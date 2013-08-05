@@ -1,0 +1,56 @@
+Errata: 1st Printing EOPL3
+
+Page 124:
+Section 4.4:
+Line 5:
+newpair ==> make-pair
+
+Page 208:
+a-program ==> cps-a-program
+const-exp ==> cps-const-exp
+var-exp ==> cps-var-exp
+
+Page: 209:
+The contract should be
+apply-procedure/k : Proc * ExpVal * Cont -> ExpVal.
+Also, "cps-" should precede "let-exp", "letrec-exp",
+"if-exp", and "call-exp".
+
+Page: 216:
+Line 10 (line 4 of the second display):
+The last paren should be preceded by ">>", leading to "exp_n>> K) >>)"
+
+Lines 9 and 14 of the final display:
+The two closing parentheses should each be preceded by ">>" leading to ">>) >>)"
+
+Page 217:
+Line 7 of last display
+There is an unmatched set of <<'s and >>'s.
+Need to move the '>>' to the next term following an equal sign
+and have it follow the "K)"
+
+Page 219:
+The type and name say it is for cps-of-diff-exp, but
+the code is for cps-of-sum-exp.  So, we need the type:
+cps-of-sum-exp : Listof (InpExp) * SimpleExp -> TfExp
+
+Page 223:
+The type left off the type of the letrec-body.
+It is, of course, just InpExp.  Here is what the type should say.
+  ;; cps-of-letrec-exp :
+  Listof(Listof(Var)) * Listof(InpExp) * InpExp * SimpleExp -> TfExp
+
+Page 265
+Section 7.4.3
+optype ==> otype
+
+Page 230
+Line -4
+apply-procedure ==> apply-procedure/k
+
+Page 231
+Line 2
+apply-procedure ==> apply-procedure/k
+
+Page 378: Line 2:
+Delete ", and"

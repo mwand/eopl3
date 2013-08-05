@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html> <head>
+<title>EOPL Errata</title>
+<link type="text/css"
+      rel="stylesheet"
+      href="eopl3.css">
+
+</head>
+
+<body>
+
+
+<h1>Errata: 1st Printing EOPL3</h1>
+
+<div id="container" align="left">
+
+<ul>
+
+  <li>
+    Page 29:<br>
+    Exercise 1.33:<br>
+    Line 3:<br>
+    integer ==> number
+
+<p> End of first display:<br>
+    Add <code>)))</code> to close up <code>(mark-leaves-with-red-depth ...</code>
+  </li>
+
+  <li>
+    Page 30:<br>
+    Exercise 1.35:<br>
+    Add <code>)))</code> to close up <code>(number-leaves ...</code>
+  </li>
+    
+  <li>
+    Page 124:<br>
+    Section 4.4:<br>
+    Line 5:<br>
+    <code>newpair</code> ==> <code>make-pair</code>
+  </li>
+
+  <li>
+    Page 195:<br>
+    Replace next to last line of Figure 6.1 with
+    <code>(set! val (* saved-n val))</code><br>
+  </li>
+
+  <li>
+    Page 196:<br>
+    Replace next to last line of Figure 6.2 with
+    <code>(set! val (* saved-n val))</code><br>
+  </li>
+        
+  <li>
+    Page 208:<br>
+    <code>a-program</code> ==> <code>cps-a-program</code><br>
+    <code>const-exp</code> ==> <code>cps-const-exp<code><br>
+    <code>var-exp<code> ==> <code>cps-var-exp<code><br>
+  </li>
+
+  <li>
+    Page: 209:<br>
+    The contract should be<br>
+    <code>apply-procedure/k</code> : <code>Proc * ExpVal * Cont -> ExpVal.</code><br>
+    Also, <code>cps-</code> should precede <code>let-exp</code>, <code>letrec-exp</code>,
+    <code>if-exp</code>, and <code>call-exp</code>.
+  </li>
+
+  <li>
+   Page: 216:<br>
+   Line 10: (line 4 of the second display):<br>
+   The last paren should be preceded by <code>>></code>,
+   leading to <code>exp_n>> K) >>)</code><br>
+
+   Lines 9 and 14 of the final display:<br>
+   The two closing parentheses should<br>
+   each be preceded by <code>>></code> leading to <code>>>) >>)</code>
+  </li>
+   
+
+  <li>
+   Page 217:<br>
+   Line 7 of last display:<br>
+   There is an unmatched set of <code><<</code>'s and <code>>></code>'s.<br>
+   Need to move the <code>>></code> to the next term following an equal sign<br>
+   and have it follow the <code>K</code>.
+  </li>
+
+  <li>
+   Page 219:<br>
+   The type and name say it is for <code>cps-of-diff-exp</code>, but<br>
+   the code is for <code>cps-of-sum-exp</code>.  So, we need the type:<br>
+   <code>cps-of-sum-exp : Listof (InpExp) * SimpleExp -> TfExp</code>
+  </li>
+
+  <li>
+   Page 223:<br>
+   The type is missing the type of the <code>letrec-body</code>.<br>
+   It is, of course, just <code>InpExp</code>.  Here is what the type should say.<br>
+     <code>;; cps-of-letrec-exp :</code><br>
+     <code>Listof(Listof(Var)) * Listof(InpExp) * InpExp * SimpleExp -> TfExp</code>
+  </li>
+   
+  <li>
+   Page 230:<br>
+   Line -4:<br>
+   <code>apply-procedure</code> ==> <code>apply-procedure/k</code>
+  </li>
+
+  <li>
+   Page 231:<br>
+   Line 2:<br>
+   <code>apply-procedure</code> ==> <code>apply-procedure/k</code>
+  </li>
+
+  <li>
+  Page 236:<br>
+  Line 14:<br>
+  boolean ==> integer
+  </li>
+
+  <li>
+   Page 265:<br>
+   Section 7.4.3:<br>
+   <code>optype</code> ==> <code>otype</code>
+  </li>
+  
+  <li>
+   Page 378: Line 2:
+   Delete ", and"
+  </li>
+
+ </ul> 
+
+<hr>
+<address></address>
+<font size=-1>
+<p align=right>
+<!-- hhmts start -->
+Last modified: Wed Jul 25 22:49:48 -0400 2012 <!-- hhmts end -->
+</body> </html>
+
+
+
+
+
+
+
+
+
+
+
+
