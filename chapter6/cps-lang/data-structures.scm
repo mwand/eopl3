@@ -1,7 +1,7 @@
 (module data-structures (lib "eopl.ss" "eopl")
 
   (require "cps-out-lang.scm")          ; for tfexp?
-  (provide (all-defined))               ; too many things to list
+  (provide (all-defined-out))               ; too many things to list
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 

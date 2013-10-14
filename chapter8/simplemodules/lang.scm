@@ -3,7 +3,7 @@
   ;; grammar for simple modules
   ;; based on CHECKED.
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
   ;;;;;;;;;;;;;;;; grammatical specification ;;;;;;;;;;;;;;;;
   

@@ -14,7 +14,7 @@
 
   (require "cps-out-lang.scm")          ; for cps-program->string 
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   (provide (all-from "interp.scm"))
 
   (define instrument-cps (make-parameter #f))  

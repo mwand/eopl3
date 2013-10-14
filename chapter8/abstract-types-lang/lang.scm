@@ -3,7 +3,7 @@
   ;; grammar for modules with abstract types
   ;; based on CHECKED.
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
   ;;;;;;;;;;;;;;;; grammatical specification ;;;;;;;;;;;;;;;;
   

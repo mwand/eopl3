@@ -5,7 +5,7 @@
 
   (require "lang.scm")
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
 ;;;;;;;;;;;;;;;; type environments ;;;;;;;;;;;;;;;;
 

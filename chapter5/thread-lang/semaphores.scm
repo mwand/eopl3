@@ -6,7 +6,7 @@
   (require "scheduler.scm")                ; for os calls
   (require "queues.scm")
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
   ;; implements binary semaphores (mutexes).
 
