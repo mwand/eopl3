@@ -3,7 +3,7 @@
   ;; grammar for full module system.
   ;; based on CHECKED.
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
   ;;;;;;;;;;;;;;;; grammatical specification ;;;;;;;;;;;;;;;;
   

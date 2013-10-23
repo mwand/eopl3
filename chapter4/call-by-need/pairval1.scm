@@ -3,7 +3,7 @@
   (require "drscheme-init.scm")
   (require "store.scm")
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   ;;;;;;;;;;;;;;;; mutable pairs ;;;;;;;;;;;;;;;;
   

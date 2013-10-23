@@ -2,7 +2,7 @@
 
   (require "lang.scm")                  ; for expression?, type?, etc.
 
-  (provide (all-defined))               ; too many things to list
+  (provide (all-defined-out))               ; too many things to list
 
   (define-datatype type-environment type-environment?
     (empty-tenv)

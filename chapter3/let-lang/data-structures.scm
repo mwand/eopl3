@@ -2,7 +2,7 @@
 
   ;; data structures for let-lang.
 
-  (provide (all-defined))               ; too many things to list
+  (provide (all-defined-out))               ; too many things to list
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 

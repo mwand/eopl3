@@ -16,7 +16,7 @@
 
   ;; here are some other things that could be provided:
 
-  ;;   (provide (all-defined))
+  ;;   (provide (all-defined-out))
   ;;   (provide (all-from "interp.scm"))
   ;;   (provide (all-from "lang.scm"))
   

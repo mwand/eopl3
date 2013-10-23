@@ -5,7 +5,7 @@
   
   (require "drscheme-init.scm")
   
-  (provide (all-defined))
+  (provide (all-defined-out))
 
   ;;;;;;;;;;;;;;;; grammatical specification ;;;;;;;;;;;;;;;;
   
