@@ -11,7 +11,8 @@
        (let ((x^ x) (y^ y))
          (if (not (equal? x y))
            (eopl:error 'equal??
-             "~s is not equal to ~s" 'x 'y))))))
+             "~s is not equal to ~s" 'x 'y)
+             #t)))))
 
   (define report-unit-tests-completed
     (lambda (fn-name)
