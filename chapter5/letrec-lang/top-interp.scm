@@ -9,7 +9,7 @@
   (require "interp.scm")           ; for value-of-program
   (require "tests.scm")            ; for test-list
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   (provide (all-from "interp.scm"))
   (provide (all-from "lang.scm"))
   

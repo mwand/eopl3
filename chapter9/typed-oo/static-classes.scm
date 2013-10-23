@@ -3,7 +3,7 @@
   (require "lang.scm")
   (require "static-data-structures.scm")
 
-  (provide (all-defined))
+  (provide (all-defined-out))
 
 ;;;;;;;;;;;;;;;; method type environments ;;;;;;;;;;;;;;;;
 

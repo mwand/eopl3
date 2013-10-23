@@ -4,7 +4,7 @@
   (require "store.scm")                 ; for reference?
   (require "classes.scm")               ; for object?
 
-  (provide (all-defined))               ; too many things to list
+  (provide (all-defined-out))               ; too many things to list
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 

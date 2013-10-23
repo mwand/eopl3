@@ -3,7 +3,7 @@
   (require "lang.scm")                  ; for expression?
   (require "store.scm")                 ; for reference?
 
-  (provide (all-defined))               ; too many things to list
+  (provide (all-defined-out))               ; too many things to list
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 

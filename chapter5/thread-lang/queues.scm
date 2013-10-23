@@ -1,6 +1,6 @@
 (module queues (lib "eopl.ss" "eopl")
 
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   ;; queues
 
