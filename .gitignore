@@ -1,3 +1,31 @@
+## My .gitignores
+
+*~
+#*#
+.#*
+*.bak
+.svn
+*.log
+~$*
+*.1
+*.2
+Thumbs.db
+desktop.ini
+*.zip
+/* but put in the ones in the examples folder */
+!*/www/modules/examples/*.zip
+TAGS
+*.aux
+*.log
+*.out
+*.dvi
+auto
+compiled
+*.stackdump
+
+## github's standard gitignore
+
+
 #################
 ## Eclipse
 #################
