@@ -4,6 +4,10 @@
   ;; Run the test suite with (run-all N), where N is the size of the
   ;; time slice.
 
+   ;;; interface for book test ;;;
+  (provide test-all)
+  (define (test-all) 
+    (run-all 50))
 
   (require "drscheme-init.scm")
   (require "data-structures.scm")   

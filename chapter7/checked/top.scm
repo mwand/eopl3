@@ -14,6 +14,11 @@
   
   (provide run run-all check check-all)
   
+  ;;; interface to book-test harness 
+  (provide test-all)
+  (define (test-all) (check-all) (run-all))
+
+
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   
   ;; run : String -> ExpVal

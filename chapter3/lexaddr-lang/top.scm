@@ -12,6 +12,11 @@
   
   (provide run run-all)
   
+  ;;;; function for automated testing ;;;;
+  (provide test-all)
+  (define (test-all) (run-all))
+
+
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   
   ;; run : String -> ExpVal

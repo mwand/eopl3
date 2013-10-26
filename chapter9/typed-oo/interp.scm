@@ -71,14 +71,14 @@
             (value-of exp2 env)))
 
         (let-exp (vars exps body)       
-	  (if (instrument-let)
+	  (when (instrument-let)
 	    (eopl:printf "entering let ~s~%" vars))
           (let ((new-env 
                   (extend-env 
                     vars
                     (map newref (values-of-exps exps env))
                     env)))
-            (if (instrument-let)
+            (when (instrument-let)
               (begin
                 (eopl:printf "entering body of let ~s with env =~%" vars)
                 (pretty-print (env->list new-env))
@@ -182,7 +182,7 @@
                     vars
                     (map newref args)
                     saved-env)))
-            (if (instrument-let)
+            (when (instrument-let)
               (begin
                 (eopl:printf
                   "entering body of proc ~s with env =~%"

@@ -211,7 +211,7 @@
     (lambda (rator-type rand-types rands exp)
       (cases type rator-type
         (proc-type (arg-types result-type)
-          (if (not (= (length arg-types) (length rand-types)))
+          (when (not (= (length arg-types) (length rand-types)))
             (report-wrong-number-of-arguments arg-types rand-types
               exp))
           (for-each check-is-subtype! rand-types arg-types rands)

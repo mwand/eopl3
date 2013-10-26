@@ -70,11 +70,11 @@
 
         ;; LET with instrumentation
        (let-exp (var exp1 body)       
-	  (if (instrument-let)
+	  (when (instrument-let)
 	    (eopl:printf "entering let ~s~%" var))
           (let ((val (value-of exp1 env)))
 	    (let ((new-env (extend-env var (newref val) env)))
-	      (if (instrument-let)
+	      (when (instrument-let)
 		(begin
 		  (eopl:printf "entering body of let ~s with env =~%" var)
 		  (pretty-print (env->list new-env))
@@ -165,7 +165,7 @@
       (cases proc proc1
         (procedure (var body saved-env)
           (let ((new-env (extend-env var val saved-env)))
-	    (if (instrument-let)
+	    (when (instrument-let)
 	      (begin
 	        (eopl:printf
 		  "entering body of proc ~s with env =~%"

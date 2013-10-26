@@ -181,7 +181,7 @@
 
   (define check-for-initialize!
     (lambda (method-tenv class-name)
-      (if (not (maybe-find-method-type method-tenv 'initialize))
+      (when (not (maybe-find-method-type method-tenv 'initialize))
         (eopl:error 'check-for-initialize!
           "no initialize method in class ~s"
           class-name))))

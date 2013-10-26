@@ -46,7 +46,7 @@
         (a-mutex (ref-to-closed? ref-to-wait-queue)
           (let ((closed? (deref ref-to-closed?))
                 (wait-queue (deref ref-to-wait-queue)))
-            (if closed?
+            (when closed?
               (if (empty? wait-queue)
                 (setref! ref-to-closed? #f)
                 (dequeue wait-queue

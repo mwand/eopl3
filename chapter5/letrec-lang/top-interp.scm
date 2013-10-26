@@ -10,8 +10,8 @@
   (require "tests.scm")            ; for test-list
   
   (provide (all-defined-out))
-  (provide (all-from "interp.scm"))
-  (provide (all-from "lang.scm"))
+  (provide (all-from-out "interp.scm"))
+  (provide (all-from-out "lang.scm"))
   
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   

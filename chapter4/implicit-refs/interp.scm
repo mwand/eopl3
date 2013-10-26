@@ -121,7 +121,7 @@
         (procedure (var body saved-env)
           (let ((r (newref arg)))
             (let ((new-env (extend-env var r saved-env)))
-              (if (instrument-let)
+              (when (instrument-let)
                 (begin
                   (eopl:printf
                     "entering body of proc ~s with env =~%"

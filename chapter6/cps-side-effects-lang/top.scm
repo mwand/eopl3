@@ -4,6 +4,13 @@
   ;; Test the interpreter alone with (interpret-all)
   ;; Test the cps converter and interprter with (run-all)
 
+   ;;; interface for book test ;;;
+  (provide test-all)
+  (define (test-all) 
+    (interpret-all)
+    (run-all))
+
+
   (require "drscheme-init.scm")
   (require "data-structures.scm")        ; for expval constructors
   (require "cps-in-lang.scm")            ; for scan&parse

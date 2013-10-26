@@ -18,6 +18,15 @@
 
   (provide run run-all check check-all parse-all)
 
+
+  ;;; interface for book test ;;;
+  (provide test-all)
+  (define (test-all) 
+    (parse-all)
+    (check-all)
+    (run-all))
+
+
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   
   ;; run : String -> ExpVal
@@ -115,7 +124,7 @@
                 (eopl:printf "passed ~%")
                 (begin
                   (eopl:printf "failed ~%")
-                  (if (stop-after-first-error)
+                  (when (stop-after-first-error)
                     (eopl:error test-name
                       "incorrect outcome detected"))))))) 
         tests-for-parse)))

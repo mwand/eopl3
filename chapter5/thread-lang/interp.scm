@@ -31,7 +31,7 @@
   (define value-of/k                    
     (lambda (exp env cont)
 
-      (if (trace-interp)
+      (when (trace-interp)
         (eopl:printf "value-of/k: ~s~%" exp))
 
       (cases expression exp

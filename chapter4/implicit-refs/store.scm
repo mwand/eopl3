@@ -47,7 +47,7 @@
       (let ((next-ref (length the-store)))
         (set! the-store
               (append the-store (list val)))
-        (if (instrument-newref)
+        (when (instrument-newref)
             (eopl:printf 
              "newref: allocating location ~s with initial contents ~s~%"
              next-ref val))                     

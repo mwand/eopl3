@@ -5,6 +5,15 @@
   ;; Run the test suite for the interpreter with (run-all).
   ;; Run the test suite for the checker with (check-all).
   
+  ;;; interface for book test ;;;
+  (provide test-all)
+  (define (test-all) 
+    (parse-all)
+    (check-all)
+    (run-all))
+
+
+
   (require "drscheme-init.scm")
   (require "data-structures.scm")       ; for expval constructors
   (require "lang.scm")                  ; for scan&parse
@@ -115,7 +124,7 @@
                 (eopl:printf "passed ~%")
                 (begin
                   (eopl:printf "failed ~%")
-                  (if (stop-after-first-error)
+                  (when (stop-after-first-error)
                     (eopl:error test-name
                       "incorrect outcome detected"))))))) 
         tests-for-parse)))

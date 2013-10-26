@@ -14,6 +14,10 @@
 
   (provide run run-all)
 
+  (provide test-all)
+
+  (define (test-all) (run-all))
+
   ;; here are some other things that could be provided:
 
   ;;   (provide (all-defined-out))

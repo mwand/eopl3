@@ -3,6 +3,11 @@
   ;; top level module.  Loads all required pieces.
   ;; Run the test suite with (run-all).
 
+   ;;; interface for book test ;;;
+  (provide test-all)
+  (define (test-all) 
+    (run-all))
+
   (require "drscheme-init.scm")
   (require "data-structures.scm")        ; for expval constructors
   (require "cps-in-lang.scm")            ; for scan&parse
@@ -13,7 +18,7 @@
   (require "cps-out-lang.scm")              ; for cps-program->string 
   
   (provide (all-defined-out))
-  (provide (all-from "interp.scm"))
+  (provide (all-from-out "interp.scm"))
 
   (define instrument-cps (make-parameter #f))  
   
@@ -25,7 +30,7 @@
     (lambda (string)
       (let ((cpsed-pgm
              (cps-of-program (scan&parse string))))
-        (if (instrument-cps) (pretty-print cpsed-pgm))
+        (when (instrument-cps) (pretty-print cpsed-pgm))
         (value-of-program cpsed-pgm))))
 
   ;; run-all : () -> Unspecified

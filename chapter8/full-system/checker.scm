@@ -11,7 +11,7 @@
   ;; Page: 242
   (define check-equal-type!
     (lambda (ty1 ty2 exp)
-      (if (not (equal? ty1 ty2))
+      (when (not (equal? ty1 ty2))
         (report-unequal-types ty1 ty2 exp))))
 
   ;; report-unequal-types : Type * Type * Exp -> Unspecified
