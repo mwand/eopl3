@@ -1,8 +1,8 @@
-(module eopl-without-exp (lib "eopl.ss" "eopl")
+#lang racket
 
-  ;; remove "exp" from the eopl language level, because we use it as
-  ;; a mutable variable.
+;; remove "exp" from the eopl language level, because we use it as
+;; a mutable variable.
 
-  (provide (all-from-except (lib "eopl.ss" "eopl") exp))
+(require (lib "eopl.ss" "eopl"))
+(provide (except-out (all-from-out (lib "eopl.ss" "eopl")) exp))
 
-)
