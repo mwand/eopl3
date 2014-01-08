@@ -4,7 +4,7 @@ Languages, 3rd edition, by Friedman and Wand.
 The code dates from 2009.  It has now been updated and should run
 right out of the box on Racket version 5.3.6.
 
-To run any of the languages, run top.scm in any of the language directories (chapterN/*-lang).
+To run any of the languages, select "Choose language from source", and run top.scm in any of the language directories (chapterN/*-lang).
 
 The file test-all.rkt will go through and test all of the testable
 languages. 
