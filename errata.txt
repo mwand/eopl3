@@ -1,4 +1,16 @@
 Errata: 1st Printing EOPL3
+Updated Sun Jan 12 22:39:19 2014
+
+
+
+Page 44:
+Exercise 2.19:
+move-to-left => move-to-left-son
+move-to-right => move-to-right-son
+
+Page 84:
+Exercise 3.32
+mututally => mutually
 
 Page 124:
 Section 4.4:
