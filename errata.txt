@@ -12,6 +12,10 @@ Page 84:
 Exercise 3.32
 mututally => mutually
 
+Page 101:
+Exercise 3.39
+Delete "and 'unpack'"
+
 Page 124:
 Section 4.4:
 Line 5:
