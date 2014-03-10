@@ -68,5 +68,17 @@ Page 231
 Line 2
 apply-procedure ==> apply-procedure/k
 
+
+Page 290
+Exercise 8.5
+ interface
+        [even : int -> bool
+         odd  : int -> bool]
+=>
+ interface
+        [even : (int -> bool)
+         odd  : (int -> bool)]
+
+
 Page 378: Line 2:
 Delete ", and"
