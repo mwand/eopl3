@@ -27,7 +27,7 @@
       (expression
         ("-" "(" expression "," expression ")")
         diff-exp)
-      
+       
       (expression
        ("zero?" "(" expression ")")
        zero?-exp)
@@ -42,6 +42,10 @@
        ("let" identifier "=" expression "in" expression)
        let-exp)   
 
+      (expression
+        ("minus" "(" expression ")")
+        minus-exp)
+      
       ))
   
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
