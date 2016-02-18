@@ -68,8 +68,9 @@
                 (run (cadr test))))
           (else (eopl:error 'run-one "no such test: ~s" test-name))))))
  
-  ;; (run-all)
+  (run-all)
   
+   ;(show-the-datatypes)
   )
 
 
