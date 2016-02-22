@@ -57,6 +57,14 @@
 
       ; check minus expression
       (simple-minus "minus(-(minus(5),9))" 14)
-      
+
+      ; check addition expression
+      (simple-addition "+(4,9)" 13)
+
+      ; check multiplication expression
+      (simple-multiplication "*(4, 9)" 36)
+
+      ; check integer quotient expression
+      (simple-integer-quotient "/(4, 9)" 4/9)
       ))
   )

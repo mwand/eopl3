@@ -39,26 +39,38 @@
       (expression (identifier) var-exp)
 
       (expression
-       ("let" identifier "=" expression "in" expression)
-       let-exp)   
+        ("let" identifier "=" expression "in" expression)
+        let-exp)   
 
       (expression
         ("minus" "(" expression ")")
         minus-exp)
-      
-      ))
-  
-  ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
-  
-  (sllgen:make-define-datatypes the-lexical-spec the-grammar)
-  
-  (define show-the-datatypes
-    (lambda () (sllgen:list-define-datatypes the-lexical-spec the-grammar)))
-  
-  (define scan&parse
-    (sllgen:make-string-parser the-lexical-spec the-grammar))
-  
-  (define just-scan
-    (sllgen:make-string-scanner the-lexical-spec the-grammar))
-  
-  )
+
+      (expression
+        ("+" "(" expression "," expression ")")
+        addition-exp)
+
+      (expression
+        ("*" "(" expression "," expression ")")
+        multiplication-exp)
+
+      (expression
+        ("/" "(" expression "," expression ")")
+        quotient-exp)
+
+        ))
+
+    ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
+
+    (sllgen:make-define-datatypes the-lexical-spec the-grammar)
+
+    (define show-the-datatypes
+      (lambda () (sllgen:list-define-datatypes the-lexical-spec the-grammar)))
+
+    (define scan&parse
+      (sllgen:make-string-parser the-lexical-spec the-grammar))
+
+    (define just-scan
+      (sllgen:make-string-scanner the-lexical-spec the-grammar))
+
+    )
