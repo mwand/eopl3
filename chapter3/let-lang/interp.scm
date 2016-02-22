@@ -64,10 +64,33 @@
             (value-of body
               (extend-env var val1 env))))
 
-        
         (minus-exp (exp1)
                    (let ((val1 (value-of exp1 env)))
                      (num-val (- 0 (expval->num val1)))))
+
+        (addition-exp (exp1 exp2)
+                      (let ((val1 (value-of exp1 env))
+                            (val2 (value-of exp2 env)))
+                        (let ((num1 (expval->num val1))
+                              (num2 (expval->num val2)))
+                          (num-val
+                           (+ num1 num2)))))
+
+        (multiplication-exp (exp1 exp2)
+                      (let ((val1 (value-of exp1 env))
+                            (val2 (value-of exp2 env)))
+                        (let ((num1 (expval->num val1))
+                              (num2 (expval->num val2)))
+                          (num-val
+                           (* num1 num2)))))
+
+        (quotient-exp (exp1 exp2)
+                      (let ((val1 (value-of exp1 env))
+                            (val2 (value-of exp2 env)))
+                        (let ((num1 (expval->num val1))
+                              (num2 (expval->num val2)))
+                          (num-val
+                           (/ num1 num2)))))
         )))
 
 
