@@ -58,6 +58,17 @@
         ("/" "(" expression "," expression ")")
         quotient-exp)
 
+      (expression
+        ("equal?" "(" expression "," expression ")")
+        equal?-exp)
+
+      (expression 
+        ("greater?" "(" expression "," expression ")")
+        greater?-exp)
+
+      (expression 
+        ("less?" "(" expression "," expression ")")
+        less?-exp)
         ))
 
     ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
