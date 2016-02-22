@@ -66,5 +66,18 @@
 
       ; check integer quotient expression
       (simple-integer-quotient "/(4, 9)" 4/9)
+
+      ; check equal?
+      (simple-equal? "equal?(1, 1)" #t)
+
+      ; check greater?
+      (simple-greater-1-1? "greater?(1, 1)" #f)
+      (simple-greater-1-2? "greater?(1, 2)" #f)
+      (simple-greater-3-1? "greater?(3, 1)" #t)
+
+      ; check less?
+      (simple-less-1-1? "less?(1, 1)" #f)
+      (simple-less-1-2? "less?(1, 2)" #t)
+      (simple-less-3-1? "less?(3, 1)" #f)
       ))
   )
