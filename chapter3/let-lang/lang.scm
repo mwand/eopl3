@@ -69,6 +69,25 @@
       (expression 
         ("less?" "(" expression "," expression ")")
         less?-exp)
+
+      (expression
+        ("cons" "(" expression "," expression ")")
+        cons-exp)
+
+      (expression
+        ("emptylist")
+        emptylist-exp)
+
+      (expression
+        ("null?" "(" expression ")")
+        null?-exp)
+      (expression
+        ("car" "(" expression ")")
+        car-exp)
+
+      (expression
+        ("cdr" "(" expression ")")
+        cdr-exp)
         ))
 
     ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
