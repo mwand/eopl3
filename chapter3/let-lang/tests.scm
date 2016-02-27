@@ -99,5 +99,8 @@
       ; check cdr of '(4 3)
       (test-cons-cdr "cdr(cons(4, 3))" 3)
 
+      ; check list
+      (test-list "car(list(3, 3, 3))" 3)
+
       ))
   )
