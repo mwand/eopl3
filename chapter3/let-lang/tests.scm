@@ -79,5 +79,25 @@
       (simple-less-1-1? "less?(1, 1)" #f)
       (simple-less-1-2? "less?(1, 2)" #t)
       (simple-less-3-1? "less?(3, 1)" #f)
+
+      ; check null? of '(4 (3))
+      (test-cons-null? "let x = 4 in null?(cons(4,
+                                           cons(cons(-(x, 1),
+                                                      emptylist),
+                                                 emptylist)))"  
+                       #f)
+      ; check null? of emptylist
+      (test-null?-emptylist "null?(emptylist)" #t)
+
+      ; check car of '(4 (3))
+      (test-cons-car "let x = 4 in car(cons(4,
+                                           cons(cons(-(x, 1),
+                                                      emptylist),
+                                                 emptylist)))" 
+                     4)
+      
+      ; check cdr of '(4 3)
+      (test-cons-cdr "cdr(cons(4, 3))" 3)
+
       ))
   )
