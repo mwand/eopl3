@@ -81,6 +81,7 @@
       (expression
         ("null?" "(" expression ")")
         null?-exp)
+
       (expression
         ("car" "(" expression ")")
         car-exp)
@@ -88,7 +89,12 @@
       (expression
         ("cdr" "(" expression ")")
         cdr-exp)
-        ))
+
+      (expression
+        ("list" "(" (separated-list expression ",") ")")
+        list-exp)
+
+      ))
 
     ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
 

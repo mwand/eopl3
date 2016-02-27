@@ -37,6 +37,13 @@
              (bool-val (bool) bool)
              (else (expval-extractor-error 'bool v)))))
 
+(define expval->cons
+  (lambda (v)
+    (cases expval v
+           (cons-val (car cdr)
+                     (cons car cdr))
+           (else (expval-extractor-error 'cons v)))))
+
 (define expval->null?
   (lambda (v)
     (cases expval v
@@ -54,6 +61,13 @@
     (cases expval v
            (cons-val (car cdr) cdr)
            (else (expval-extractor-error 'cdr v)))))
+
+(define list-val
+  (lambda (args)
+    (if (null? args)
+      (emptylist-val)
+      (cons-val (car args)
+                (list-val (cdr args))))))
 
 (define expval-extractor-error
   (lambda (variant value)
