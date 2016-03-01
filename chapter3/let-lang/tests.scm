@@ -102,5 +102,8 @@
       ; check list
       (test-list "car(list(3, 3, 3))" 3)
 
+      ; check cond
+      (test-cond-error "cond 3 ==> 3 end" 3)
+      (test-cond-valid "cond less?(3,2) ==> 0 greater?(3,2) ==> 3 end" 3)
       ))
   )

@@ -17,6 +17,9 @@
     (cons-val
       (car expval?)
       (cdr expval?))
+    (cond-val
+      (predicates (list-of expval?))
+      (values (list-of expval?)))
     )
 
 ;;; extractors:
