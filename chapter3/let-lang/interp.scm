@@ -4,8 +4,8 @@
   ;; latex code for inserting the rules into the code in the book.
   ;; These are too complicated to put here, see the text, sorry.
 
+  (require scheme/base)
   (require "drscheme-init.scm")
-
   (require "lang.scm")
   (require "data-structures.scm")
   (require "environments.scm")
@@ -137,6 +137,20 @@
                   (list-val (map (lambda (arg)
                                    (value-of arg env))
                                  args)))
+
+        (cond-exp (predicates values)
+                  (define inner
+                    (lambda (predicates values)
+                      (if (or (null? predicates) (null? values))
+                        (eopl:error 'cond-exp "This cond expression have no value")
+                        (let ((predicate (value-of (car predicates) env))
+                              (value (value-of (car values) env)))
+                          (let ((predicate-bool (expval->bool predicate))
+                                (num (expval->num value)))
+                            (if (equal? predicate-bool #t)
+                              (num-val num)
+                              (inner (cdr predicates) (cdr values))))))))
+                  (inner predicates values))
 
         )))
 
