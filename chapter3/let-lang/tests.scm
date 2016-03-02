@@ -68,26 +68,26 @@
       (simple-integer-quotient "/(4, 9)" 4/9)
 
       ; check equal?
-      (simple-equal? "equal?(1, 1)" #t)
+      (simple-equal? "equal?(1, 1)" 1)
 
       ; check greater?
-      (simple-greater-1-1? "greater?(1, 1)" #f)
-      (simple-greater-1-2? "greater?(1, 2)" #f)
-      (simple-greater-3-1? "greater?(3, 1)" #t)
+      (simple-greater-1-1? "greater?(1, 1)" 0)
+      (simple-greater-1-2? "greater?(1, 2)" 0)
+      (simple-greater-3-1? "greater?(3, 1)" 1)
 
       ; check less?
-      (simple-less-1-1? "less?(1, 1)" #f)
-      (simple-less-1-2? "less?(1, 2)" #t)
-      (simple-less-3-1? "less?(3, 1)" #f)
+      (simple-less-1-1? "less?(1, 1)" 0)
+      (simple-less-1-2? "less?(1, 2)" 1)
+      (simple-less-3-1? "less?(3, 1)" 0)
 
       ; check null? of '(4 (3))
       (test-cons-null? "let x = 4 in null?(cons(4,
                                            cons(cons(-(x, 1),
                                                       emptylist),
                                                  emptylist)))"  
-                       #f)
+                       0)
       ; check null? of emptylist
-      (test-null?-emptylist "null?(emptylist)" #t)
+      (test-null?-emptylist "null?(emptylist)" 1)
 
       ; check car of '(4 (3))
       (test-cons-car "let x = 4 in car(cons(4,

@@ -11,8 +11,6 @@
   (define-datatype expval expval?
     (num-val
       (value number?))
-    (bool-val
-      (boolean boolean?))
     (emptylist-val)
     (cons-val
       (car expval?)
@@ -32,14 +30,6 @@
            (num-val (num) num)
            (else (expval-extractor-error 'num v)))))
 
-;; expval->bool : ExpVal -> Bool
-;; Page: 70
-(define expval->bool
-    (lambda (v)
-      (cases expval v
-             (bool-val (bool) bool)
-             (else (expval-extractor-error 'bool v)))))
-
 (define expval->cons
   (lambda (v)
     (cases expval v
@@ -50,8 +40,8 @@
 (define expval->null?
   (lambda (v)
     (cases expval v
-           (emptylist-val () (bool-val #t))
-           (else (bool-val #f)))))
+           (emptylist-val () (num-val 1))
+           (else (num-val 0)))))
 
 (define expval->car
   (lambda (v)
