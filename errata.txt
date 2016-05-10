@@ -79,6 +79,17 @@ Exercise 8.5
         [even : (int -> bool)
          odd  : (int -> bool)]
 
+Page 337 et seq:
+The code in
+https://github.com/mwand/eopl3/blob/master/chapter9/classes is
+inconsistent .  data-structures.scm defines ExpVal to include objects,
+with the injector obj-val.  However, the rest of the interpreter
+doesn't use obj-val.  Objects are passed around without the wrapper.
+The code still works, because method-call-exp doesn't check to see
+whether its argument is an object.  method-call-exp should call a
+function like expval->obj, in the same way that diff-exp calls
+expval->num. 
+
 
 Page 378: Line 2:
 Delete ", and"
