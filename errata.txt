@@ -8,6 +8,10 @@ Exercise 2.19:
 move-to-left => move-to-left-son
 move-to-right => move-to-right-son
 
+Page 45:
+Exercise 2.20
+at-leaf? is already in exercise 2.19
+
 Page 84:
 Exercise 3.32
 mututally => mutually
