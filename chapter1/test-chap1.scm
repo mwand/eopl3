@@ -15,7 +15,8 @@
            (printf "~s returned ~s, should have returned ~s~%"
              'test-exp
              observed-ans
-             correct-ans))))))
+             correct-ans)
+           )))))
 
 
   ;; in-S? : N -> Bool
@@ -60,7 +61,7 @@
         "List too short by ~s elements.~%" (+ n 1))))
 
   ;; uncomment these to test equal??
-  ;; (equal?? (nth-element '(a b c d) 2) 'foo)
+  (equal?? (nth-element '(a b c d) 2) 'foo)
   ;; (equal?? (nth-element '(a b c d) 3) 'bar)
 
   (equal?? (nth-element '(a b c d) 2) 'c)
@@ -91,7 +92,7 @@
   (define occurs-free?
     (lambda (var exp)
       (cond
-        ((symbol? exp) (eqv? var exp))  
+        ((symbol? exp) (eqv? var exp))
         ((eqv? (car exp) 'lambda)
          (and
            (not (eqv? var (car (cadr exp))))
@@ -188,4 +189,64 @@
 
   (equal?? (vector-sum (vector 1 2 3 4 5)) 15)
 
-  )
+  ;; ex 1.26
+  (define up
+    (lambda (lst)
+      (if
+        (null? lst) '()
+        (cond
+          [(list? (car lst))
+           (cons (caar lst) (up (merge-my (cdr (car lst)) (cdr lst))))]
+          [else (cons (car lst) (up (cdr lst)))])
+        )
+        ))
+
+  (define append-my
+    (lambda (lst elem)
+      (cond
+        [(null? elem) lst]
+        [(null? lst) (list elem)]
+        [else
+         (cond
+           [(null? (cdr lst)) (cons (car lst) (list elem))]
+           [else
+            (cons (car lst) (append-my (cdr lst) elem))])])))
+
+  (equal?? (append-my '(1 2)  3) '(1 2 3))
+
+  (define merge-my
+    (lambda (lst1 lst2)
+      (cond
+        [(null? lst2) lst1]
+        [(null? lst1) lst2]
+        [else (merge-my (append-my lst1 (car lst2)) (cdr lst2))]
+        )
+      ))
+
+  (equal?? (merge-my '(1 2 (34)) '(3 4)) '(1 2 3 4))
+
+
+  (equal?? (up '((1 2) (3 4))) '(1 2 3 4))
+
+  ;; ex 1.27
+  (define flatten
+    (lambda (lst)
+      (cond
+        [(null? lst) '()]
+        [else
+         (cond
+           [(null? (car lst)) (flatten (cdr lst))]
+           [(list? (car lst))
+            (merge-my (flatten (car lst))
+                      (flatten (cdr lst)))]
+            ;;(merge-my (flatten (car (car lst)))
+            ;;          (flatten (merge-my (cdr (car lst)) (cdr lst))))]
+           [else (cons (car lst) (flatten (cdr lst)))]
+           )])
+      ))
+
+  (equal?? (flatten '(() a b ((((c)))) (d () ((e)) x (y z)))) '(a b c d e x y z))
+  (equal?? (flatten '((a) () (b ()) () (c))) '(a b c))
+
+)
+
