@@ -248,5 +248,13 @@
   (equal?? (flatten '(() a b ((((c)))) (d () ((e)) x (y z)))) '(a b c d e x y z))
   (equal?? (flatten '((a) () (b ()) () (c))) '(a b c))
 
+  ;; ex 1.29
+  (define sort
+    (lambda (loi)
+      (cond
+        [(null? loi) '()]
+        [(null? (cdr loi)) loi]
+        [else ])
+      ))
 )
 
