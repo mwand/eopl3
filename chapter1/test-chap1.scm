@@ -11,7 +11,7 @@
     (syntax-rules ()
       ((_ test-exp correct-ans)
        (let ((observed-ans test-exp))
-         (if (not (equal? observed-ans correct-ans))
+         (when (not (equal? observed-ans correct-ans))
            (printf "~s returned ~s, should have returned ~s~%"
              'test-exp
              observed-ans
@@ -196,7 +196,7 @@
         (null? lst) '()
         (cond
           [(list? (car lst))
-           (cons (caar lst) (up (merge-my (cdr (car lst)) (cdr lst))))]
+           (cons (caar lst) (up (merge (cdr (car lst)) (cdr lst))))]
           [else (cons (car lst) (up (cdr lst)))])
         )
         ))
@@ -214,19 +214,30 @@
 
   (equal?? (append-my '(1 2)  3) '(1 2 3))
 
-  (define merge-my
+  (define merge
     (lambda (lst1 lst2)
       (cond
         [(null? lst2) lst1]
         [(null? lst1) lst2]
-        [else (merge-my (append-my lst1 (car lst2)) (cdr lst2))]
+        [else (merge (append-my lst1 (car lst2)) (cdr lst2))]
         )
       ))
 
-  (equal?? (merge-my '(1 2 (34)) '(3 4)) '(1 2 3 4))
+  (equal?? (merge '(1 2 (34)) '(3 4)) '(1 2 3 4))
 
 
   (equal?? (up '((1 2) (3 4))) '(1 2 3 4))
+
+  ;; ex 1.22
+  (define filter-in
+    (lambda (pred lst)
+      (cond
+        [(null? lst) '()]
+        [(pred (car lst)) (cons (car lst) (filter-in pred (cdr lst)))]
+        [else (filter-in pred (cdr lst))])))
+
+  (equal?? (filter-in number? '(a 2 (1 3) b 7)) '(2 7))
+  (equal?? (filter-in symbol? '(a (b c) 17 foo)) '(a foo))
 
   ;; ex 1.27
   (define flatten
@@ -237,10 +248,10 @@
          (cond
            [(null? (car lst)) (flatten (cdr lst))]
            [(list? (car lst))
-            (merge-my (flatten (car lst))
+            (merge (flatten (car lst))
                       (flatten (cdr lst)))]
-            ;;(merge-my (flatten (car (car lst)))
-            ;;          (flatten (merge-my (cdr (car lst)) (cdr lst))))]
+            ;;(merge (flatten (car (car lst)))
+            ;;          (flatten (merge (cdr (car lst)) (cdr lst))))]
            [else (cons (car lst) (flatten (cdr lst)))]
            )])
       ))
@@ -249,12 +260,23 @@
   (equal?? (flatten '((a) () (b ()) () (c))) '(a b c))
 
   ;; ex 1.29
+  (define last
+    (lambda (lst)
+      (cond
+        [(null? lst) '()]
+        [(null? (cdr lst)) (car lst)]
+        [else
+         (last (cdr lst))])))
+
   (define sort
     (lambda (loi)
       (cond
         [(null? loi) '()]
         [(null? (cdr loi)) loi]
-        [else ])
-      ))
-)
+        [else
+         (merge (sort (filter-in (lambda (x) (> (car loi) x)) (cdr loi)))
+                (cons (car loi)
+                      (sort (filter-in
+                             (lambda (x) (<= (car loi) x)) (cdr loi)))))])))
 
+ )
