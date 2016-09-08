@@ -358,4 +358,22 @@
                                                  (leaf 14)))))
    '(red (bar 1 1) (red 2 (quux 2 2))))
 
+
+  ;; ex 1.34
+  ;; Binary-search-tree ::= () | (Int Binary-search-tree Binary-search-tree)
+  (define path
+    (lambda (n bst)
+      (cond
+        [(null? bst) '()]
+        [(equal? (car bst) n) '()]
+        [(< n (car bst)) (cons 'left (path n (cadr bst)))]
+        [else
+         (cons 'right (path n (caddr bst)))])))
+
+  (equal?? (path 17 '(14 (7 () (12 () ()))
+                         (26 (20 (17 () ())
+                                 ())
+                             (31 () ()))))
+           '(right left left))
+
  )
