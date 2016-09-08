@@ -279,4 +279,83 @@
                       (sort (filter-in
                              (lambda (x) (<= (car loi) x)) (cdr loi)))))])))
 
+  ;; Bintree ::= Int | (Symbol Bintree Bintree)
+  ;; ex1.31
+  (define leaf
+    (lambda (x)
+      (cond
+        [(number? x) x]
+        [else
+         (error 'leaf "Not a number.")])))
+
+  (define interior-node
+    (lambda (content lson rson)
+      (cond
+        [(symbol? content) (list content lson rson)]
+        [else
+         (error 'interior-node "not a symbol")])))
+
+  (define leaf?
+    (lambda (x)
+      (number? x)))
+
+  (define lson
+    (lambda (node)
+      (cadr node)))
+
+  (define rson
+    (lambda (node)
+      (caddr node)))
+
+  (define contents-of
+    (lambda (node)
+      (cond
+        [(leaf? node) (leaf node)]
+        [else
+         (car node)])))
+
+  ;; ex 1.33
+  (define leaf-plus-one
+    (lambda (tree)
+      (cond
+        [(leaf? tree) (+ (leaf tree) 1)]
+        [(leaf? (lson tree))
+         (interior-node (contents-of tree)
+                        (+ (lson tree) 1)
+                        (leaf-plus-one (rson tree)))]
+        [(leaf? (rson tree))
+         (interior-node (contents-of tree)
+                        (leaf-plus-one (lson tree))
+                        (+ 1 (rson tree)))]
+        [else
+         (interior-node (contents-of tree)
+                        (leaf-plus-one (lson tree))
+                        (leaf-plus-one (rson tree)))])))
+
+  (define mark-leaves-with-red-depth
+    (lambda (tree)
+      (cond
+        [(leaf? tree) (leaf 0)]
+        [(equal? (contents-of tree) 'red)
+         (interior-node 'red
+                        (leaf-plus-one (mark-leaves-with-red-depth (lson tree)))
+                        (leaf-plus-one (mark-leaves-with-red-depth (rson tree))))]
+        [else
+         (interior-node (contents-of tree)
+                        (mark-leaves-with-red-depth (lson tree))
+                        (mark-leaves-with-red-depth (rson tree)))])))
+
+  (equal?? 
+   (mark-leaves-with-red-depth
+    (interior-node 'red
+                   (interior-node 'bar
+                                  (leaf 26)
+                                  (leaf 12))
+                   (interior-node 'red
+                                  (leaf 11)
+                                  (interior-node 'quux
+                                                 (leaf 117)
+                                                 (leaf 14)))))
+   '(red (bar 1 1) (red 2 (quux 2 2))))
+
  )
