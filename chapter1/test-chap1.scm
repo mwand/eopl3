@@ -61,7 +61,7 @@
         "List too short by ~s elements.~%" (+ n 1))))
 
   ;; uncomment these to test equal??
-  (equal?? (nth-element '(a b c d) 2) 'foo)
+  (equal?? (nth-element '(a b c d) 2) 'c)
   ;; (equal?? (nth-element '(a b c d) 3) 'bar)
 
   (equal?? (nth-element '(a b c d) 2) 'c)
@@ -223,7 +223,7 @@
         )
       ))
 
-  (equal?? (merge '(1 2 (34)) '(3 4)) '(1 2 3 4))
+  (equal?? (merge '(1 2 (34)) '(3 4)) '(1 2 (34) 3 4))
 
 
   (equal?? (up '((1 2) (3 4))) '(1 2 3 4))
@@ -315,22 +315,26 @@
          (car node)])))
 
   ;; ex 1.33
-  (define leaf-plus-one
-    (lambda (tree)
+  (define leaf-plus
+    (lambda (n tree)
       (cond
-        [(leaf? tree) (+ (leaf tree) 1)]
+        [(leaf? tree) (+ (leaf tree) n)]
         [(leaf? (lson tree))
          (interior-node (contents-of tree)
-                        (+ (lson tree) 1)
-                        (leaf-plus-one (rson tree)))]
+                        (+ (lson tree) n)
+                        (leaf-plus n (rson tree)))]
         [(leaf? (rson tree))
          (interior-node (contents-of tree)
-                        (leaf-plus-one (lson tree))
-                        (+ 1 (rson tree)))]
+                        (leaf-plus n (lson tree))
+                        (+ n (rson tree)))]
         [else
          (interior-node (contents-of tree)
-                        (leaf-plus-one (lson tree))
-                        (leaf-plus-one (rson tree)))])))
+                        (leaf-plus n (lson tree))
+                        (leaf-plus n (rson tree)))])))
+
+  (define leaf-plus-one
+    (lambda (tree)
+      (leaf-plus 1 tree)))
 
   (define mark-leaves-with-red-depth
     (lambda (tree)
@@ -376,4 +380,34 @@
                              (31 () ()))))
            '(right left left))
 
+  ;; ex 1.35
+  (define number-leaves
+    (lambda (tree)
+      (cond
+        [(leaf? tree) (leaf 0)]
+        [(leaf? (lson tree))
+         (interior-node (car tree)
+                        (number-leaves (cadr tree))
+                        (leaf-plus-one (number-leaves (caddr tree))))]
+       [else
+        (interior-node (car tree)
+                       ;(number-leaves (cadr tree))
+                       (number-leaves (cadr tree))
+                       (leaf-plus 2 (number-leaves (caddr tree))))]
+       )))
+
+  (equal?? (number-leaves
+            (interior-node 'red
+                           (interior-node 'bar
+                                          (leaf 26)
+                                          (leaf 12))
+                           ;(leaf 5)
+                           (interior-node 'red
+                                          (leaf 11)
+                                          ;;(leaf 12))
+                           ;;))
+                                          (interior-node 'quux
+                                                         (leaf 117)
+                                                         (leaf 14)))))
+           '(red (bar 0 1) (red 2 (quux 3 4))))
  )
