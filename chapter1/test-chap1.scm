@@ -389,25 +389,54 @@
          (interior-node (car tree)
                         (number-leaves (cadr tree))
                         (leaf-plus-one (number-leaves (caddr tree))))]
-       [else
-        (interior-node (car tree)
-                       ;(number-leaves (cadr tree))
-                       (number-leaves (cadr tree))
-                       (leaf-plus 2 (number-leaves (caddr tree))))]
-       )))
+        [else
+         (interior-node (car tree)
+                        (number-leaves (cadr tree))
+                        (leaf-plus 2 (number-leaves (caddr tree))))]
+        )))
 
   (equal?? (number-leaves
             (interior-node 'red
                            (interior-node 'bar
                                           (leaf 26)
                                           (leaf 12))
-                           ;(leaf 5)
                            (interior-node 'red
                                           (leaf 11)
-                                          ;;(leaf 12))
-                           ;;))
                                           (interior-node 'quux
                                                          (leaf 117)
                                                          (leaf 14)))))
            '(red (bar 0 1) (red 2 (quux 3 4))))
+
+  ;; number-elements-from : Listof(SchemeVal) × Int → Listof(List(Int, SchemeVal))
+  ;; usage: (number-elements-from ’(v0 v1 v2 ...) n)
+  ;; = ((n v0) (n+1 v1) (n+2 v2) ...)
+  ;; (define number-elements-from
+  ;;   (lambda (lst n)
+  ;;     (if (null? lst) ’()
+  ;;         (cons
+  ;;          (list n (car lst))
+  ;;          (number-elements-from (cdr lst) (+ n 1))))))
+
+  ;; number-elements : List → Listof(List(Int, SchemeVal))
+  ;; (define number-elements
+  ;;   (lambda (lst)
+  ;;     (number-elements-from lst 0)))
+
+  (define number-elements-1
+    (lambda (lst)
+      (cond
+        [(null? lst) '()]
+        [(g (list 0 (car lst)) (number-elements-1 (cdr lst)))])))
+
+  (define g
+    (lambda (elem lst)
+      (cond
+        ;; [(null? lst) '()]
+        [(null? (cdr lst)) (cons elem '())]
+        [else
+         (cons (list (+ 1 (car elem)) (car elem))
+               (cdr lst))])))
+
+  (equal?? (number-elements-1 '(a)) ; b c d))
+           '((0 a) (1 b) (2 c) (3 d)))
  )
