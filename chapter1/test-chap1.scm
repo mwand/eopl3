@@ -407,6 +407,7 @@
                                                          (leaf 14)))))
            '(red (bar 0 1) (red 2 (quux 3 4))))
 
+  ;; ex 1.36
   ;; number-elements-from : Listof(SchemeVal) × Int → Listof(List(Int, SchemeVal))
   ;; usage: (number-elements-from ’(v0 v1 v2 ...) n)
   ;; = ((n v0) (n+1 v1) (n+2 v2) ...)
@@ -431,12 +432,20 @@
   (define g
     (lambda (elem lst)
       (cond
-        ;; [(null? lst) '()]
-        [(null? (cdr lst)) (cons elem '())]
+        [(null? lst) (list elem)]
+        ;; [(null? (cdr lst)) (cons elem '())]
         [else
-         (cons (list (+ 1 (car elem)) (car elem))
-               (cdr lst))])))
+         (cons elem
+               (first-plus-one lst))])))
 
-  (equal?? (number-elements-1 '(a)) ; b c d))
+  (define first-plus-one
+    (lambda (lst)
+      (cond
+        [(null? lst) '()]
+        [else
+         (cons (cons (+ 1 (caar lst)) (cdar lst))
+               (first-plus-one (cdr lst)))])))
+
+  (equal?? (number-elements-1 '(a b c d))
            '((0 a) (1 b) (2 c) (3 d)))
  )
