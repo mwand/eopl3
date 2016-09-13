@@ -3,7 +3,7 @@
   ;; Simple data structure representation of environments
   ;; Page: 38
 
-  (require "utils.rkt")
+  (require "utils.scm")
 
   ;; data definition:
   ;; Env ::= (empty-env) | (extend-env Var Schemeval Env)
