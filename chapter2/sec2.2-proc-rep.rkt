@@ -3,7 +3,7 @@
   ;; Simple procedural representation of environments
   ;; Page: 40
 
-  (require "utils.scm")
+  (require "utils.rkt")
 
   ;; data definition:
   ;; Env = Var -> Schemeval

@@ -23,10 +23,8 @@
     (cond
       [(empty-stack? stack)
        (eopl:error "This is empty stack: ~s" stack)]
-      [(null? (cdr stack)) (car stack)]
       [else
-       (top (cdr stack))])))
-
+       (car stack)] 
 
 (define s
   (push (push (push (empty-stack) 'a)
