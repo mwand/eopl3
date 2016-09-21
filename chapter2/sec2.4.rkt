@@ -1,6 +1,6 @@
 (module sec2.4 (lib "eopl.ss" "eopl")
 
-  (require "utils.scm")
+  (require "utils.rkt")
 
   (define identifier? symbol?)
 

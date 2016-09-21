@@ -24,7 +24,7 @@
       [(empty-stack? stack)
        (eopl:error "This is empty stack: ~s" stack)]
       [else
-       (car stack)] 
+       (car stack)]))) 
 
 (define s
   (push (push (push (empty-stack) 'a)
