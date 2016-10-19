@@ -23,50 +23,38 @@
                         (cons (bintree-to-list left)
                               (cons (bintree-to-list right) '()))))))))
 
-(define sum-of-interior
+(define rec-max-interior
   (lambda (t)
     (cases bintree t
-           (leaf-node (num) num)
+           (leaf-node (num) (list '() num))
            (interior-node
             (key left right)
-            (+ (sum-of-interior left)
-               (sum-of-interior right))))))
+            (let ([l-rec (rec-max-interior left)]
+                  [r-rec (rec-max-interior right)])
+              (list 
+               (cond
+                 [(null? (car l-rec))
+                  (cond
+                    [(null? (car r-rec))
+                     (list key (+ (cadr l-rec) (cadr r-rec)))]
+                    [else
+                     (list key (+ (cadr l-rec) (cadar r-rec)))])]
+                 [else
+                  (list key (+ (cadar l-rec) (cadar r-rec)))])
+               l-rec
+               r-rec))))))
 
-(define max-interior
-  (lambda (t)
-    (cases bintree t
-           (leaf-node (num) (eopl:error "a leaf node"))
-           (interior-node
-            (key left right)
-            (cases bintree left
-                  (leaf-node
-                   (num)
-                   (cases bintree right
-                          (leaf-node (num) key)
-                          (interior-node
-                           (rkey rleft rright)
-                           (cond
-                             [(> num 0) (max-interior
-                                         (interior-node key rleft rright))]
-                             [else
-                              (max-interior right)]))))
-                  (interior-node
-                   (lkey lleft rright)
-                   (cases bintree right
-                          (leaf-node
-                           (num)
-                           (cond
-                             [(> num 0) (max-interior
-                                         (interior-node key lleft rright))]
-                             [else
-                              (max-interior left)]))
-                          (interior-node
-                           (rkey rleft rright)
-                           (max-interior
-                            (interior-node key
-                                           (max-interior left)
-                                           (max-interior right)))))))
-              ))))
+;; (define max-interior
+;;   (lambda (t)
+;;     (let ([tree (rec-max-interior t)]
+;;           (cond
+;;             [(null? (car tree)) (eopl:error "This is a leaf node")]
+;;             (cond
+;;               [(null? (caadr tree))
+;;                (cond
+;;                  [(null? (caaddr tree)) (caar tree)]
+;;                  [else
+;;                   (if )])]))))))
 
 (equal?? (bintree-to-list
           (interior-node
