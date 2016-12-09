@@ -18,7 +18,7 @@
    (left red-blue-tree?)
    (rigth red-blue-tree?))
   (blue-node
-   (tree red-blue-tree?)))
+   (tree (list-of red-blue-tree?))))
 
 ;; (define-datatype bintree bintree? 
 ;;    (leaf-node 
@@ -28,8 +28,11 @@
 ;;     (left bintree?)
 ;;     (right bintree?)))
 
-;(define mark-leaves-with-red-depth
-;  (lambda (tree)))
+(define mark-leaves-with-red-depth
+  (lambda (tree)))
 
 (define tree-1 (red-node (leaf 5) (leaf 10)))
+(define tree-2 (blue-node (list tree-1 (leaf 20))))
+(define tree-3 (red-node tree-2 tree-2))
+
 (report-unit-tests-completed 'red-blue-tree)

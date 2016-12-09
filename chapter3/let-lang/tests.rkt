@@ -26,7 +26,7 @@
     (test-unbound-var-2 "-(x,foo)" error)
     
     ;; simple conditionals
-    (if-true "if zero?(0) then 3 else 4" 4)
+    (if-true "if zero?(0) then 3 else 4" 3)
     (if-false "if zero?(1) then 3 else 4" 4)
     
     ;; test dynamic typechecking
