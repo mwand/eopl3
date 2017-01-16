@@ -7,8 +7,7 @@
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 
-;;; an expressed value is either a number, a boolean, a procval, or a
-;;; reference. 
+;;; an expressed value is either a number, a boolean, or a procval,
 
   (define-datatype expval expval?
     (num-val
@@ -17,8 +16,6 @@
       (boolean boolean?))
     (proc-val 
       (proc proc?))
-    (ref-val
-      (ref reference?))
     )
 
 ;;; extractors:
@@ -41,11 +38,6 @@
 	(proc-val (proc) proc)
 	(else (expval-extractor-error 'proc v)))))
 
-(define expval->ref
-    (lambda (v)
-      (cases expval v
-	(ref-val (ref) ref)
-	(else (expval-extractor-error 'reference v)))))
 
   (define expval-extractor-error
     (lambda (variant value)
