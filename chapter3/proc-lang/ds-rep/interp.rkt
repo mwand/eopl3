@@ -50,7 +50,7 @@
                           (if (zero? num1)
                               (bool-val #t)
                               (bool-val #f)))))
-           
+
            ;\commentbox{\ma{\theifspec}}
            (if-exp (exp1 exp2 exp3)
                    (let ((val1 (value-of exp1 env)))
@@ -63,7 +63,7 @@
                     (let ((val1 (value-of exp1 env)))
                       (value-of body
                                 (extend-env var val1 env))))
-           
+
            (proc-exp (var body)
                      (proc-val (procedure var body env)))
 

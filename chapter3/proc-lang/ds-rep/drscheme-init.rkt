@@ -4,7 +4,8 @@
 ;;; makes structs printable, and provides basic functionality for
 ;;; testing.  This includes pretty-printing and tracing.
 
-#lang eopl
+#lang racket
+
 ;; show the contents of define-datatype values
 (print-struct #t)
 
@@ -100,7 +101,7 @@
                   run-fn (list pgm) correct-answer equal-answer?))
                 (correct? (car result))
                 (actual-answer (cdr result)))
-           (if (or
+           (when (or
                 (not correct?)
                 (not (run-quietly)))
                (begin
@@ -108,12 +109,12 @@
                  (printf "correct outcome: ~a~%" correct-answer)
                  (printf "actual outcome:  ")
                  (pretty-display actual-answer)))
-           (if correct?
+           (when correct?
                (printf "correct~%~%")
                (begin
                  (printf "incorrect~%~%")
                  ;; stop on first error if stop-after-first? is set:
-                 (if (stop-after-first-error)
+                 (when (stop-after-first-error)
                      (error name "incorrect outcome detected")) 
                  (set! tests-failed
                        (cons name tests-failed)))))))

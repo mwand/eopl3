@@ -24,7 +24,7 @@
     (expression
      ("-" "(" expression "," expression ")")
      diff-exp)
-    
+
     (expression
      ("zero?" "(" expression ")")
      zero?-exp)
@@ -37,7 +37,7 @@
 
     (expression
      ("let" identifier "=" expression "in" expression)
-     let-exp)   
+     let-exp)
 
     (expression
      ("proc" "(" identifier ")" expression)
@@ -46,7 +46,7 @@
     (expression
      ("(" expression expression ")")
      call-exp)
-    
+
     ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
