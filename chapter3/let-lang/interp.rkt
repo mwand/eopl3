@@ -50,7 +50,7 @@
                           (if (zero? num1)
                               (bool-val #t)
                               (bool-val #f)))))
-           
+
            ;\commentbox{\ma{\theifspec}}
            (if-exp (exp1 exp2 exp3)
                    (let ((val1 (value-of exp1 env)))
@@ -59,10 +59,15 @@
                          (value-of exp3 env))))
 
            ;\commentbox{\ma{\theletspecsplit}}
-           (let-exp (var exp1 body)       
+           (let-exp (var exp1 body)
                     (let ((val1 (value-of exp1 env)))
                       (value-of body
                                 (extend-env var val1 env))))
 
+           ;\commentbox{\ma{\minusspec}}
+           (minus-exp (exp1)
+                      (let ((val1 (value-of exp1 env)))
+                        (num-val
+                         (- 0 (expval->num val1)))))
            )))
 
