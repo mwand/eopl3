@@ -1,7 +1,5 @@
 #lang eopl
-
-;; grammar for the LET language
-
+;; grammar for the PROC language
 
 (require "drscheme-init.rkt")
 
@@ -23,38 +21,13 @@
   '((program (expression) a-program)
 
     (expression (number) const-exp)
-
     (expression
      ("-" "(" expression "," expression ")")
      diff-exp)
-
-    (expression
-     ("+" "(" expression "," expression ")")
-     addition-exp)
-
-    (expression
-     ("*" "(" expression "," expression ")")
-     multiplication-exp)
-
-    (expression
-     ("/" "(" expression "," expression ")")
-     quotient-exp)
-
+    
     (expression
      ("zero?" "(" expression ")")
      zero?-exp)
-
-    (expression
-     ("equal?" "(" expression "," expression ")")
-     equal?-exp)
-
-    (expression
-     ("greater?" "(" expression "," expression ")")
-     greater?-exp)
-
-    (expression
-     ("less?" "(" expression "," expression ")")
-     less?-exp)
 
     (expression
      ("if" expression "then" expression "else" expression)
@@ -64,12 +37,16 @@
 
     (expression
      ("let" identifier "=" expression "in" expression)
-     let-exp)
+     let-exp)   
 
     (expression
-     ("minus" "(" expression ")")
-     minus-exp)
+     ("proc" "(" identifier ")" expression)
+     proc-exp)
 
+    (expression
+     ("(" expression expression ")")
+     call-exp)
+    
     ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
