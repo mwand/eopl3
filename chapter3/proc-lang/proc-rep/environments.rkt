@@ -1,8 +1,7 @@
-#lang eopl
-
+#lang eopl  
 
 ;; builds environment interface, using data structures defined in
-;; data-structures.rkt. 
+;; data-structures.scm. 
 
 (require "data-structures.rkt")
 

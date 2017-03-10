@@ -59,7 +59,7 @@
          (ans (cdr result)))
       
       (cons
-       (when (eqv? correct-answer 'error)
+       (if (eqv? correct-answer 'error)
            error-thrown?
            (equal-answer? ans correct-answer))
        ans))))
