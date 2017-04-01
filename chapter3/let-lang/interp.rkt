@@ -120,5 +120,30 @@
                       (let ((val1 (value-of exp1 env)))
                         (num-val
                          (- 0 (expval->num val1)))))
+
+           (null?-exp (exp1)
+                      (let ((val1 (value-of exp1 env)))
+                        (bool-val
+                         (null? (expval->list val1)))))
+
+           (cons-exp (head tail)
+                     (let ((val1 (value-of head env))
+                           (val2 (value-of tail env)))
+                       (let ((num2 (expval->list  val2)))
+                         (list-val
+                          (cons val1 num2)))))
+
+           (car-exp (li)
+                     (let ((val1 (value-of li env)))
+                       (let ((num1 (expval->list val1)))
+                          (car num1))))
+
+           (cdr-exp (li)
+                    (let ((val1 (value-of li env)))
+                      (let ((num1 (expval->list val1)))
+                        (list-val
+                         (cdr num1)))))
+
+           (emptylist-exp (list-val '()))
            )))
 

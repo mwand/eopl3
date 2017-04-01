@@ -11,7 +11,9 @@
   (num-val
    (value number?))
   (bool-val
-   (boolean boolean?)))
+   (boolean boolean?))
+  (list-val
+   (listv list?)))
 
 ;;; extractors:
 
@@ -30,6 +32,19 @@
     (cases expval v
            (bool-val (bool) bool)
            (else (expval-extractor-error 'bool v)))))
+
+(define expval->list
+  (lambda (v)
+    (cases expval v
+           (list-val (li) li)
+           (else (expval-extractor-error 'list v)))))
+
+(define expval->denval
+  (lambda (v)
+    (cases expval v
+           (num-val (num) num)
+           (bool-val (bool) bool)
+           (list-val (li) (map expval->denval li)))))
 
 (define expval-extractor-error
   (lambda (variant value)

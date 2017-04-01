@@ -62,4 +62,15 @@
     (multiplication "*(2,3)" 6)
 
     (equal "equal?(1,2)" #f)
+
+    (greater "greater? (4, 5)" #f)
+    (less "less? (4 ,5)" #t)
+
+    (emptylist "emtpylist" '())
+    (null?-list "null? (emptylist)" #t)
+    (cons-car-cdr "let x = 4
+                   in cons(x,
+                           cons(cons(-(x,1),
+                                emptylist),
+                           emptylist))", '(4 (3)))
     ))
