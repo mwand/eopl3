@@ -1,6 +1,6 @@
 (module sec2.1 (lib "eopl.ss" "eopl")
 
-  (require "utils.scm")
+  (require "utils.rkt")
 
   (let ()
     ;; Unary Representation

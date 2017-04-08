@@ -1,6 +1,6 @@
 (module sec2.3 (lib "eopl.ss" "eopl")
 
-  (require "utils.scm")
+  (require "utils.rkt")
 
   ;; var-exp : Var -> Lc-exp
   (define var-exp

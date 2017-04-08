@@ -1,8 +1,13 @@
 (module sec2.4 (lib "eopl.ss" "eopl")
 
-  (require "utils.scm")
+  (require "utils.rkt")
 
-  (define identifier? symbol?)
+  (define identifier?
+    (lambda (sym)
+      (cond
+        [(eqv? sym 'lambda) #f]
+        [else
+         (symbol? sym)])))
 
   (define-datatype lc-exp lc-exp? 
     (var-exp
