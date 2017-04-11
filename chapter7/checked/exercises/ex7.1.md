@@ -64,3 +64,28 @@ proc (x) x
 value val is of type t?
 
 ex7.1, problem 13, undecidable?
+
+> Exercise 7.4 [*] Using the rules of this section, write derivations, like the one on
+page 5, that assign types for proc (x) x and proc (x) proc (y) (x y). Use
+the rules to assign at least two types for each of these terms. Do the values of these
+expressions have the same types?
+
+```
+x ∈ Int
+----------------------
+proc (x) x ∈ (Int -> Int)
+
+x ∈ Bool
+----------------------
+proc (x) x ∈ (Bool -> Bool)
+
+x ∈ Bool -> Int  y ∈ Bool
+----------------------
+proc (x) proc (y) (x y) ∈ Int
+
+x ∈ Int -> Bool  y ∈ Int
+----------------------
+proc (x) proc (y) (x y) ∈ Bool
+```
+
+Answer: Not always.
