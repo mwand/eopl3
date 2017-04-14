@@ -229,9 +229,9 @@
              int)
             
             (apply-a-letrec "
-                                                    letrec bool f(x : int) = -(x,1)
+                                                    letrec int f(x : int) = -(x,1)
                                                     in (f 40)"
-                            bool)
+                            int)
             
             (letrec-non-shadowing
              "(proc (x : int)
@@ -267,7 +267,22 @@
               in (f 1)"
              bool
              )
-
+            
+            ;; multiargument applications
+            (apply-multiargument-proc-in-rator-pos "(proc(x : int y : int) -(x,y) 30 20)" int)
+            (checker-doesnt-ignore-type-info-in-multiargument-proc
+             "(proc(x : (int -> int)) -(x,1)  30)"
+             error)
+            (apply-simple-multiargument-proc "let f = proc (x : int y : bool) -(x,1) in (f 30 zero?(0))" int)
+            (let-to-multiargument-proc-1 "(proc(f : (int -> int) g: (int -> bool)) (g (f 30))
+                                                                      proc(x : int) -(x,1)
+                                                                      proc(x : int) zero?(x))"
+                           bool)
+            
+            (nested-multiargument-procs "((proc (x : int y : int) proc (z : int) -(y, -(x,z)) 5 6) 7)" int)
+            (nested-multiargument-procs2
+             "let f = proc (x : int y : int) proc (z : int) -(y, -(x, z)) in ((f -(10,5) 3) 3)"
+             int)
             )
           )
         )
