@@ -109,18 +109,22 @@
                                         (report-rator-not-a-proc-type rator-type rator)))))
 
                    ;; \commentbox{\letrecrule}
-                   (letrec-exp (p-result-type p-name b-var b-var-type p-body
+                   (letrec-exp (p-result-type-list p-name-list b-var-list b-var-type-list p-body-list
                                               letrec-body)
-                               (let ((tenv-for-letrec-body
-                                       (extend-tenv p-name
-                                                    (proc-type b-var-type p-result-type)
-                                                    tenv)))
-                                 (let ((p-body-type 
-                                         (type-of p-body
-                                                  (extend-tenv b-var b-var-type
-                                                               tenv-for-letrec-body)))) 
-                                   (check-equal-type!
-                                     p-body-type p-result-type p-body)
+                               (let* ((letrec-statement-list 
+                                       (zip p-result-type-list p-name-list b-var-list b-var-type-list p-body-list))
+                                      (type-list (map proc-type b-var-type-list p-result-type-list))
+                                      (tenv-for-letrec-body
+                                       (extend-list-tenv p-name-list type-list tenv)))
+                                 (let ((p-body-type-list
+                                         (map (lambda (p-body) 
+                                                (type-of p-body 
+                                                         (extend-list-tenv b-var-list 
+                                                                           b-var-type-list 
+                                                                           tenv-for-letrec-body))) 
+                                              p-body-list)))
+                                   (for-each check-equal-type!
+                                     p-body-type-list p-result-type-list p-body-list)
                                    (type-of letrec-body tenv-for-letrec-body)))))))
 
         (define report-rator-not-a-proc-type
@@ -139,8 +143,8 @@
                            (type type?)
                            (tenv type-environment?))
                          (extended-list-tenv-record
-                           (sym-list list?)
-                           (type-list list?)
+                           (sym-list (list-of symbol?))
+                           (type-list (list-of type?))
                            (tenv type-environment?))
                          )
 
@@ -148,7 +152,7 @@
         (define extend-tenv extended-tenv-record)
         (define extend-list-tenv extended-list-tenv-record)
 
-        (define zip (lambda (l1 l2) (map list l1 l2)))
+        (define (zip . xss) (apply map list xss))
 
         (define apply-tenv 
           (lambda (tenv sym)
