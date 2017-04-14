@@ -92,7 +92,7 @@
                 (check (cadr test))))
           (else (eopl:error 'check-one "no such test: ~s" test-name))))))
  
-  ;; (check-all)
+  (check-all)
 
   )
 
