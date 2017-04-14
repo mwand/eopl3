@@ -1,0 +1,3 @@
+before_install: sudo apt-get install racket
+git_depth: 1
+script: racket test-all.rkt
