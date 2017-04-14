@@ -27,7 +27,7 @@
       (expression
         ("-" "(" expression "," expression ")")
         diff-exp)
-      
+       
       (expression
        ("zero?" "(" expression ")")
        zero?-exp)
@@ -39,22 +39,78 @@
       (expression (identifier) var-exp)
 
       (expression
-       ("let" identifier "=" expression "in" expression)
-       let-exp)   
+        ("let" identifier "=" expression "in" expression)
+        let-exp)   
+
+      (expression
+        ("minus" "(" expression ")")
+        minus-exp)
+
+      (expression
+        ("+" "(" expression "," expression ")")
+        addition-exp)
+
+      (expression
+        ("*" "(" expression "," expression ")")
+        multiplication-exp)
+
+      (expression
+        ("/" "(" expression "," expression ")")
+        quotient-exp)
+
+      (expression
+        ("equal?" "(" expression "," expression ")")
+        equal?-exp)
+
+      (expression 
+        ("greater?" "(" expression "," expression ")")
+        greater?-exp)
+
+      (expression 
+        ("less?" "(" expression "," expression ")")
+        less?-exp)
+
+      (expression
+        ("cons" "(" expression "," expression ")")
+        cons-exp)
+
+      (expression
+        ("emptylist")
+        emptylist-exp)
+
+      (expression
+        ("null?" "(" expression ")")
+        null?-exp)
+
+      (expression
+        ("car" "(" expression ")")
+        car-exp)
+
+      (expression
+        ("cdr" "(" expression ")")
+        cdr-exp)
+
+      (expression
+        ("list" "(" (separated-list expression ",") ")")
+        list-exp)
+
+      (expression
+        ("cond" (arbno expression "==>" expression) "end")
+        cond-exp)
 
       ))
-  
-  ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
-  
-  (sllgen:make-define-datatypes the-lexical-spec the-grammar)
-  
-  (define show-the-datatypes
-    (lambda () (sllgen:list-define-datatypes the-lexical-spec the-grammar)))
-  
-  (define scan&parse
-    (sllgen:make-string-parser the-lexical-spec the-grammar))
-  
-  (define just-scan
-    (sllgen:make-string-scanner the-lexical-spec the-grammar))
-  
-  )
+
+    ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
+
+    (sllgen:make-define-datatypes the-lexical-spec the-grammar)
+
+    (define show-the-datatypes
+      (lambda () (sllgen:list-define-datatypes the-lexical-spec the-grammar)))
+
+    (define scan&parse
+      (sllgen:make-string-parser the-lexical-spec the-grammar))
+
+    (define just-scan
+      (sllgen:make-string-scanner the-lexical-spec the-grammar))
+
+    )

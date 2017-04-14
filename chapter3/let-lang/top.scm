@@ -49,7 +49,6 @@
     (lambda (sloppy-val)
       (cond
         ((number? sloppy-val) (num-val sloppy-val))
-        ((boolean? sloppy-val) (bool-val sloppy-val))
         (else
          (eopl:error 'sloppy->expval 
                      "Can't convert sloppy value to expval: ~s"
@@ -68,8 +67,9 @@
                 (run (cadr test))))
           (else (eopl:error 'run-one "no such test: ~s" test-name))))))
  
-  ;; (run-all)
+  (run-all)
   
+   ;(show-the-datatypes)
   )
 
 
