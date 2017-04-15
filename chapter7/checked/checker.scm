@@ -82,6 +82,8 @@
                              ty2))
                    
                    ;; \commentbox{\letrule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (let-exp (var-list exp-list body)
                             (if (find-duplicates var-list)
                                 (report-let-duplicate-identifier var-list exp)
@@ -90,6 +92,8 @@
                                          (extend-list-tenv var-list type-list tenv)))))
                    
                    ;; \commentbox{\procrulechurch}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (proc-exp (var-list var-type-list body)
                              (let ((result-type
                                     (type-of body
@@ -97,6 +101,8 @@
                                (proc-type var-type-list result-type)))
                    
                    ;; \commentbox{\apprule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (call-exp (rator rand-list)
                              (let ((rator-type (type-of rator tenv))
                                    (rand-type-list (map (lambda (rand) (type-of rand tenv)) rand-list)))
@@ -109,6 +115,8 @@
                                        (report-rator-not-a-proc-type rator-type rator)))))
                    
                    ;; \commentbox{\letrecrule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (letrec-exp (p-result-type-list p-name-list b-var-list b-var-type-list p-body-list
                                                    letrec-body)
                                (let* ((letrec-statement-list
