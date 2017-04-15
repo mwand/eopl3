@@ -270,19 +270,39 @@
             
             ;; multiargument applications
             (apply-multiargument-proc-in-rator-pos "(proc(x : int y : int) -(x,y) 30 20)" int)
+            
             (checker-doesnt-ignore-type-info-in-multiargument-proc
              "(proc(x : (int -> int)) -(x,1)  30)"
              error)
+            
             (apply-simple-multiargument-proc "let f = proc (x : int y : bool) -(x,1) in (f 30 zero?(0))" int)
+            
             (let-to-multiargument-proc-1 "(proc(f : (int -> int) g: (int -> bool)) (g (f 30))
                                                                       proc(x : int) -(x,1)
                                                                       proc(x : int) zero?(x))"
-                           bool)
+                                         bool)
             
             (nested-multiargument-procs "((proc (x : int y : int) proc (z : int) -(y, -(x,z)) 5 6) 7)" int)
+            
             (nested-multiargument-procs2
              "let f = proc (x : int y : int) proc (z : int) -(y, -(x, z)) in ((f -(10,5) 3) 3)"
              int)
+            
+            ;; multiargument proc as parameter
+            (apply-multiargument-proc-as-parameter-in-rator-pos
+             "(proc(x : (int * int * int -> int)) (x 1 2 3)
+                                                   proc(x: int y: int z: int) -(x, -(y, z)))"
+             int)
+            
+            (apply-multiargument-proc-as-parameter-error-1
+             "(proc(x : (int * int * int -> int)) (x 1 2 3)
+                                                   proc(x: int y: int) -(x, y))"
+             error)
+
+            (apply-multiargument-proc-as-parameter-error-2
+             "(proc(x : (int * int * int -> int)) (x 1 2 3)
+                                                   proc(x: int y: int z: bool) z)"
+             error)
             )
           )
         )
