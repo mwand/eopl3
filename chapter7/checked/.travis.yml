@@ -1,5 +1,0 @@
-before_install:
-    - sudo apt-get install racket
-git_depth: 3
-script: 
-    - racket top.scm
