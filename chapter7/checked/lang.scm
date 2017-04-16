@@ -3,6 +3,7 @@
         ;; grammar for the CHECKED language
         
         (require "drscheme-init.scm")
+        (require "utils.scm")
         
         (provide (all-defined-out))
         
@@ -58,6 +59,16 @@
               "in" expression)
              letrec-exp)
             
+            ;; Page: 245
+            ;; ex7.8
+            (expression
+             ("newpair" "(" expression "," expression ")")
+             pair-exp)
+            
+            (expression
+             ("unpair" identifier identifier "=" expression "in" expression)
+             unpair-exp)
+            
             (type
              ("int")
              int-type)
@@ -70,6 +81,10 @@
              ("(" (separated-list type "*") "->" type ")")
              proc-type)
             
+            ;; ex7.8
+            (type
+             ("pairof" type "*" type)
+             pair-type)
             ))
         
         ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
@@ -94,21 +109,39 @@
             (cases type ty
                    (int-type () 'int)
                    (bool-type () 'bool)
+                   ;; Page: 243
+                   ;; ex7.5
+                   ;; (type * type * ... * type -> type)
                    (proc-type (arg-type-list result-type)
+                              (define format-type-list
+                                (lambda (type-list)
+                                  (cdr (reduce (lambda (element lst) (cons '* (cons element lst)))
+                                               type-list
+                                               '()))))
                               (append
                                (format-type-list (map type-to-external-form arg-type-list))
                                (list
                                 '->
-                                (type-to-external-form result-type)))))))
+                                (type-to-external-form result-type))))
+                   ;; Page: 245
+                   ;; ex7.8
+                   ;; pairof type * type
+                   (pair-type (ty1 ty2)
+                              (list
+                               'pairof
+                               (type-to-external-form ty1)
+                               (type-to-external-form ty2))))))
         
-        (define format-type-list
-          (lambda (type-list)
-            (cdr (reduce (lambda (element lst) (cons '* (cons element lst)))
-                         type-list
-                         '()))))
+        (define pair-type->fst
+          (lambda (ty)
+            (cases type ty
+                   (pair-type (ty1 ty2) ty1)
+                   (else (eopl:error "Looking for a pair-type, found ~s" ty)))))
         
-        (define (reduce fn list init)
-          (if (null? list) init
-            (fn (car list)
-                (reduce fn (cdr list) init))))
+        (define pair-type->snd
+          (lambda (ty)
+            (cases type ty
+                   (pair-type (ty1 ty2) ty2)
+                   (else (eopl:error "Looking for a pair-type, found ~s" ty)))))
+        
         )

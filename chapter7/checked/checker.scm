@@ -2,6 +2,7 @@
         
         (require "drscheme-init.scm")
         (require "lang.scm")
+        (require "utils.scm")
         
         (provide type-of type-of-program)
         
@@ -143,7 +144,22 @@
                                              p-body-list)))
                                    (for-each check-equal-type!
                                              p-body-type-list p-result-type-list p-body-list)
-                                   (type-of letrec-body tenv-for-letrec-body)))))))
+                                   (type-of letrec-body tenv-for-letrec-body))))
+                   
+                   ;; Page: 245
+                   ;; ex7.8
+                   (pair-exp (exp1 exp2)
+                             (let ((exp1-type (type-of exp1 tenv))
+                                   (exp2-type (type-of exp2 tenv)))
+                                   (pair-type exp1-type exp2-type)))
+
+                   (unpair-exp (var1 var2 pr-exp body)
+                               (let* ((pr-type (type-of pr-exp tenv))
+                                      (pr-fst-type (pair-type->fst pr-type))
+                                      (pr-snd-type (pair-type->snd pr-type))
+                                      (tenv-for-unpair-body (extend-list-tenv (list var1 var2) (list pr-fst-type pr-snd-type) tenv)))
+                                 (type-of body tenv-for-unpair-body)))
+                   )))
         
         (define report-rator-not-a-proc-type
           (lambda (rator-type rator)
@@ -186,7 +202,8 @@
                                                      (result (assoc sym zip-list)))
                                                 (if result
                                                     (cadr result)
-                                                  (apply-tenv old-env sym)))))))
+                                                  (apply-tenv old-env sym))))
+                   )))
         
         (define init-tenv
           (lambda ()
