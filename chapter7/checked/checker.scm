@@ -73,6 +73,16 @@
                                 (bool-type)))
                    
                    ;; \commentbox{\condrule}
+                   ;; Page: 243
+                   ;; ex7.7
+                   (if2-exp (exp1 exp2 exp3)
+                           (let ((ty1 (type-of exp1 tenv))
+                                (ty2 (type-of exp2 tenv))
+                                (ty3 (type-of exp3 tenv)))
+                             (cond ((equal? ty1 (bool-type))
+                                    (check-equal-type! ty2 ty3 exp)))
+                             ty2))
+
                    (if-exp (exp1 exp2 exp3)
                            (let ((ty1 (type-of exp1 tenv))
                                  (ty2 (type-of exp2 tenv))
@@ -82,6 +92,8 @@
                              ty2))
                    
                    ;; \commentbox{\letrule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (let-exp (var-list exp-list body)
                             (if (find-duplicates var-list)
                                 (report-let-duplicate-identifier var-list exp)
@@ -90,6 +102,8 @@
                                          (extend-list-tenv var-list type-list tenv)))))
                    
                    ;; \commentbox{\procrulechurch}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (proc-exp (var-list var-type-list body)
                              (let ((result-type
                                     (type-of body
@@ -97,6 +111,8 @@
                                (proc-type var-type-list result-type)))
                    
                    ;; \commentbox{\apprule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (call-exp (rator rand-list)
                              (let ((rator-type (type-of rator tenv))
                                    (rand-type-list (map (lambda (rand) (type-of rand tenv)) rand-list)))
@@ -109,6 +125,8 @@
                                        (report-rator-not-a-proc-type rator-type rator)))))
                    
                    ;; \commentbox{\letrecrule}
+                   ;; Page: 243
+                   ;; ex7.5 
                    (letrec-exp (p-result-type-list p-name-list b-var-list b-var-type-list p-body-list
                                                    letrec-body)
                                (let* ((letrec-statement-list

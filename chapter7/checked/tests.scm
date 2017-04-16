@@ -303,6 +303,26 @@
              "(proc(x : (int * int * int -> int)) (x 1 2 3)
                                                    proc(x: int y: int z: bool) z)"
              error)
+
+            ;; ex7.7
+            ;; Change the code for checking an if-exp so that if the test expression
+            ;; is not a boolean, the other expressions are not checked. Give an expression for which
+            ;; the new version of the checker *behaves differently* from the old version.
+            (if-first-check-test-is-bool-1
+             "if2 1 then 2 else 3"
+             int)
+
+            (if-first-check-test-is-bool-4
+             "if2 0 then zero?(1) else 3"
+             bool)
+
+            (if-first-check-test-is-bool-2
+             "if2 zero?(0) then 2 else 3"
+             int)
+
+            (if-first-check-test-is-bool-3
+             "if2 zero?(0) then zero?(1) else 3"
+             error)
             )
           )
         )
