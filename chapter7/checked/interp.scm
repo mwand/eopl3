@@ -72,6 +72,9 @@
                    (letrec-exp (ty1 p-name b-var ty2 p-body letrec-body)
                                (value-of letrec-body
                                          (extend-env-rec p-name b-var p-body env)))
+                   (pair-exp (exp1 exp2) (value-of exp1))
+
+                   (unpair-exp (var1 var2 exp body) (value-of exp))
                    
                    )))
         

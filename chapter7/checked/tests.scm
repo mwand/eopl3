@@ -323,6 +323,22 @@
             (if-first-check-test-is-bool-3
              "if2 zero?(0) then zero?(1) else 3"
              error)
+
+            ;; ex7.8
+            ;; 
+            (simple-pair-exp-test
+              "newpair (2, zero?(2))"
+              (pairof int bool))
+
+            (simple-unpair-exp-fst-test
+              "unpair var1 var2 = newpair (2, zero?(2)) in var1"
+              int
+             )
+
+            (simple-unpair-exp-snd-test
+              "unpair var1 var2 = newpair (2, zero?(2)) in var2"
+              bool
+             )
             )
           )
         )
