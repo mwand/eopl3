@@ -73,6 +73,16 @@
                                 (bool-type)))
                    
                    ;; \commentbox{\condrule}
+                   ;; Page: 243
+                   ;; ex7.7
+                   (if2-exp (exp1 exp2 exp3)
+                           (let ((ty1 (type-of exp1 tenv))
+                                (ty2 (type-of exp2 tenv))
+                                (ty3 (type-of exp3 tenv)))
+                             (cond ((equal? ty1 (bool-type))
+                                    (check-equal-type! ty2 ty3 exp)))
+                             ty2))
+
                    (if-exp (exp1 exp2 exp3)
                            (let ((ty1 (type-of exp1 tenv))
                                  (ty2 (type-of exp2 tenv))

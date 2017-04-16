@@ -34,6 +34,10 @@
              ("if" expression "then" expression "else" expression)
              if-exp)
             
+            (expression
+             ("if2" expression "then" expression "else" expression)
+             if2-exp)
+            
             (expression (identifier) var-exp)
             
             (expression

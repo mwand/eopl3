@@ -48,6 +48,13 @@
                                (value-of exp1 env)
                              (value-of exp2 env)))
                    
+                   ;; Page: 243
+                   ;; ex7.7
+                   (if2-exp (exp0 exp1 exp2)
+                           (if (expval->bool (value-of exp0 env))
+                               (value-of exp1 env)
+                             (value-of exp2 env)))
+                   
                    (let-exp (var exp1 body)
                             (let ((val (value-of exp1 env)))
                               (value-of body
