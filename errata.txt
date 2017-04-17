@@ -8,6 +8,10 @@ Exercise 2.19:
 move-to-left => move-to-left-son
 move-to-right => move-to-right-son
 
+Page 45:
+Exercise 2.20
+at-leaf? is already in exercise 2.19
+
 Page 84:
 Exercise 3.32
 mututally => mutually
@@ -21,6 +25,23 @@ Section 4.4:
 Line 5:
 newpair ==> make-pair
 
+Page 195:
+Figure 6.1, in apply-cont, the case for fact1-cont:
+(begin
+  (set! cont saved-cont)
+  (set! n saved-n)
+  (apply-cont))))))
+==>
+(begin
+  (set! cont saved-cont)
+  (set! val (* val saved-n))  ;; changed here
+  (apply-cont)))
+  
+Page 196, Figure 6.2, next-to-last line of apply-cont:
+(set! n saved-n)
+=>
+(set! val (* val saved-n)) 
+ 
 Page 208:
 a-program ==> cps-a-program
 const-exp ==> cps-const-exp
@@ -78,6 +99,17 @@ Exercise 8.5
  interface
         [even : (int -> bool)
          odd  : (int -> bool)]
+
+Page 337 et seq:
+The code in
+https://github.com/mwand/eopl3/blob/master/chapter9/classes is
+inconsistent .  data-structures.scm defines ExpVal to include objects,
+with the injector obj-val.  However, the rest of the interpreter
+doesn't use obj-val.  Objects are passed around without the wrapper.
+The code still works, because method-call-exp doesn't check to see
+whether its argument is an object.  method-call-exp should call a
+function like expval->obj, in the same way that diff-exp calls
+expval->num. 
 
 
 Page 378: Line 2:
