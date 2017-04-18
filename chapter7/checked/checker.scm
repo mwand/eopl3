@@ -2,7 +2,7 @@
         
         (require "drscheme-init.scm")
         (require "lang.scm")
-        (require "utils.scm")
+        (require "../../utils.scm")
         
         (provide type-of type-of-program)
         

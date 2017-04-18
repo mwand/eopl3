@@ -98,7 +98,7 @@
   
   ;; (stop-after-first-error #t)
  
-  ;; (check-all)
+  (check-all)
 
   
   )
