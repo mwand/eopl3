@@ -3,7 +3,7 @@
         ;; grammar for the CHECKED language
         
         (require "drscheme-init.scm")
-        (require "utils.scm")
+        (require "../../utils.scm")
         
         (provide (all-defined-out))
         
