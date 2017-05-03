@@ -4,6 +4,8 @@
   (require "lang.scm")
   (require "data-structures.scm")
   (require "unifier.scm")
+  (require "substitutions.scm")
+  
 
   (provide type-of-program type-of)
 
@@ -27,7 +29,10 @@
     (lambda (pgm)
       (cases program pgm
         (a-program (exp1)
-          (cases answer (type-of exp1 (init-tenv) (empty-subst))
+          (cases answer 
+                 (begin 
+                   (initialize-subst!-ex7.21)
+                   (type-of exp1 (init-tenv) (empty-subst)))
             (an-answer (ty subst)
               (apply-subst-to-type ty subst)))))))
 
