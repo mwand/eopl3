@@ -7,12 +7,16 @@
         (require "data-structures.scm")
         (require "../../utils.scm")
         
-        (provide substitution? 
-                 empty-subst 
+        (provide substitution?
+                 empty-subst
                  extend-subst
                  extend-subst-ex7.18
                  apply-subst-to-type
-                 apply-subst-to-type-ex7.18)
+                 apply-subst-to-type-ex7.18
+                 get-subst-ex7.21
+                 initialize-subst!-ex7.21
+                 extend-subst!-ex7.21
+)
         
         ;;;;;;;;;;;;;;;; Unit substitution ;;;;;;;;;;;;;;;;
         
@@ -84,10 +88,11 @@
                               (let ((tmp (assoc ty subst)))
                                 (if tmp
                                     ; t(σ[tv = t']) = (tσ)[tv = t']
-                                  (reduce (lambda (sub ty)
+                                    (let ((result (reduce (lambda (sub ty)
                                             (apply-one-subst ty (car sub) (cdr sub)))
                                           subst
-                                          (cdr tmp))
+                                          (cdr tmp))))
+                                          result)
                                   ty))))))
         
         ;; Page: 262
@@ -166,15 +171,32 @@
         (define extend-subst
           (lambda (subst tvar ty)
             (cons (cons tvar ty) subst)))
-
+        
         ;; Ex7.18
         (define extend-subst-ex7.18
           (lambda (subst tvar ty)
             (mcons (mcons tvar ty) subst)))
+        
+        ;; Ex7.21
+        (define the-subst #f)
+
+        (define get-subst-ex7.21
+          (lambda () the-subst))
+        
+        (define initialize-subst!-ex7.21
+          (lambda () (set! the-subst (empty-subst))))
+        
+        (define extend-subst!-ex7.21
+          (lambda (tvar ty)
+            (begin
+              (set! the-subst (cons (cons tvar ty) the-subst))
+              (get-subst-ex7.21)
+              )))
         
         (define type-var?
           (lambda (ty)
             (cases type ty
                    (tvar-type (_) #t)
                    (else #f))))
+        
         )
