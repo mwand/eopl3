@@ -131,6 +131,12 @@
         
         )))
 
+  ;; Exercise 7.27 [**] Rewrite the inferencer so that it works in two phases. 
+  ;; In the ﬁrst phase it should generate a set of equations, and in the second 
+  ;; phase, it should repeat- edly call unify to solve them.
+  ;; 
+  ;; In original implementation, 
+
     ;;;;;;;;;;;;;;;; type environments ;;;;;;;;;;;;;;;;
     
   ;; why are these separated?

@@ -54,11 +54,11 @@
                  ((equal? ty1 ty2) (get-subst-ex7.21))
                  ((tvar-type? ty1)
                   (if (no-occurrence? ty1 ty2)
-                      (extend-subst!-ex7.21 ty1 ty2)
+                      (extend-subst!-ex7.22 ty1 ty2)
                     (report-no-occurrence-violation ty1 ty2 exp)))
                  ((tvar-type? ty2)
                   (if (no-occurrence? ty2 ty1)
-                      (extend-subst!-ex7.21 ty2 ty1)
+                      (extend-subst!-ex7.22 ty2 ty1)
                     (report-no-occurrence-violation ty2 ty1 exp)))
                  ((and (proc-type? ty1) (proc-type? ty2))
                   (begin (unifier
