@@ -5,7 +5,8 @@
   (require "data-structures.scm")
   (require "unifier.scm")
   (require "substitutions.scm")
-  
+  (require "gen-equations.scm")
+  (require "tenv.scm")
 
   (provide type-of-program type-of)
 
@@ -32,8 +33,9 @@
           (cases answer 
                  (begin 
                    (initialize-subst!-ex7.21)
-                   (type-of exp1 (init-tenv) (empty-subst)))
+                   (type-of-ex7.27 exp1 (init-tenv)))
             (an-answer (ty subst)
+                       ;(eopl:printf "type-of-program\nty: ~s\nsubst: ~s\n" ty subst)
               (apply-subst-to-type ty subst)))))))
 
   ;; type-of : Exp * Tenv * Subst -> Type
@@ -135,53 +137,17 @@
   ;; In the ﬁrst phase it should generate a set of equations, and in the second 
   ;; phase, it should repeat- edly call unify to solve them.
   ;; 
-  ;; In original implementation, 
+  (define type-of-ex7.27
+    (lambda (exp tenv)
+      (initialize-subst!-ex7.21)
+      (let* ((pair (gen-equations exp tenv))
+             (target-type (car pair))
+             (equations (cdr pair))
+             (subst (unifier-ex7.27 equations (empty-subst))))
+        (an-answer target-type (get-subst-ex7.21)))))
 
     ;;;;;;;;;;;;;;;; type environments ;;;;;;;;;;;;;;;;
     
   ;; why are these separated?
-
-  (define-datatype type-environment type-environment?
-    (empty-tenv-record)
-    (extended-tenv-record
-      (sym symbol?)
-      (type type?)
-      (tenv type-environment?)))
-    
-  (define empty-tenv empty-tenv-record)
-  (define extend-tenv extended-tenv-record)
-    
-  (define apply-tenv 
-    (lambda (tenv sym)
-      (cases type-environment tenv
-        (empty-tenv-record ()
-          (eopl:error 'apply-tenv "Unbound variable ~s" sym))
-        (extended-tenv-record (sym1 val1 old-env)
-          (if (eqv? sym sym1) 
-            val1
-            (apply-tenv old-env sym))))))
-  
-  (define init-tenv
-    (lambda ()
-      (extend-tenv 'x (int-type) 
-        (extend-tenv 'v (int-type)
-          (extend-tenv 'i (int-type)
-            (empty-tenv))))))
-
-  ;; fresh-tvar-type : () -> Type
-  ;; Page: 265  
-  (define fresh-tvar-type
-    (let ((sn 0))
-      (lambda ()
-        (set! sn (+ sn 1))
-        (tvar-type sn))))
-
-  ;; otype->type : OptionalType -> Type
-  ;; Page: 265
-  (define otype->type
-    (lambda (otype)
-      (cases optional-type otype
-        (no-type () (fresh-tvar-type))
-        (a-type (ty) ty))))
 
   )

@@ -89,13 +89,11 @@
                               (let ((tmp (assoc ty subst)))
                                 (if tmp
                                     ; t(σ[tv = t']) = (tσ)[tv = t']
-                                  (let ((result (reduce (lambda (sub ty)
-                                                          (apply-one-subst ty (car sub) (cdr sub)))
-                                                        subst
-                                                        (cdr tmp))))
+                                  (let ((result (apply-subst-to-type (cdr tmp) subst)))
+                                    ;(eopl:printf "apply-subst-to-type\nresult: ~s\n" result)
                                     result)
                                   ty))))))
-        
+
         ;; Page: 262
         ;; Exercise 7.18 [**] Modify the implementation in the preceding exercise so that
         ;; apply-subst-to-type computes the substitution for any type variable at most once.
