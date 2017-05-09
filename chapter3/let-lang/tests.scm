@@ -55,5 +55,55 @@
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 
+      ; check minus expression
+      (simple-minus "minus(-(minus(5),9))" 14)
+
+      ; check addition expression
+      (simple-addition "+(4,9)" 13)
+
+      ; check multiplication expression
+      (simple-multiplication "*(4, 9)" 36)
+
+      ; check integer quotient expression
+      (simple-integer-quotient "/(4, 9)" 4/9)
+
+      ; check equal?
+      (simple-equal? "equal?(1, 1)" 1)
+
+      ; check greater?
+      (simple-greater-1-1? "greater?(1, 1)" 0)
+      (simple-greater-1-2? "greater?(1, 2)" 0)
+      (simple-greater-3-1? "greater?(3, 1)" 1)
+
+      ; check less?
+      (simple-less-1-1? "less?(1, 1)" 0)
+      (simple-less-1-2? "less?(1, 2)" 1)
+      (simple-less-3-1? "less?(3, 1)" 0)
+
+      ; check null? of '(4 (3))
+      (test-cons-null? "let x = 4 in null?(cons(4,
+                                           cons(cons(-(x, 1),
+                                                      emptylist),
+                                                 emptylist)))"  
+                       0)
+      ; check null? of emptylist
+      (test-null?-emptylist "null?(emptylist)" 1)
+
+      ; check car of '(4 (3))
+      (test-cons-car "let x = 4 in car(cons(4,
+                                           cons(cons(-(x, 1),
+                                                      emptylist),
+                                                 emptylist)))" 
+                     4)
+      
+      ; check cdr of '(4 3)
+      (test-cons-cdr "cdr(cons(4, 3))" 3)
+
+      ; check list
+      (test-list "car(list(3, 3, 3))" 3)
+
+      ; check cond
+      (test-cond-error "cond 3 ==> 3 end" 3)
+      (test-cond-valid "cond less?(3,2) ==> 0 greater?(3,2) ==> 3 end" 3)
       ))
   )
