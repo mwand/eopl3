@@ -9,6 +9,9 @@ move-to-left => move-to-left-son
 move-to-right => move-to-right-son
 
 Page 45:
+Exercise 2.19: The definition of t1 is missing a right paren.
+
+Page 45:
 Exercise 2.20
 at-leaf? is already in exercise 2.19
 
@@ -72,6 +75,12 @@ Page 231
 Line 2
 apply-procedure ==> apply-procedure/k
 
+Page 273
+Exercise 7.28
+In the example,
+The first 'let' should be 'letrec', to fit into the syntax of INFERRED
+Also
+((foo f) cdr(x)))  => (foo cdr(x)))
 
 Page 290
 Exercise 8.5
@@ -82,6 +91,11 @@ Exercise 8.5
  interface
         [even : (int -> bool)
          odd  : (int -> bool)]
+
+Page 303:
+(name type?) => (name symbol?)
+Note: in the repo, this field is called t-name.
+See chapter8/abstract-types-lang/static-data-structures.scm
 
 Page 337 et seq:
 The code in
@@ -94,6 +108,12 @@ whether its argument is an object.  method-call-exp should call a
 function like expval->obj, in the same way that diff-exp calls
 expval->num. 
 
+Page 341:
+extend-env* => extend-env
+
+Page 362:
+2 lines above the display
+instance => interface
 
 Page 378: Line 2:
 Delete ", and"
