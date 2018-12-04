@@ -28,6 +28,23 @@ Section 4.4:
 Line 5:
 newpair ==> make-pair
 
+Page 195:
+Figure 6.1, in apply-cont, the case for fact1-cont:
+(begin
+  (set! cont saved-cont)
+  (set! n saved-n)
+  (apply-cont))))))
+==>
+(begin
+  (set! cont saved-cont)
+  (set! val (* val saved-n))  ;; changed here
+  (apply-cont)))
+  
+Page 196, Figure 6.2, next-to-last line of apply-cont:
+(set! n saved-n)
+=>
+(set! val (* val saved-n)) 
+ 
 Page 208:
 a-program ==> cps-a-program
 const-exp ==> cps-const-exp
