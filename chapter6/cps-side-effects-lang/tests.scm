@@ -199,7 +199,13 @@ in letrec even(d) = if zero?(deref(x))
 let x = newref(22)
 in let f = proc (z) let zz = newref(-(z,deref(x))) in deref(zz)
    in -((f 66), (f 55))"
-   11)
+                    11)
+
+     ;; thanks to EFanZh for finding this
+    (let-scope-1 "
+      let x = 6 in -(let x = 11 in x, x)"
+      5)
+
 
     ))
 

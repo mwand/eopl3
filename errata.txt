@@ -1,7 +1,5 @@
 Errata: 1st Printing EOPL3
-Updated Sun Jan 12 22:39:19 2014
-
-
+Updated Wed Dec 12 14:44:27 2018
 
 Page 44:
 Exercise 2.19:
@@ -73,6 +71,23 @@ Page 219:
 The type and name say it is for cps-of-diff-exp, but
 the code is for cps-of-sum-exp.  So, we need the type:
 cps-of-sum-exp : Listof (InpExp) * SimpleExp -> TfExp
+
+Page 223-224
+The code for cps-of-let-exp is incorrect, because it puts k-exp inside
+the scope of id.  The solution is to translate the 'let' into the immediate
+application of a lambda expression.  Then cps-of-exps will make the
+needed fresh variables. 
+
+  (define cps-of-let-exp
+    (lambda (id rhs body k-exp)
+      (cps-of-exp
+       (call-exp
+        (proc-exp (list id) body)
+        (list rhs))
+       k-exp)))
+
+The proposed code in Exercise 6.27 suffers from the same error.
+
 
 Page 223:
 The type left off the type of the letrec-body.
