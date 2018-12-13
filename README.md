@@ -2,7 +2,7 @@ This is all the code from the book Essentials of Programming
 Languages, 3rd edition, by Friedman and Wand.
 
 The code dates from 2009.  It has now been updated and should run
-right out of the box on Racket version 5.3.6.
+right out of the box on Racket version 6.11.
 
 To run any of the languages, select "Choose language from source", and run top.scm in any of the language directories (chapterN/*-lang).
 
