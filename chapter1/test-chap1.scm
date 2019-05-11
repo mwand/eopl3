@@ -273,4 +273,25 @@
             ((> n (car bst))
              (find (caddr bst) n (cons 'right known)))
             (else known))))
+  
+  ;; number-leaves : Bintree -> Bintree
+  ;; Page : 30
+  (define number-leaves
+    (lambda (tree)
+      (car (do-number tree 0))))
+  (define do-number
+    (lambda (tree start)
+      (if (leaf? tree)
+          (cons (leaf start) 1)
+          (let* ((left-result (do-number (lson tree) start))
+                 (left-count (cdr left-result))
+                 (left-tree (car left-result))
+                 (right-result (do-number (rson tree) (+ start left-count)))
+                 (right-count (cdr right-result))
+                 (right-tree (car right-result)))
+            (cons (interior-node (symbol-of tree)
+                                 left-tree
+                                 right-tree)
+                  (+ left-count right-count))))))
   )
+    
