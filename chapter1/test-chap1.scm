@@ -188,4 +188,43 @@
 
   (equal?? (vector-sum (vector 1 2 3 4 5)) 15)
 
+  ;; leaf : Int -> Bintree
+  ;; Page: 29
+  (define leaf
+    (lambda (n)
+      (tag 'leaf (list n))))
+
+  ;; interior-node : Symbol * Bintree * Bintree -> Bintree
+  ;; Page : 29
+  (define interior-node
+    (lambda (sym left right)
+      (tag 'interior (list sym left right))))
+
+  ;; leaf? : Bintree -> Bool
+  ;; Page : 29
+  (define leaf?
+    (lambda (tree)
+      (eq? 'leaf (car tree))))
+
+  (define tag
+    (lambda (t content)
+      (list t content)))
+  
+  ;; lson : Bintree -> Bintree
+  ;; Page : 29
+  (define lson
+    (lambda (node)
+      (cadr (cadr node))))
+
+  ;; rson : Bintree -> Bintree
+  ;; Page : 29
+  (define rson
+    (lambda (node)
+      (caddr (cadr node))))
+
+  ;; contents-of : Bintree -> List
+  ;; Page : 29
+  (define contents-of
+    (lambda (tree)
+      (cdr tree)))
   )
