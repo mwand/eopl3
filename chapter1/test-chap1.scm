@@ -207,9 +207,9 @@
       (eq? 'leaf (car tree))))
 
   (define tag
-    (lambda (t content)
-      (list t content)))
-  
+    (lambda (t contents)
+      (list t contents)))
+  (interior-node 's (leaf 5) (leaf 6))
   ;; lson : Bintree -> Bintree
   ;; Page : 29
   (define lson
@@ -226,5 +226,16 @@
   ;; Page : 29
   (define contents-of
     (lambda (tree)
-      (cdr tree)))
+      (cadr tree)))
+  
+  ;; double-tree : Bintree -> Bintree
+  ;; Page : 29
+  (define double-tree
+    (lambda (tree)
+      (if (leaf? tree)
+          (leaf (map (lambda (x) (* x 2))
+                     (contents-of tree)))
+          (interior-node (car (cadr tree))
+                         (double-tree (lson tree))
+                         (double-tree (rson tree))))))
   )
