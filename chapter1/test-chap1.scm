@@ -227,6 +227,11 @@
   (define contents-of
     (lambda (tree)
       (cadr tree)))
+
+  ;; symbol : Bintree -> List
+  (define symbol-of
+    (lambda (node)
+      (car (cadr node))))
   
   ;; double-tree : Bintree -> Bintree
   ;; Page : 29
@@ -235,7 +240,23 @@
       (if (leaf? tree)
           (leaf (map (lambda (x) (* x 2))
                      (contents-of tree)))
-          (interior-node (car (cadr tree))
+          (interior-node (symbol-of tree)
                          (double-tree (lson tree))
                          (double-tree (rson tree))))))
+  
+  ;; mark-leaves-with-red-depth
+  ;; Page : 29
+  (define mark-leaves-with-red-depth
+    (lambda (tree)
+      (do-mark tree 0)))
+  (define do-mark
+    (lambda (tree depth-of-parent)
+      (let* ((sym (symbol-of tree))
+             (depth (+ depth-of-parent
+                       (if (eq? 'red sym) 1 0))))
+        (if (leaf? tree)
+            (leaf depth)
+            (interior-node sym
+                           (do-mark (lson tree) depth)
+                           (do-mark (rson tree) depth))))))
   )
