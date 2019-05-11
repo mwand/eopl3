@@ -1,5 +1,5 @@
 (module test-chap1 mzscheme
-
+  
   ;; This collects the code in chapter 1.  It uses a very primitive
   ;; testing macro, equal??.  This needs to be a macro because we print
   ;; the test as well as evaluate it.
@@ -244,7 +244,7 @@
                          (double-tree (lson tree))
                          (double-tree (rson tree))))))
   
-  ;; mark-leaves-with-red-depth
+  ;; mark-leaves-with-red-depth : Bintree -> Bintree
   ;; Page : 29
   (define mark-leaves-with-red-depth
     (lambda (tree)
@@ -259,4 +259,18 @@
             (interior-node sym
                            (do-mark (lson tree) depth)
                            (do-mark (rson tree) depth))))))
+  ;; path : Integer * BinarySearchTree -> Listof(Symbol)
+  ;; Page : 30
+  (define path
+    (lambda (n bst)
+      (reverse (find bst n '()))))
+  (define find
+    (lambda (bst n known)
+      (cond ((null? bst)
+             (error "No path found"))
+            ((< n (car bst))
+             (find (cadr bst) n (cons 'left known)))
+            ((> n (car bst))
+             (find (caddr bst) n (cons 'right known)))
+            (else known))))
   )
