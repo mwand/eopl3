@@ -25,6 +25,12 @@
   ;; Page: 83
   (define value-of
     (lambda (exp env)
+      (define (accumulate init op seq)
+        (if (null? seq)
+            init
+            (op (car seq)
+                (accumulate init op (cdr seq)))))
+      
       (cases expression exp
 
         ;\commentbox{ (value-of (const-exp \n{}) \r) = \n{}}
@@ -71,9 +77,17 @@
                 (arg (value-of rand env)))
             (apply-procedure proc arg)))
 
-        (letrec-exp (p-name b-var p-body letrec-body)
+        (letrec-exp (p-name b-var p-body 
+                     extra-p-names extra-b-vars extra-p-bodies
+                     letrec-body)
           (value-of letrec-body
-            (extend-env-rec p-name b-var p-body env)))
+            (accumulate (extend-env-rec p-name b-var p-body env)
+                        (lambda (proc-triple env)
+                          (extend-env-rec (car proc-triple)
+                                          (cadr proc-triple)
+                                          (caddr proc-triple)
+                                          env))
+                        (map list extra-p-names extra-b-vars extra-p-bodies))))
 
         )))
 
