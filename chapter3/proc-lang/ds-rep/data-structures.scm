@@ -90,4 +90,55 @@
     (lambda (r)
       (cdr r)))
 
+;;;;;;;;;;;;;;;;;;;;;;list of free variables;;;;;;;;;;;;;;;;;;
+(define (free-vars-of exp)
+
+  (define (remove item seq)
+    (if (null? seq)
+        '()
+        (let ((rests (remove item (cdr seq)))
+              (first (car seq)))
+          (if (eq? item first)
+              rests
+              (cons first rests)))))
+
+  
+  (lambda (var)
+
+    (define (strip-shadow-from body)
+      (lambda (var1)
+        (let ((free-vars ((free-vars-of body) var1)))
+            (if (eq? var1 var)
+                free-vars
+                (remove var free-vars)))))
+
+    (cases expression exp
+        (const-exp (num) '())
+
+        (var-exp (var1) (if (eq? var1 var) '() (list var1)))
+
+        (diff-exp (exp1 exp2)
+          (append ((free-vars-of exp1) var)
+                  ((free-vars-of exp2) var)))
+
+        (zero?-exp (exp1)
+          ((free-vars-of exp1) var))
+          
+        (if-exp (exp1 exp2 exp3)
+          (append ((free-vars-of exp1) var)
+                  (append ((free-vars-of exp2) var)
+                          ((free-vars-of exp3) var))))
+
+        (let-exp (var1 exp1 body)
+          ((strip-shadow-from body) var1))
+
+        
+        (proc-exp (var1 body)
+          ((strip-shadow-from body) var1))
+
+        (call-exp (rator rand)
+          (append ((free-vars-of rator) var)
+                  ((free-vars-of rand) var)))
+
+        )))
 )

@@ -27,6 +27,13 @@
   ;; value-of : Exp * Env -> ExpVal
   (define value-of
     (lambda (exp env)
+
+      (define (accumulate op init seq)
+        (if (null? seq)
+            init
+            (op (car seq)
+                (accumulate op init (cdr seq)))))
+                
       (cases expression exp
 
         ;\commentbox{ (value-of (const-exp \n{}) \r) = \n{}}
@@ -66,7 +73,13 @@
               (extend-env var val1 env))))
         
         (proc-exp (var body)
-          (proc-val (procedure var body env)))
+          (let* ((free-vars ((free-vars-of body) var))
+                 (stripped-env (accumulate (lambda (var1 env1)
+                                             (let ((val1 (apply-env env var1)))
+                                               (extend-env var1 val1 env1)))
+                                           (empty-env)
+                                           free-vars)))
+            (proc-val (procedure var body stripped-env))))
 
         (call-exp (rator rand)
           (let ((proc (expval->proc (value-of rator env)))
