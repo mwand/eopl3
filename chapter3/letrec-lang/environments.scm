@@ -5,7 +5,7 @@
 
   (require "data-structures.scm")
 
-  (provide init-env empty-env extend-env apply-env)
+  (provide (all-defined-out))
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
   
@@ -36,11 +36,15 @@
           (eopl:error 'apply-env "No binding for ~s" search-sym))
         (extend-env (var val saved-env)
 	  (if (eqv? search-sym var)
-	    val
-	    (apply-env saved-env search-sym)))
-        (extend-env-rec (p-name b-var p-body saved-env)
-          (if (eqv? search-sym p-name)
-            (proc-val (procedure b-var p-body env))          
-            (apply-env saved-env search-sym))))))
-    
-  )
+	      (if (not (vector? val))
+		  val
+		  (vector-ref val 0))
+	      (apply-env saved-env search-sym))))))
+
+  (define extend-env-rec
+    (lambda (p-name b-var p-body saved-env)
+      (let* ((vec (make-vector 1))
+	     (new-env (extend-env p-name vec saved-env)))
+	(vector-set! vec 0
+		     (proc-val (procedure b-var p-body new-env)))
+	new-env))))

@@ -61,12 +61,8 @@
     (empty-env)
     (extend-env 
       (bvar symbol?)
-      (bval expval?)
-      (saved-env environment?))
-    (extend-env-rec
-      (id symbol?)
-      (bvar symbol?)
-      (body expression?)
+      (bval (lambda (x)
+              (or (expval? x) (vector? x))))
       (saved-env environment?)))
 
 )
