@@ -1,6 +1,11 @@
 Errata: 1st Printing EOPL3
 Updated Wed Dec 12 14:44:27 2018
 
+Page 5:
+In the deduction tree 2/3 of the way down the page, all the hypotheses that say "xxx in N" should say "xxx in Int", 
+as described in Definition 1.1.5 (on p. 4)
+h/t: Kyle Stansfield (stanfield@ucsb.edu)
+
 Page 44:
 Exercise 2.19:
 move-to-left => move-to-left-son
