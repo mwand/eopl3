@@ -31,6 +31,11 @@ Section 4.4:
 Line 5:
 newpair ==> make-pair
 
+Page 180:
+205 is printed by the producer. So the text should say:
+
+So the first two items, 300 and 205, are printed by the main thread and the subthread respectively.
+
 Page 195:
 Figure 6.1, in apply-cont, the case for fact1-cont:
 (begin
