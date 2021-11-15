@@ -26,6 +26,10 @@ Page 101:
 Exercise 3.39
 Delete "and 'unpack'"
 
+Page 107:
+Paragraph 3
+store-passing specfications => store-passing specifications
+
 Page 124:
 Section 4.4:
 Line 5:
