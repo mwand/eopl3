@@ -225,13 +225,26 @@
 
   ;; cps-of-let-exp : Var * InpExp * InpExp * SimpleExp -> TfExp
   ;; Page: 222
+  ;; This is wrong because it puts `k-exp` iside the scope of `id`
+  ;; (define cps-of-let-exp
+  ;;   (lambda (id rhs body k-exp)
+  ;;     (cps-of-exps (list rhs)
+  ;;       (lambda (new-rands)
+  ;;         (cps-let-exp id 
+  ;;           (car new-rands)
+  ;;           (cps-of-exp body k-exp))))))
+
+  ;; Correct solution: translate the 'let' into the immediate
+  ;; application of a lambda expression.  Then
+  ;; cps-of-exps will make the needed fresh variables
+
   (define cps-of-let-exp
     (lambda (id rhs body k-exp)
-      (cps-of-exps (list rhs)
-        (lambda (new-rands)
-          (cps-let-exp id 
-            (car new-rands)
-            (cps-of-exp body k-exp))))))
+      (cps-of-exp
+       (call-exp
+        (proc-exp (list id) body)
+        (list rhs))
+       k-exp)))
 
   ;; cps-of-letrec-exp :
   ;; Listof(Listof(Var)) * Listof(InpExp) * InpExp * SimpleExp -> TfExp

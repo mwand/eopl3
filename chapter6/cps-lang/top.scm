@@ -33,6 +33,11 @@
         (when (instrument-cps) (pretty-print cpsed-pgm))
         (value-of-program cpsed-pgm))))
 
+  (define compile
+    (lambda (string)
+      (cps-of-program (scan&parse string))))
+        
+
   ;; run-all : () -> Unspecified
 
   ;; runs all the tests in test-list, comparing the results with

@@ -145,11 +145,14 @@ in let times4 = (fix t4m)
                       else if zero?(-(n,1)) then 1
                       else -((fib -(n,1)), -(0, (fib -(n,2))))
       in +((fib 1), 12, (fib 5))"
-      21)
+                       21)
 
-    ))
+    
+    ;; thanks to EFanZh for finding this
+    (let-scope-1 "
+      let x = 6 in -(let x = 11 in x, x)"
+      5)
 
 
+    )))
 
-
-  )

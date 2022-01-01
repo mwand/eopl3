@@ -1,12 +1,18 @@
 Errata: 1st Printing EOPL3
-Updated Sun Jan 12 22:39:19 2014
+Updated Wed Dec 12 14:44:27 2018
 
-
+Page 5:
+In the deduction tree 2/3 of the way down the page, all the hypotheses that say "xxx in N" should say "xxx in Int", 
+as described in Definition 1.1.5 (on p. 4)
+h/t: Kyle Stansfield (stanfield@ucsb.edu)
 
 Page 44:
 Exercise 2.19:
 move-to-left => move-to-left-son
 move-to-right => move-to-right-son
+
+Page 45:
+Exercise 2.19: The definition of t1 is missing a right paren.
 
 Page 45:
 Exercise 2.20
@@ -25,6 +31,28 @@ Section 4.4:
 Line 5:
 newpair ==> make-pair
 
+Page 180:
+205 is printed by the producer. So the text should say:
+
+So the first two items, 300 and 205, are printed by the main thread and the subthread respectively.
+
+Page 195:
+Figure 6.1, in apply-cont, the case for fact1-cont:
+(begin
+  (set! cont saved-cont)
+  (set! n saved-n)
+  (apply-cont))))))
+==>
+(begin
+  (set! cont saved-cont)
+  (set! val (* val saved-n))  ;; changed here
+  (apply-cont)))
+  
+Page 196, Figure 6.2, next-to-last line of apply-cont:
+(set! n saved-n)
+=>
+(set! val (* val saved-n)) 
+ 
 Page 208:
 a-program ==> cps-a-program
 const-exp ==> cps-const-exp
@@ -54,6 +82,23 @@ The type and name say it is for cps-of-diff-exp, but
 the code is for cps-of-sum-exp.  So, we need the type:
 cps-of-sum-exp : Listof (InpExp) * SimpleExp -> TfExp
 
+Page 223-224
+The code for cps-of-let-exp is incorrect, because it puts k-exp inside
+the scope of id.  The solution is to translate the 'let' into the immediate
+application of a lambda expression.  Then cps-of-exps will make the
+needed fresh variables. 
+
+  (define cps-of-let-exp
+    (lambda (id rhs body k-exp)
+      (cps-of-exp
+       (call-exp
+        (proc-exp (list id) body)
+        (list rhs))
+       k-exp)))
+
+The proposed code in Exercise 6.27 suffers from the same error.
+
+
 Page 223:
 The type left off the type of the letrec-body.
 It is, of course, just InpExp.  Here is what the type should say.
@@ -72,6 +117,12 @@ Page 231
 Line 2
 apply-procedure ==> apply-procedure/k
 
+Page 273
+Exercise 7.28
+In the example,
+The first 'let' should be 'letrec', to fit into the syntax of INFERRED
+Also
+((foo f) cdr(x)))  => (foo cdr(x)))
 
 Page 290
 Exercise 8.5
@@ -82,6 +133,11 @@ Exercise 8.5
  interface
         [even : (int -> bool)
          odd  : (int -> bool)]
+
+Page 303:
+(name type?) => (name symbol?)
+Note: in the repo, this field is called t-name.
+See chapter8/abstract-types-lang/static-data-structures.scm
 
 Page 337 et seq:
 The code in
@@ -94,6 +150,12 @@ whether its argument is an object.  method-call-exp should call a
 function like expval->obj, in the same way that diff-exp calls
 expval->num. 
 
+Page 341:
+extend-env* => extend-env
+
+Page 362:
+2 lines above the display
+instance => interface
 
 Page 378: Line 2:
 Delete ", and"
