@@ -1,6 +1,6 @@
-#lang eopl
+#lang racket
 
-(require "utils.rkt")
+(require rackunit)
 
 (define empty-stack
   (lambda ()
@@ -8,7 +8,7 @@
       (cond
         [(eqv? op 'empty) #t]
         [else
-         (eopl:error "This is a empty stack")]))))
+         (error "This is a empty stack")]))))
 
 (define empty-stack? (lambda (s) (s 'empty)))
 
@@ -20,7 +20,7 @@
         [(eqv? op 'pop) stack]
         [(eqv? op 'empty) #f]
         [else
-         (eopl:error "Not a proper operator")]))))
+         (error "Not a proper operator")]))))
 
 (define pop (lambda (s) (s 'pop)))
 
@@ -29,9 +29,10 @@
 (define s
   (push 'a (push 'b (push 'c (empty-stack)))))
 
-(equal?? (top s) 'a)
-(equal?? (top (pop s)) 'b)
-(equal?? (empty-stack? (empty-stack)) #t)
-(equal?? (empty-stack? s) #f)
 
-(report-unit-tests-completed 'stack-rep)
+(module+ test
+  (check-equal? (top s) 'c)
+  (check-equal? (top (pop s)) 'b)
+  (check-equal? (empty-stack? (empty-stack)) #t)
+  (check-equal? (empty-stack? s) #f)
+  )

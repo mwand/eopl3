@@ -31,7 +31,8 @@
               'b)
         'c))
 
-(equal?? (top s) 'a)
+(top s)
+(equal?? (top s) 'c)
 (equal?? (pop s) '(b a))
 
 (report-unit-tests-completed 'stack-rep)

@@ -34,16 +34,28 @@
        (- (diff-tree (car dt))
           (diff-tree (cdr dt)))])))
 
-(define diff-plus-plus
+(define diff-tree-plus
   (lambda (a b)
     (diff a (diff (zero) b))))
 
 (equal?? (diff-tree (diff (one)
-                          (diff (one) (one)))) 1)
+                          (diff (one) (one))))
+         1)
 
 (equal?? (diff-tree (successor (diff (one)
-                                      (diff (one) (one))))) 2)
+                                     (diff (one) (one)))))
+         2)
 
 (equal?? (diff-tree (predecessor 
                      (successor (diff (one)
-                                      (diff (one) (one)))))) 1)
+                                      (diff (one) (one))))))
+         1)
+
+;; (equal?? (diff-tree-plus
+;;           (diff-tree (diff (one)
+;;                            (diff (one) (one))
+;;                            ))
+;;           (one))
+;;          3)
+
+(report-unit-tests-completed 'diff-tree)

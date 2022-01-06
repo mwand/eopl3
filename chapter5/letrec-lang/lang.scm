@@ -1,5 +1,5 @@
-(module lang (lib "eopl.ss" "eopl")                
-  
+(module lang (lib "eopl.ss" "eopl")
+
   ;; grammar for the LETREC language
 
   (require "drscheme-init.scm")

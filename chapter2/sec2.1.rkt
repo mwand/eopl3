@@ -1,6 +1,7 @@
 (module sec2.1 (lib "eopl.ss" "eopl")
 
   (require "utils.rkt")
+  (provide (all-defined-out))
 
   (let ()
     ;; Unary Representation
@@ -25,9 +26,9 @@
       (if (is-zero? x) 0
         (+ 1 (my-int->scheme-int (predecessor x)))))
 
-    (equal?? 
+    (equal??
       (my-int->scheme-int
-        (plus 
+        (plus
           (scheme-int->my-int 3)
           (scheme-int->my-int 7)))
       10)
@@ -88,5 +89,5 @@
     (report-unit-tests-completed 'reverse-number-representation)
     )
 
-  )
+ )
 
