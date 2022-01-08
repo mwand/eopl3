@@ -1,20 +1,20 @@
-#lang eopl
+#lang racket
 
-(require "utils.rkt")
+(require rackunit)
 
 (define leaf
   (lambda (x)
     (cond
       [(number? x) x]
       [else
-       (eopl:error 'leaf "Not a number.")])))
+       (error 'leaf "Not a number.")])))
 
 (define interior-node
   (lambda (content lson rson)
     (cond
       [(number? content) (list content lson rson)]
       [else
-       (eopl:error 'interior-node "not a symbol")])))
+       (error 'interior-node "not a symbol")])))
 
 (define leaf?
   (lambda (x)
@@ -46,12 +46,12 @@
 (define move-to-left
   (lambda (node)
     (cond
-      [(leaf? node) (eopl:error "not a interior-node, it is a leaf")]
+      [(leaf? node) (error "not a interior-node, it is a leaf")]
       [else
        (cadr node)])))
 
 (define move-to-right
-   (lambda (node)
+  (lambda (node)
     (caddr node)))
 
 (define at-leaf?
@@ -84,15 +84,16 @@
 (define t1 (insert-to-right 14
                             (insert-to-left 12
                                             (number->bintree 13))))
+(module+ test
+  (check-equal? (move-to-left t1) '(12 () ()))
+  (check-equal? (current-element (move-to-left t1)) 12)
+  (check-equal? (at-leaf? (move-to-right (move-to-left t1))) #t)
+  (check-equal? (insert-to-left 15 t1)
+                '(13
+                  (15
+                   (12 () ())
+                   ())
+                  (14 () ())))
+  )
 
-(equal?? (move-to-left t1) '(12 () ()))
-(equal?? (current-element (move-to-left t1)) 12)
-(equal?? (at-leaf? (move-to-right (move-to-left t1))) #t)
-(equal?? (insert-to-left 15 t1)
-         '(13
-           (15
-            (12 () ())
-            ())
-           (14 () ())))
-
-(report-unit-tests-completed "bintree-rep.rkt")
+;;(report-unit-tests-completed "bintree-rep.rkt")
