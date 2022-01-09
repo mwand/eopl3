@@ -1,8 +1,7 @@
-#lang eopl
+#lang racket
 
-(require "utils.rkt")
-
-(define empty-stack? null?)
+(require rackunit)
+(require eopl)
 
 (define-datatype stack stack?
   (empty-stack)
@@ -25,7 +24,8 @@
 (define s
   (push 'a (push 'b (push 'c (empty-stack)))))
 
-(equal? (top s) 'a)
-(equal?? (top (pop s)) 'b)
-
-(report-unit-tests-completed 'stack-datatype)
+(module+ test
+  (check-equal? (top s) 'a)
+  (check-equal? (top (pop s)) 'b)
+  (check-equal? (top (pop (pop s))) 'c)
+  )

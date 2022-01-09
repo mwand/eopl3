@@ -1,6 +1,7 @@
-#lang eopl
+#lang racket
 
-(require "utils.rkt")
+(require eopl)
+(require rackunit)
 
 ;; ex 2.26 red-blue-tree datatype
 ;; Red-blue-tree ::= Red-blue-subtree
@@ -43,7 +44,8 @@
 (define tree-2 (blue-node (list tree-1 (leaf 20))))
 (define tree-3 (red-node tree-2 tree-2))
 
-(equal?? (mark-leaves-with-red-depth tree-3)
-         (red-node (blue-node (list (red-node (leaf 2) (leaf 2)) (leaf 1)))
-                   (blue-node (list (red-node (leaf 2) (leaf 2)) (leaf 1)))))
-(report-unit-tests-completed 'red-blue-tree)
+(module+ test
+  (check-equal? (mark-leaves-with-red-depth tree-3)
+                (red-node (blue-node (list (red-node (leaf 2) (leaf 2)) (leaf 1)))
+                          (blue-node (list (red-node (leaf 2) (leaf 2)) (leaf 1)))))
+  )
