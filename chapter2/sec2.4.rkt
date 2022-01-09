@@ -87,32 +87,5 @@
                (pred (car val))
                ((list-of pred) (cdr val)))))))
 
-;; For exercises 2.24-2.25
-(define-datatype bintree bintree?
-  (leaf-node
-   (num integer?))
-  (interior-node
-   (key symbol?)
-   (left bintree?)
-   (right bintree?)))
-
-;;   > (bintree-to-list
-;;       (interior-node
-;;         'a
-;;         (leaf-node 3)
-;;         (leaf-node 4)))
-;;   (interior-node a (leaf-node 3) (leaf-node 4)))
-
-;;   > (define tree-1
-;;       (interior-node 'foo (leaf-node 2) (leaf-node 3)))
-;;   > (define tree-2
-;;       (interior-node 'bar (leaf-node -1) tree-1))
-;;   > (define tree-3
-;;       (interior-node 'baz tree-2 (leaf-node 1)))
-;;   > (max-interior tree-2)
-;;   foo
-;;   > (max-interior tree-3)
-;;   baz
-
 (eopl:printf "unit tests completed successfully.~%")
 
