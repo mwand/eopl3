@@ -1,7 +1,16 @@
-#lang eopl
+#lang racket
 
 ;; ex 2.29
-(require "utils.rkt")
+;| Lc-exp ::= Identifier
+;             var-exp (var)
+;         ::= (lambda ({Identifier}∗) Lc-exp)
+;             lambda-exp (bound-vars body)
+;         ::=(Lc-exp {Lc-exp}∗)
+;             app-exp (rator rands)
+;|
+
+(require eopl)
+(require rackunit)
 
 (define (identifier? x)
   (and (symbol? x)
@@ -30,6 +39,12 @@
 
 (define report-invalid-concrete-syntax
   (lambda (datum)
-    (eopl:error "invalid concrete syntax ~s" datum)))
+    (error "invalid concrete syntax ~s" datum)))
 
 
+(module+ test
+  (check-equal? (parse-expression 'x)
+                (var-exp 'x))
+  (check-equal? (parse-expression '(lambda (a b) (a b)))
+                (lambda-exp '(a b) (var-exp 'a+b)))
+  )

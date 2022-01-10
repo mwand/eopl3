@@ -1,5 +1,6 @@
-#lang eopl
-(require racket)
+#lang racket
+
+(require eopl)
 (require "utils.rkt")
 
 ;; data definitions
@@ -102,15 +103,15 @@
  '(lambda (y) (x y)))
 
 (equal??
- (unparse-lc-exp 
+ (unparse-lc-exp
   (app-exp
    (lambda-exp 'x (var-exp 'x))
    (app-exp (var-exp 'x) (var-exp 'y))))
  '((lambda (x) x) (x y)))
 
 
-(equal?? 
- (unparse-lc-exp 
+(equal??
+ (unparse-lc-exp
   (lambda-exp 'y
               (lambda-exp 'z
                           (app-exp (var-exp 'x)
