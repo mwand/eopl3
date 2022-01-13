@@ -141,10 +141,3 @@
          (app-exp (rator rand)
                   (format "(~a ~a)" (unparse rator) (unparse rand)))))
 
-;; Exercise 2.31
-(define-datatype prefix-exp prefix-exp?
-  (const-exp
-   (num integer?))
-  (diff-exp
-   (operand1 prefix-exp?)
-   (operand2 prefix-exp?)))
