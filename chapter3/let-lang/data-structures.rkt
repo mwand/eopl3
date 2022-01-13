@@ -56,7 +56,7 @@
 ;; example of a data type built without define-datatype
 
 (define empty-env-record
-  (lambda () 
+  (lambda ()
     '()))
 
 (define extended-env-record

@@ -33,6 +33,10 @@
      addition-exp)
 
     (expression
+     ("minus" "(" expression ")")
+     minus-exp)
+
+    (expression
      ("*" "(" expression "," expression ")")
      multiplication-exp)
 
@@ -67,10 +71,6 @@
      let-exp)
 
     (expression
-     ("minus" "(" expression ")")
-     minus-exp)
-
-    (expression
      ("cons" "(" expression "," expression ")")
      cons-exp)
 
@@ -89,6 +89,10 @@
     (expression
      ("emptylist")
      emptylist-exp)
+
+    ;; (expression
+    ;;  ("list" "(" (arbno expression ",") ")")
+    ;;  list-exp)
     ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

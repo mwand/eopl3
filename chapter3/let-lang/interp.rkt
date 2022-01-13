@@ -51,6 +51,12 @@
                              (num-val
                               (+ num1 num2)))))
 
+           ;\commentbox{\ma{\minusspec}}
+           (minus-exp (exp1)
+                      (let ((val1 (value-of exp1 env)))
+                        (num-val
+                         (- 0 (expval->num val1)))))
+
            (multiplication-exp (exp1 exp2)
                                (let ((val1 (value-of exp1 env))
                                      (val2 (value-of exp2 env)))
@@ -65,7 +71,7 @@
                            (let ((num1 (expval->num val1))
                                  (num2 (expval->num val2)))
                              (num-val
-                              (/ num1 num2)))))
+                              (quotient num1 num2)))))
 
            ;\commentbox{\zerotestspec}
            (zero?-exp (exp1)
@@ -115,17 +121,12 @@
                       (value-of body
                                 (extend-env var val1 env))))
 
-           ;\commentbox{\ma{\minusspec}}
-           (minus-exp (exp1)
-                      (let ((val1 (value-of exp1 env)))
-                        (num-val
-                         (- 0 (expval->num val1)))))
-
            (null?-exp (exp1)
                       (let ((val1 (value-of exp1 env)))
                         (bool-val
                          (null? (expval->list val1)))))
 
+           ;\\commentbox{\ma{\thelistspec}}
            (cons-exp (head tail)
                      (let ((val1 (value-of head env))
                            (val2 (value-of tail env)))
@@ -133,13 +134,13 @@
                          (list-val
                           (cons val1 num2)))))
 
-           (car-exp (li)
-                     (let ((val1 (value-of li env)))
+           (car-exp (exp)
+                     (let ((val1 (value-of exp env)))
                        (let ((num1 (expval->list val1)))
                           (car num1))))
 
-           (cdr-exp (li)
-                    (let ((val1 (value-of li env)))
+           (cdr-exp (exp)
+                    (let ((val1 (value-of exp env)))
                       (let ((num1 (expval->list val1)))
                         (list-val
                          (cdr num1)))))

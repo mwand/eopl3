@@ -35,7 +35,7 @@
 ;; run-all : () -> unspecified
 
 ;; runs all the tests in test-list, comparing the results with
-;; equal-answer?  
+;; equal-answer?
 
 (define run-all
   (lambda ()
@@ -45,7 +45,7 @@
   (lambda (ans correct-ans)
     (equal? ans (sloppy->expval correct-ans))))
 
-(define sloppy->expval 
+(define sloppy->expval
   (lambda (sloppy-val)
     (cond
       ((number? sloppy-val) (num-val sloppy-val))
