@@ -145,6 +145,13 @@
                         (list-val
                          (cdr num1)))))
 
+           (list-exp (exp)
+                     (list-val
+                      (map
+                       (lambda (exp1)
+                         (value-of exp1 env))
+                       exp)))
+
            (emptylist-exp (list-val '()))
            )))
 

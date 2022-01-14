@@ -74,4 +74,6 @@
                            cons(cons(-(x,1),
                                 emptylist),
                            emptylist))", '(4 (3)))
+    (simple-list "let x = 4
+                 in list(x, -(x,1), -(x,3))", '(4 3 1))
     ))

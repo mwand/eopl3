@@ -90,9 +90,9 @@
      ("emptylist")
      emptylist-exp)
 
-    ;; (expression
-    ;;  ("list" "(" (arbno expression ",") ")")
-    ;;  list-exp)
+    (expression
+     ("list" "(" (separated-list expression ",") ")")
+     list-exp)
     ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
