@@ -71,6 +71,10 @@
      let-exp)
 
     (expression
+     ("emptylist")
+     emptylist-exp)
+
+    (expression
      ("cons" "(" expression "," expression ")")
      cons-exp)
 
@@ -85,10 +89,6 @@
     (expression
      ("null?" "(" expression ")")
      null?-exp)
-
-    (expression
-     ("emptylist")
-     emptylist-exp)
 
     (expression
      ("list" "(" (separated-list expression ",") ")")

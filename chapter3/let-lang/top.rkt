@@ -8,6 +8,7 @@
 (require "lang.rkt")             ; for scan&parse.rkk
 (require "interp.rkt")           ; for value-of-program
 (require "tests.rkt")            ; for test-list
+;; (require "environments.rkt")     ; for debug
 
 ;; since this is the top-level module, we don't really need to
 ;; provide anything, but we do so just in case.  
@@ -50,6 +51,7 @@
     (cond
       ((number? sloppy-val) (num-val sloppy-val))
       ((boolean? sloppy-val) (bool-val sloppy-val))
+      ((list? sloppy-val) (list-val (map sloppy->expval sloppy-val)))
       (else
        (eopl:error 'sloppy->expval 
                    "Can't convert sloppy value to expval: ~s"

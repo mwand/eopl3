@@ -57,8 +57,7 @@
 
     ;; check minus
     (simple-minus "minus (- (minus (5), 9))" 14)
-
-    (simplle-addition "+(1,5)" 6)
+    (simple-addition "+(1,5)" 6)
     (simple-multiplication "*(2,3)" 6)
     (simple-quotient "/(5,3)" 1)
 
@@ -67,13 +66,13 @@
     (greater "greater? (4, 5)" #f)
     (less "less? (4 ,5)" #t)
 
-    (emptylist "emtpylist" '())
+    (emptylist "emptylist" ())
     (null?-list "null? (emptylist)" #t)
     (cons-car-cdr "let x = 4
                    in cons(x,
                            cons(cons(-(x,1),
                                 emptylist),
-                           emptylist))", '(4 (3)))
+                           emptylist))"  (4 (3)))
     (simple-list "let x = 4
-                 in list(x, -(x,1), -(x,3))", '(4 3 1))
+                 in list(x, -(x,1), -(x,3))" (4 3 1))
     ))

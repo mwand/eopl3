@@ -127,6 +127,8 @@
                          (null? (expval->list val1)))))
 
            ;\\commentbox{\ma{\thelistspec}}
+           (emptylist-exp () (list-val '()))
+
            (cons-exp (head tail)
                      (let ((val1 (value-of head env))
                            (val2 (value-of tail env)))
@@ -151,7 +153,5 @@
                        (lambda (exp1)
                          (value-of exp1 env))
                        exp)))
-
-           (emptylist-exp (list-val '()))
            )))
 
