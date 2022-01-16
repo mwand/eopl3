@@ -153,5 +153,14 @@
                        (lambda (exp1)
                          (value-of exp1 env))
                        exp)))
+
+           ;\\commentbox{\ma\thecondspec}
+           (cond-exp (exp1 exp2)
+                     (if (null? exp1)
+                         (eopl:error "none of cond succeed")
+                         (let ((condval (value-of (car exp1) env)))
+                           (if condval
+                               (value-of (car exp2) env)
+                               (cond-exp (cdr exp1) (cdr exp2))))))
            )))
 

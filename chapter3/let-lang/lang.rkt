@@ -93,6 +93,12 @@
     (expression
      ("list" "(" (separated-list expression ",") ")")
      list-exp)
+
+    (expression
+     ("cond" "{"
+             ;; (separated-list expression "==>" expression) "}" )
+             (arbno expression "==>" expression) "}" )
+     cond-exp)
     ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

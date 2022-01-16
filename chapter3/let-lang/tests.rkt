@@ -75,4 +75,10 @@
                            emptylist))"  (4 (3)))
     (simple-list "let x = 4
                  in list(x, -(x,1), -(x,3))" (4 3 1))
+
+    (cond-1 "let x = 4 in
+            cond {
+                  equal?(x,0) ==> x
+                  equal?(x,4) ==> x
+                 }" 4)
     ))
