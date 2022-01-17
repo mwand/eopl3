@@ -95,9 +95,10 @@
      list-exp)
 
     (expression
-     ("cond" "{"
+     ("cond"
              ;; (separated-list expression "==>" expression) "}" )
-             (arbno expression "==>" expression) "}" )
+      (arbno expression "==>" expression)
+      "end" )
      cond-exp)
     ))
 
