@@ -173,6 +173,11 @@
                          (value-of exp1 env))
                        exp)))
 
+           (unpack-exp (syms lst body)
+                       (let* [(lstval (expval->list (value-of lst env)))
+                              (new-env (extend-env-list-val syms lstval env))]
+                         (value-of body new-env)))
+
            ;\\commentbox{\ma\thecondspec}
            (cond-exp (exp1 exp2)
                      (if (null? exp1)
@@ -183,7 +188,7 @@
                                (cond-exp (cdr exp1) (cdr exp2))))))
            )))
 
-;; for let, ex 3.17 3.18
+;; for let, ex 3.16 3.17
 ;; https://docs.racket-lang.org/reference/let.html#%28form._%28%28lib._racket%2Fprivate%2Fletstx-scheme..rkt%29._letrec%29%29
 (define (extend-env-list-val vars vals env)
   (if (or (null? vars) (null? vals))
@@ -192,7 +197,7 @@
                            (extend-env (car vars) (car vals) env)))
   )
 
-;; helper func for let*, ex 3.18
+;; helper func for let*, ex 3.17
 (define (extend-env-list-exps vars exps env)
   (if (or (null? vars) (null? exps))
       env

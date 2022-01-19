@@ -106,6 +106,10 @@
      list-exp)
 
     (expression
+     ("unpack" (arbno identifier) "=" expression "in" expression)
+     unpack-exp)
+
+    (expression
      ("cond"
              ;; (separated-list expression "==>" expression) "}" )
       (arbno expression "==>" expression)
