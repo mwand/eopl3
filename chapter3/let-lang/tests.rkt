@@ -52,6 +52,18 @@
 
     ;; check nested let and shadowing
     (simple-nested-let "let x = 3 in let y = 4 in -(x,y)" -1)
+    ;; (nested-let "let x = 3 in let x = -(5,x) in y = 3 in -(x,y)" -1)
+    (let-multiple
+     "let x = 30
+      in let x = -(x,1)
+             y = -(x,2)
+         in -(x,y)" 1)
+    (let-star-multiple
+     "let x = 30
+      in let* x = -(x,1)
+              y = -(x,2)
+         in -(x,y)
+     " 2)
     (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
     (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" 2)
 

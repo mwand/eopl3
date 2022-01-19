@@ -10,7 +10,7 @@
 (require "data-structures.rkt")
 (require "environments.rkt")
 
-(provide value-of-program value-of)
+(provide value-of-program value-of value-of-print)
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -21,6 +21,12 @@
     (cases program pgm
            (a-program (exp1)
                       (value-of exp1 (init-env))))))
+
+;; value-of-print: Print->ExpVal
+(define value-of-print
+  (lambda (exp)
+    (display exp)
+    (num-val 1)))
 
 ;; value-of : Exp * Env -> ExpVal
 ;; Page: 71
@@ -66,7 +72,7 @@
                                     (* num1 num2)))))
 
            (quotient-exp (exp1 exp2)
-                         (let ((val1 (value-of exp1 env))
+                        (let ((val1 (value-of exp1 env))
                                (val2 (value-of exp2 env)))
                            (let ((num1 (expval->num val1))
                                  (num2 (expval->num val2)))
@@ -116,10 +122,23 @@
                          (value-of exp3 env))))
 
            ;\commentbox{\ma{\theletspecsplit}}
-           (let-exp (var exp1 body)
-                    (let ((val1 (value-of exp1 env)))
-                      (value-of body
-                                (extend-env var val1 env))))
+           ;; (let-exp (var exp1 body)
+           ;;          (let ((val1 (value-of exp1 env)))
+           ;;            (value-of body
+           ;;                      (extend-env var val1 env))))
+           (let-exp (vars exps body)
+                    (let ((vals
+                           (map
+                            (lambda (e) (value-of e env))
+                            exps
+                            )))
+                          (value-of body
+                                    (extend-env-list-val vars vals env))))
+
+           (let*-exp (vars exps body)
+                     (let
+                         ((new-env (extend-env-list-exps vars exps env)))
+                         (value-of body new-env)))
 
            (null?-exp (exp1)
                       (let ((val1 (value-of exp1 env)))
@@ -164,3 +183,18 @@
                                (cond-exp (cdr exp1) (cdr exp2))))))
            )))
 
+;; for let, ex 3.17 3.18
+;; https://docs.racket-lang.org/reference/let.html#%28form._%28%28lib._racket%2Fprivate%2Fletstx-scheme..rkt%29._letrec%29%29
+(define (extend-env-list-val vars vals env)
+  (if (or (null? vars) (null? vals))
+      env
+      (extend-env-list-val (cdr vars) (cdr vals)
+                           (extend-env (car vars) (car vals) env)))
+  )
+
+;; helper func for let*, ex 3.18
+(define (extend-env-list-exps vars exps env)
+  (if (or (null? vars) (null? exps))
+      env
+      (extend-env-list-exps (cdr vars) (cdr exps)
+                            (extend-env (car vars) (value-of (car exps) env) env))))

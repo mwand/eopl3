@@ -22,6 +22,8 @@
 (define the-grammar
   '((program (expression) a-program)
 
+    (print (expression) print-exp)
+
     (expression (number) const-exp)
 
     (expression
@@ -66,9 +68,18 @@
 
     (expression (identifier) var-exp)
 
+    ;; (expression
+    ;;  (identifier "=" expression)
+    ;;  assign-exp)
+
     (expression
-     ("let" identifier "=" expression "in" expression)
+     ("let" (arbno identifier "=" expression) "in" expression)
+     ;; ("let" (separated-list expression) "in" expression)
      let-exp)
+
+    (expression
+     ("let*" (arbno identifier "=" expression) "in" expression)
+     let*-exp)
 
     (expression
      ("emptylist")
