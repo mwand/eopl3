@@ -3,6 +3,7 @@
 
 ;; top level module.  Loads all required pieces.
 ;; Run the test suite with (run-all).
+(require rackunit)
 
 (require "drscheme-init.rkt")
 (require "data-structures.rkt")  ; for expval constructors
@@ -35,7 +36,7 @@
 
 (define equal-answer?
   (lambda (ans correct-ans)
-    (equal? ans (sloppy->expval correct-ans))))
+    (check-equal? ans (sloppy->expval correct-ans))))
 
 (define sloppy->expval 
   (lambda (sloppy-val)
@@ -61,5 +62,3 @@
         (else (eopl:error 'run-one "no such test: ~s" test-name))))))
 
 ;; (run-all)
-
-

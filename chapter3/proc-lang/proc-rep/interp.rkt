@@ -52,7 +52,7 @@
                           (if (zero? num1)
                               (bool-val #t)
                               (bool-val #f)))))
-           
+
            ;\commentbox{\ma{\theifspec}}
            (if-exp (exp1 exp2 exp3)
                    (let ((val1 (value-of exp1 env)))
@@ -61,13 +61,24 @@
                          (value-of exp3 env))))
 
            ;\commentbox{\ma{\theletspecsplit}}
-           (let-exp (var exp1 body)       
+           (let-exp (var exp1 body)
                     (let ((val1 (value-of exp1 env)))
                       (value-of body
                                 (extend-env var val1 env))))
-           
+
            (proc-exp (var body)
                      (proc-val (procedure var body env)))
+
+
+           (letproc-exp (name var func body)
+                        (let [(procval (proc-val (procedure var func env)))]
+                        ;; (let [(procval (proc-exp var func))]
+                          (value-of body
+                                    (extend-env name procval env))))
+                        ;; (let* [(procval (proc-exp var func))
+                        ;;        (new-env (extend-env name procval env))]
+                        ;;   (value-of body new-env)
+                          ;; ))
 
            (call-exp (rator rand)
                      (let ((proc (expval->proc (value-of rator env)))

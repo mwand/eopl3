@@ -61,11 +61,14 @@
     (apply-simple-proc "let f = proc (x) -(x,1) in (f 30)" 29)
     (let-to-proc-1 "(proc(f)(f 30)  proc(x)-(x,1))" 29)
 
+    (letproc-1 " letproc f(x) -(x,1) in
+                                 (f 10)" 9)
+
 
     (nested-procs "((proc (x) proc (y) -(x,y)  5) 6)" -1)
     (nested-procs2 "let f = proc(x) proc (y) -(x,y) in ((f -(10,5)) 6)"
                    -1)
-    
+
     (y-combinator-1 "
 let fix =  proc (f)
             let d = proc (x) proc (z) ((f (x x)) z)
@@ -74,5 +77,5 @@ in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
    in (times4 3)" 12)
-    
+
     ))
