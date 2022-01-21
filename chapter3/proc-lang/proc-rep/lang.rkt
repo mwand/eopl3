@@ -41,15 +41,17 @@
      let-exp)
 
     (expression
-     ("proc" "(" identifier ")" expression)
+     ("proc" "(" (separated-list identifier ",") ")" expression)
      proc-exp)
 
     (expression
-     ("letproc" identifier "(" identifier ")" expression "in" expression)
+     ("letproc" identifier
+                "(" (separated-list identifier ",") ")"
+                expression "in" expression)
      letproc-exp)
 
     (expression
-     ("(" expression expression ")")
+     ("(" expression (arbno expression) ")")
      call-exp)
 
     ))

@@ -5,7 +5,7 @@
 
 (require "data-structures.rkt")
 
-(provide init-env empty-env extend-env apply-env)
+(provide init-env empty-env extend-env extend-env* apply-env)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
 
@@ -38,6 +38,22 @@
 (define extend-env
   (lambda (sym val old-env)
     (extended-env-record sym val old-env)))
+
+(define (extend-env* vars vals env)
+  (if (or (null? vars) (null? vals))
+      env
+      ;; (begin
+      ;;   (display vars)
+      ;;   (display vals)
+      (extend-env* (cdr vars) (cdr vals)
+                   (extend-env (car vars) (car vals) env))))
+;; )
+
+;; (define (extend-envrec vars exps env)
+;;   (if (or (null? vars) (null? exps))
+;;       env
+;;       (extend-envrec (cdr vars) (cdr exps)
+;;                      (extend-env (car vars) (value-of (car exps) env) env))))
 
 (define apply-env
   (lambda (env search-sym)

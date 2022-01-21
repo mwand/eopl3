@@ -59,15 +59,21 @@
     ;; simple applications
     (apply-proc-in-rator-pos "(proc(x) -(x,1)  30)" 29)
     (apply-simple-proc "let f = proc (x) -(x,1) in (f 30)" 29)
+    (apply-multiple-para-in-rator-pos "(proc(x,y) -(x,y) 30 29)" 1)
+    (apply-multiple-para-proc "let f = proc(x,y) -(x,y) in (f 30 29)" 1)
     (let-to-proc-1 "(proc(f)(f 30)  proc(x)-(x,1))" 29)
-
-    (letproc-1 " letproc f(x) -(x,1) in
-                                 (f 10)" 9)
+    (letproc-1 "letproc f(x) -(x,1) in (f 10)" 9)
+    (letproc-mupltiple-para "letproc f(x,y) -(x,y) in (f 10 1)" 9)
 
 
     (nested-procs "((proc (x) proc (y) -(x,y)  5) 6)" -1)
     (nested-procs2 "let f = proc(x) proc (y) -(x,y) in ((f -(10,5)) 6)"
                    -1)
+
+
+    ;; ex3.20, cury func
+    (curry-proc "let f = proc(x) proc(y) -(x, -(0,y)) in ((f 2) 3)" 5)
+             ;; "let f = proc(x) proc(y) -(x, -(0,y) in ((f 3) 4))" 7)
 
     (y-combinator-1 "
 let fix =  proc (f)

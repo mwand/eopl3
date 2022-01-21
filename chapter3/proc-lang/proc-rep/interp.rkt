@@ -66,23 +66,22 @@
                       (value-of body
                                 (extend-env var val1 env))))
 
-           (proc-exp (var body)
-                     (proc-val (procedure var body env)))
+           (proc-exp (vars body)
+                     (proc-val (procedure vars body env)))
 
 
-           (letproc-exp (name var func body)
-                        (let [(procval (proc-val (procedure var func env)))]
-                        ;; (let [(procval (proc-exp var func))]
+           (letproc-exp (name vars func body)
+                        (let [(procval (proc-val (procedure vars func env)))]
                           (value-of body
                                     (extend-env name procval env))))
-                        ;; (let* [(procval (proc-exp var func))
-                        ;;        (new-env (extend-env name procval env))]
-                        ;;   (value-of body new-env)
-                          ;; ))
 
            (call-exp (rator rand)
                      (let ((proc (expval->proc (value-of rator env)))
-                           (arg (value-of rand env)))
+                           (arg
+                            (map
+                             (lambda (e) (value-of e env))
+                             rand)))
+                            ;; (value-of rand env)))
                        (apply-procedure proc arg)))
 
            )))
@@ -91,13 +90,12 @@
 ;; procedure : Var * Exp * Env -> Proc
 ;; Page: 79
 (define procedure
-  (lambda (var body env)
-    (lambda (val)
-      (value-of body (extend-env var val env)))))
+  (lambda (vars body env)
+    (lambda (vals)
+      (value-of body (extend-env* vars vals env)))))
 
 ;; apply-procedure : Proc * ExpVal -> ExpVal
 ;; Page: 79
 (define apply-procedure
-  (lambda (proc val)
-    (proc val)))
-
+  (lambda (proc vals)
+    (proc vals)))
