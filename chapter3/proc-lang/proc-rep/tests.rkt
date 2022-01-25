@@ -39,7 +39,7 @@
     ;; properly. 
     (if-eval-test-true "if zero?(-(11,11)) then 3 else 4" 3)
     (if-eval-test-false "if zero?(-(11, 12)) then 3 else 4" 4)
-    
+ 
     ;; and make sure the other arm doesn't get evaluated.
     (if-eval-test-true-2 "if zero?(-(11, 11)) then 3 else foo" 3)
     (if-eval-test-false-2 "if zero?(-(11,12)) then foo else 4" 4)
@@ -75,6 +75,7 @@
     (curry-proc "let f = proc(x) proc(y) -(x, -(0,y)) in ((f 2) 3)" 5)
              ;; "let f = proc(x) proc(y) -(x, -(0,y) in ((f 3) 4))" 7)
 
+    ;; ex3.23
     (y-combinator-1 "
 let fix =  proc (f)
             let d = proc (x) proc (z) ((f (x x)) z)
@@ -83,5 +84,62 @@ in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
    in (times4 3)" 12)
+
+
+    (y-combinator-mult4 "
+let makemult = proc (maker) proc (x)
+if zero?(x)
+then 0
+else -(((maker maker) -(x,1)), -4)
+in let times4 = proc (x) ((makemult makemult) x) in (times4 3)" 12)
+
+    (y-combinator-fib "
+let fix =  proc (f)
+    let d = proc (x) proc (z) ((f (x x)) z)
+        in proc (n) ((f (d d)) n)
+in let
+   fibfix = proc(f) proc(x) if zero?(x) then 0 else
+                            if zero?(-(x,1)) then 1 else
+                            -((f -(x,1)), -(0, (f -(x,2))))
+in let fib =(fix fibfix)
+in (fib 5)
+" 5)
+
+    (y-combinator-fib-1 "
+let makefib = proc(maker) proc(x)
+if zero?(x) then 0 else
+if zero?(-(x,1)) then 1 else
+   -(((maker maker) -(x,1)), -(0, ((maker maker) -(x,2))))
+in let
+   fibfix = proc(x) ((makefib makefib) x) in (fibfix 6)
+" 8)
+
+    ;; ex 3.24
+    ;; letrec
+    ;; even(x) = if zero?(x) then 1 else (odd -(x,1))
+    ;; odd(x) = if zero?(x) then 0 else (even -(x,1))
+    ;; in (odd 13)
+    ;; 
+    ;; let makerec = proc (f)
+    ;; let d = proc (x)
+    ;; proc (z) ((f (x x)) z)
+    ;; in proc (n) ((f (d d)) n)
+    ;; in let maketimes4 = proc (f) proc (x)
+    ;; if zero?(x)
+    ;; then 0
+    ;; else -((f -(x,1)), -4)
+    ;; in let times4 = (makerec maketimes4) in (times4 3)
+    (y-combinator-odd-even "
+let makerec = proc (f)
+              let d = proc (x)
+                       proc (z) ((f (x x)) z)
+              in proc (n) ((f (d d)) n)
+in let evenoddfix = proc(f) proc(x)
+                 if zero?(x) then 0 else
+                 if zero?(-(x,1)) then 1 else
+                 (f -(x,2))
+in let evenodd = (makerec evenoddfix)
+in (evenodd 13)
+" 1)
 
     ))

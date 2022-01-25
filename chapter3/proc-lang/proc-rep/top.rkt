@@ -28,7 +28,7 @@
 ;; run-all : () -> unspecified
 
 ;; runs all the tests in test-list, comparing the results with
-;; equal-answer?  
+;; equal-answer?
 
 (define run-all
   (lambda ()
@@ -38,13 +38,13 @@
   (lambda (ans correct-ans)
     (check-equal? ans (sloppy->expval correct-ans))))
 
-(define sloppy->expval 
+(define sloppy->expval
   (lambda (sloppy-val)
     (cond
       ((number? sloppy-val) (num-val sloppy-val))
       ((boolean? sloppy-val) (bool-val sloppy-val))
       (else
-       (eopl:error 'sloppy->expval 
+       (eopl:error 'sloppy->expval
                    "Can't convert sloppy value to expval: ~s"
                    sloppy-val)))))
 
