@@ -49,10 +49,10 @@
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
 ;; proc? : SchemeVal -> Bool
-;; procedure : Var * Exp * Env -> Proc
+;; procedure : Vars * Exp * Env -> Proc
 (define-datatype proc proc?
   (procedure
-   (bvar symbol?)
+   (bvars (list-of symbol?))
    (body expression?)
    (env environment?)))
 
@@ -65,8 +65,7 @@
    (saved-env environment?))
   (extend-env-rec
    (id symbol?)
-   (bvar symbol?)
+   (bvar (list-of symbol?))
    (body expression?)
    (saved-env environment?)))
-
-
+ 

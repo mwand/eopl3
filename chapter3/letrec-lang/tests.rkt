@@ -7,7 +7,7 @@
   '(
 
     ;; simple arithmetic
-    (positive-const "11" 12)
+    (positive-const "11" 11)
     (negative-const "-33" -33)
     (simple-arith-1 "-(44,33)" 11)
 
@@ -16,9 +16,9 @@
     (nested-arith-right "-(55, -(22,11))" 44)
 
     ;; simple variables
-    (test-var-1 "x" 10)
-    (test-var-2 "-(x,1)" 9)
-    (test-var-3 "-(1,x)" -9)
+    ;; (test-var-1 "x" 10)
+    ;; (test-var-2 "-(x,1)" 9)
+    ;; (test-var-3 "-(1,x)" -9)
 
     ;; simple unbound variables
     (test-unbound-var-1 "foo" error)
@@ -96,4 +96,6 @@ in let times4 = (fix t4m)
    in letrec  odd(x)  = if zero?(x) then 0 else ((even odd) -(x,1))
    in (odd 13)" 1)
 
+
+    (multiple-letrec-1 "letrec f(x,y) = if zero?(x)  then 0 else -((f -(x,y) y), -2) in (f 4 1)" 8)
     ))

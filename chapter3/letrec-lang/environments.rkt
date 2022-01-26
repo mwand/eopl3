@@ -4,7 +4,7 @@
 
 (require "data-structures.rkt")
 
-(provide init-env empty-env extend-env apply-env)
+(provide init-env empty-env extend-env extend-env* apply-env)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
 
@@ -15,15 +15,16 @@
 ;; bound to the expressed value 10.
 ;; Page: 69
 
-(define init-env
-  (lambda ()
-    (extend-env
-     'i (num-val 1)
-     (extend-env
-      'v (num-val 5)
-      (extend-env
-       'x (num-val 10)
-       (empty-env))))))
+;; (define init-env
+;;   (lambda ()
+;;     (extend-env
+;;      'i (num-val 1)
+;;      (extend-env
+;;       'v (num-val 5)
+;;       (extend-env
+;;        'x (num-val 10)
+;;        (empty-env))))))
+(define init-env empty-env)
 
 ;;;;;;;;;;;;;;;; environment constructors and observers ;;;;;;;;;;;;;;;;
 
@@ -40,4 +41,18 @@
            (extend-env-rec (p-name b-var p-body saved-env)
                            (if (eqv? search-sym p-name)
                                (proc-val (procedure b-var p-body env))
-                               (apply-env saved-env search-sym))))))
+                               (apply-env saved-env search-sym)))
+           )))
+;; (extend-env-rec* (p-name b-vars p-body saved-env)
+;;                  (if (eq? search-sym p-name)
+;;                      (proc-val (procedure b-vars p-body env))
+;;                      (apply-env saved-env search-sym)))
+(define (extend-env* vars vals saved-env)
+  (if (or (null? vars) (null? vals))
+      saved-env
+      (extend-env* (cdr vars) (cdr vals)
+                   (extend-env (car vars) (car vals) saved-env))))
+
+;; (define (extend-env-rec* p-name b-vars p-body saved-env)
+;;   (if (eq? ))
+;;   )
