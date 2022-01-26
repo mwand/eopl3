@@ -1,4 +1,4 @@
-#lang eopl  
+#lang eopl
 
 ;; builds environment interface, using data structures defined in
 ;; data-structures.scm. 

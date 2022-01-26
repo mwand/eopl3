@@ -64,10 +64,18 @@
                          (value-of exp3 env))))
 
            ;\commentbox{\ma{\theletspecsplit}}
-           (let-exp (var exp1 body)
-                    (let ((val1 (value-of exp1 env)))
+           ;; (let-exp (var exp1 body)
+           ;;          (let ((val1 (value-of exp1 env)))
+           ;;            (value-of body
+           ;;                      (extend-env var val1 env))))
+           (let-exp (vars exps body)
+                    (let ((vals
+                           (map
+                            (lambda (e) (value-of e env))
+                            exps
+                            )))
                       (value-of body
-                                (extend-env var val1 env))))
+                                (extend-env* vars vals env))))
 
            (proc-exp (vars body)
                      (let [(new-env (filter-env vars body env))]
@@ -139,7 +147,7 @@
                    (append (occur-free search-var exp1)
                            (occur-free search-var exp2)
                            (occur-free search-var exp3)))
-           (let-exp (var exp1 body)
+           (let-exp (var exps body)
                     (occur-free search-var body))
            (proc-exp (vars body)
                      (occur-free* (cons search-var vars) body))
