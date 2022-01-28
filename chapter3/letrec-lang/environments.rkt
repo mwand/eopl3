@@ -4,7 +4,7 @@
 
 (require "data-structures.rkt")
 
-(provide init-env empty-env extend-env extend-env* apply-env)
+(provide init-env empty-env extend-env extend-env* extend-env-rec apply-env)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
 
@@ -36,28 +36,22 @@
                       (eopl:error 'apply-env "No binding for ~s" search-sym))
            (extend-env (var val saved-env)
                        (if (eqv? search-sym var)
-                           val
-                           (apply-env saved-env search-sym)))
-           (extend-env-rec (p-names b-vars p-bodies saved-env)
-                           (extend-env-rec*
-                            p-names b-vars p-bodies saved-env search-sym env))
-                           )))
+                           (if (expval? val)
+                               val
+                               (vector-ref val 0))
+                           (apply-env saved-env search-sym))))))
+
+
+(define extend-env-rec
+  (lambda (p-name b-var body saved-env)
+    (let* ([vec (make-vector 1)]
+           [new-env (extend-env p-name vec saved-env)])
+      (vector-set! vec 0
+                   (proc-val (procedure b-var body new-env)))
+      new-env)))
 
 (define (extend-env* vars vals saved-env)
   (if (or (null? vars) (null? vals))
       saved-env
       (extend-env* (cdr vars) (cdr vals)
                    (extend-env (car vars) (car vals) saved-env))))
-
-(define extend-env-rec*
-  (lambda (p-names b-vars p-bodies saved-env search-sym env)
-    (if (null? p-names)
-        (apply-env saved-env search-sym)
-        (if (eqv? (car p-names) search-sym)
-            (proc-val (procedure (car b-vars) (car p-bodies) env))
-            (extend-env-rec* (cdr p-names)
-                             (cdr b-vars)
-                             (cdr p-bodies)
-                             saved-env
-                             search-sym
-                             env)))))

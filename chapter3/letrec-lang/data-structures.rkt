@@ -61,11 +61,11 @@
   (empty-env)
   (extend-env 
    (bvar symbol?)
-   (bval expval?)
-   (saved-env environment?))
-  (extend-env-rec
-   (ids (list-of symbol?))
-   (bvars (list-of (list-of symbol?)))
-   (bodies (list-of expression?))
+   (bval (lambda (val)
+            (or (expval? val)
+                (vector? val))))
+   ;; (bvar (list-of symbol?))
+   ;; (bval (list-of (lambda (val)
+   ;;         (or (expval? val)
+   ;;             (vector? val)))))
    (saved-env environment?)))
- 

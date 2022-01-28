@@ -59,7 +59,7 @@
 
            ;\commentbox{\ma{\theletspecsplit}}
            (let-exp (var exp1 body)
-                    (let ((val1 (value-of exp1 env)))
+                    (let ([val1 (value-of exp1 env)])
                       (value-of body
                                 (extend-env var val1 env))))
 
@@ -101,20 +101,3 @@
     (cases proc proc1
            (procedure (vars body saved-env)
                       (value-of body (extend-env* vars args saved-env))))))
-
-;; helper for extend-env-rec list
-;; (define (extend-env-rec* p-names b-vars p-bodys env)
-;;   (if (or (null? p-names) (null? b-vars) (null? p-bodys))
-;;       env
-;;       ;; (begin (display env)
-;;       ;;        (newline)
-;;       ;;        (display "===========")
-;;       ;;        (newline)
-;;       (extend-env-rec* (cdr p-names)
-;;                        (cdr b-vars)
-;;                        (cdr p-bodys)
-;;                        (extend-env-rec (car p-names)
-;;                                        (car b-vars)
-;;                                        (car p-bodys)
-;;                                        ;; (value-of (car p-bodys) env)
-;;                                        env))))
