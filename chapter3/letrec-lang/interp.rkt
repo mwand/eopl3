@@ -71,11 +71,26 @@
                            (args (map
                                   (lambda (e) (value-of e env))
                                   rand)))
+                       (begin (display env)
+                              (newline)
+                              (display proc)
+                              (newline)
+                              (display "----------")
+                              (newline))
                        (apply-procedure proc args)))
 
            (letrec-exp (p-name b-var p-body letrec-body)
                        (value-of letrec-body
                                  (extend-env-rec p-name b-var p-body env)))
+           ;; (letrec-exp (p-names b-vars p-bodys letrec-body)
+           ;;             (let [(new-env (extend-env-rec p-names b-vars p-bodys env))]
+           ;;               (begin
+           ;;                 (display new-env)
+           ;;                 (newline)
+           ;;                 (display "++++++++++++++")
+           ;;                 (newline)
+           ;;               (value-of letrec-body new-env))))
+                                   ;; (extend-env-rec* p-names b-vars p-bodys env)))
 
            )))
 
@@ -86,3 +101,20 @@
     (cases proc proc1
            (procedure (vars body saved-env)
                       (value-of body (extend-env* vars args saved-env))))))
+
+;; helper for extend-env-rec list
+;; (define (extend-env-rec* p-names b-vars p-bodys env)
+;;   (if (or (null? p-names) (null? b-vars) (null? p-bodys))
+;;       env
+;;       ;; (begin (display env)
+;;       ;;        (newline)
+;;       ;;        (display "===========")
+;;       ;;        (newline)
+;;       (extend-env-rec* (cdr p-names)
+;;                        (cdr b-vars)
+;;                        (cdr p-bodys)
+;;                        (extend-env-rec (car p-names)
+;;                                        (car b-vars)
+;;                                        (car p-bodys)
+;;                                        ;; (value-of (car p-bodys) env)
+;;                                        env))))

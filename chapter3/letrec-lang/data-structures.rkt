@@ -64,8 +64,8 @@
    (bval expval?)
    (saved-env environment?))
   (extend-env-rec
-   (id symbol?)
-   (bvar (list-of symbol?))
-   (body expression?)
+   (ids (list-of symbol?))
+   (bvars (list-of (list-of symbol?)))
+   (bodies (list-of expression?))
    (saved-env environment?)))
  

@@ -38,21 +38,26 @@
                        (if (eqv? search-sym var)
                            val
                            (apply-env saved-env search-sym)))
-           (extend-env-rec (p-name b-var p-body saved-env)
-                           (if (eqv? search-sym p-name)
-                               (proc-val (procedure b-var p-body env))
-                               (apply-env saved-env search-sym)))
-           )))
-;; (extend-env-rec* (p-name b-vars p-body saved-env)
-;;                  (if (eq? search-sym p-name)
-;;                      (proc-val (procedure b-vars p-body env))
-;;                      (apply-env saved-env search-sym)))
+           (extend-env-rec (p-names b-vars p-bodies saved-env)
+                           (extend-env-rec*
+                            p-names b-vars p-bodies saved-env search-sym env))
+                           )))
+
 (define (extend-env* vars vals saved-env)
   (if (or (null? vars) (null? vals))
       saved-env
       (extend-env* (cdr vars) (cdr vals)
                    (extend-env (car vars) (car vals) saved-env))))
 
-;; (define (extend-env-rec* p-name b-vars p-body saved-env)
-;;   (if (eq? ))
-;;   )
+(define extend-env-rec*
+  (lambda (p-names b-vars p-bodies saved-env search-sym env)
+    (if (null? p-names)
+        (apply-env saved-env search-sym)
+        (if (eqv? (car p-names) search-sym)
+            (proc-val (procedure (car b-vars) (car p-bodies) env))
+            (extend-env-rec* (cdr p-names)
+                             (cdr b-vars)
+                             (cdr p-bodies)
+                             saved-env
+                             search-sym
+                             env)))))

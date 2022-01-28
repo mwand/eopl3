@@ -98,4 +98,16 @@ in let times4 = (fix t4m)
 
 
     (multiple-letrec-1 "letrec f(x,y) = if zero?(x)  then 0 else -((f -(x,y) y), -2) in (f 4 1)" 8)
+
+    ;; ex3.32
+    (letret-multiple-1 "letrec
+even(x) = if zero?(x) then 1 else (odd -(x,1))
+odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (odd 13)" 1)
+
+    (letret-multiple-2 "letrec
+even(x) = if zero?(x) then 1 else (odd -(x,1))
+odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (even 13)" 0)
+
     ))
