@@ -64,9 +64,9 @@
                            (if (null? vars)
                                (apply-env saved-env search-sym)
                                (if (eqv? search-sym (car vars))
-                                   (begin (display vec)
-                                          (newline)
-                                   (vector-ref vec idx))
+                                   ;; (begin (display vec)
+                                   ;;        (newline))
+                                   (vector-ref vec idx)
                                    (apply-env
                                     (extend-env-rec
                                      (cdr vars)
