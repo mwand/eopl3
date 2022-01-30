@@ -4,6 +4,7 @@
 ;; latex code for inserting the rules into the code in the book.
 ;; These are too complicated to put here, see the text, sorry.
 
+
 (require "drscheme-init.rkt")
 
 (require "lang.rkt")
@@ -71,27 +72,28 @@
                            (args (map
                                   (lambda (e) (value-of e env))
                                   rand)))
-                       (begin (display env)
-                              (newline)
-                              (display proc)
-                              (newline)
-                              (display "----------")
-                              (newline))
+                       ;; (begin (display env)
+                       ;;        (newline)
+                       ;;        (display proc)
+                       ;;        (newline)
+                       ;;        (display args)
+                       ;;        (newline)
+                       ;;        (display "----------")
+                       ;;        (newline))
                        (apply-procedure proc args)))
 
-           (letrec-exp (p-name b-var p-body letrec-body)
-                       (value-of letrec-body
-                                 (extend-env-rec p-name b-var p-body env)))
-           ;; (letrec-exp (p-names b-vars p-bodys letrec-body)
-           ;;             (let [(new-env (extend-env-rec p-names b-vars p-bodys env))]
-           ;;               (begin
-           ;;                 (display new-env)
-           ;;                 (newline)
-           ;;                 (display "++++++++++++++")
-           ;;                 (newline)
-           ;;               (value-of letrec-body new-env))))
-                                   ;; (extend-env-rec* p-names b-vars p-bodys env)))
-
+           ;; (letrec-exp (p-name b-var p-body letrec-body)
+           ;;             (value-of letrec-body
+           ;;                       (extend-env-rec p-name b-var p-body env)))
+           (letrec-exp (p-names b-vars p-bodys letrec-body)
+                       (let [(new-env (extend-env-rec-vector p-names b-vars p-bodys env))]
+                         ;; (begin
+                         ;;   (display new-env)
+                         ;;   (newline)
+                         ;;   (display ">>>>>>>>>>>>>>>>")
+                         ;;   (newline))
+                         (value-of letrec-body new-env)))
+                                   ;; (extend-env-rec* p-names b-vars p-bodys env))))
            )))
 
 ;; apply-procedure : Proc * ExpVal -> ExpVal
@@ -101,3 +103,9 @@
     (cases proc proc1
            (procedure (vars body saved-env)
                       (value-of body (extend-env* vars args saved-env))))))
+                      ;; (let ([new-env (extend-env* vars args saved-env)])
+                      ;;   (begin (display new-env)
+                      ;;          (newline)
+                      ;;          (display "+++++++++")
+                      ;;          (newline)
+                      ;;          (value-of body new-env)))))))

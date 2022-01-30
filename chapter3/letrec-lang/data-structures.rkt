@@ -59,13 +59,16 @@
 ;; Page: 86
 (define-datatype environment environment?
   (empty-env)
-  (extend-env 
+  (extend-env
    (bvar symbol?)
-   (bval (lambda (val)
-            (or (expval? val)
-                (vector? val))))
-   ;; (bvar (list-of symbol?))
-   ;; (bval (list-of (lambda (val)
-   ;;         (or (expval? val)
-   ;;             (vector? val)))))
+   (bval expval?)
+   (saved-env environment?))
+  (extend-env*
+   (bvars (list-of symbol?))
+   (bvals (list-of expval?))
+   (saved-env environment?))
+  (extend-env-rec
+   (bvars (list-of symbol?))
+   (bvec vector?)
+   (idx number?)
    (saved-env environment?)))
