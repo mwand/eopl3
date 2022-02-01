@@ -48,6 +48,12 @@
      ("(" expression expression ")")
      call-exp)
 
+    (expression
+     ("cond"
+      (arbno expression "==>" expression)
+      "end" )
+     cond-exp)
+
     (expression ("%nameless-var" number) nameless-var-exp)
     (expression
      ("%let" expression "in" expression)

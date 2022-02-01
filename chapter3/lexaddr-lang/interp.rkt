@@ -59,6 +59,17 @@
                            (arg (value-of rand nameless-env)))
                        (apply-procedure proc arg)))
 
+           (cond-exp (exp1 exp2)
+                     (if (null? exp1)
+                         (eopl:error "none of cond succeed")
+                         (let ((condval (value-of (car exp1) nameless-env)))
+                           (if (expval->bool condval)
+                               (value-of (car exp2) nameless-env)
+                               (value-of
+                                (cond-exp (cdr exp1) (cdr exp2))
+                                nameless-env
+                                )))))
+
            (nameless-var-exp (n)
                              (apply-nameless-env nameless-env n))
 

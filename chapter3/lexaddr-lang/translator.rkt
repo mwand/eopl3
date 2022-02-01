@@ -48,12 +48,21 @@
                      (call-exp
                       (translation-of rator senv)
                       (translation-of rand senv)))
+
+           (cond-exp (exp1 exp2)
+                     (let ([translation-of-list
+                            (lambda (e)
+                               (translation-of e senv))])
+                     (cond-exp
+                      (map translation-of-list exp1)
+                      (map translation-of-list exp2))))
+
            (else (report-invalid-source-expression exp))
            )))
 
 (define report-invalid-source-expression
   (lambda (exp)
-    (eopl:error 'value-of 
+    (eopl:error 'value-of
                 "Illegal expression in source code: ~s" exp)))
 
 ;;;;;;;;;;;;;;;; static environments ;;;;;;;;;;;;;;;;
