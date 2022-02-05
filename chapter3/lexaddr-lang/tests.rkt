@@ -86,5 +86,21 @@ in let times4 = (fix t4m)
                   zero?(-(x,4)) ==> 2
             end" 2)
 
-)
+    (simple-cons-1 "cons(3,cons(4, emptylist))" (3 4))
+    (simple-car-1 "car(cons(3,cons(4, emptylist)))" 3)
+    (simple-cdr-1 "cdr(cons(3,cons(4,emptylist)))" (4))
+    (cons-car-cdr "let x = 4
+                   in cons(x,
+                           cons(cons(-(x,1),
+                                emptylist),
+                           emptylist))"  (4 (3)))
+
+    (simple-list-1 "list(2,3,4)" (2 3 4))
+    (simple-list-2 "let x = 4
+                 in list(x, -(x,1), -(x,3))" (4 3 1))
+
+    (unpack-list "
+      let u = 7
+      in unpack x y = cons(u,cons(3,emptylist))
+         in -(x,y)" 4)
     ))

@@ -54,13 +54,47 @@
       "end" )
      cond-exp)
 
+    (expression
+     ("emptylist")
+     emptylist-exp)
+
+    (expression
+     ("cons" "(" expression "," expression ")")
+     cons-exp)
+
+    (expression
+     ("car" "(" expression ")")
+     car-exp)
+
+    (expression
+     ("cdr" "(" expression ")")
+     cdr-exp)
+
+    (expression
+     ("null?" "(" expression ")")
+     null?-exp)
+
+    (expression
+     ("list" "(" (separated-list expression ",") ")")
+     list-exp)
+
+    (expression
+     ("unpack" (arbno identifier) "=" expression "in" expression)
+     unpack-exp)
+
     (expression ("%nameless-var" number) nameless-var-exp)
+
     (expression
      ("%let" expression "in" expression)
      nameless-let-exp)
+
     (expression
      ("%lexproc" expression)
      nameless-proc-exp)
+
+    (expression
+     ("%unpack" expression "in" expression)
+     nameless-unpack-exp)
 
     ))
 

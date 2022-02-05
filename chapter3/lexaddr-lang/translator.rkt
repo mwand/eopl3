@@ -18,47 +18,72 @@
 ;; Page 97
 (define translation-of
   (lambda (exp senv)
-    (cases expression exp
-           (const-exp (num) (const-exp num))
-           (diff-exp (exp1 exp2)
-                     (diff-exp
+    (let ([translation-of* (lambda (e)
+                             (translation-of e senv))])
+      (cases expression exp
+             (const-exp (num) (const-exp num))
+             (diff-exp (exp1 exp2)
+                       (diff-exp
+                        (translation-of exp1 senv)
+                        (translation-of exp2 senv)))
+             (zero?-exp (exp1)
+                        (zero?-exp
+                         (translation-of exp1 senv)))
+             (if-exp (exp1 exp2 exp3)
+                     (if-exp
                       (translation-of exp1 senv)
-                      (translation-of exp2 senv)))
-           (zero?-exp (exp1)
-                      (zero?-exp
-                       (translation-of exp1 senv)))
-           (if-exp (exp1 exp2 exp3)
-                   (if-exp
-                    (translation-of exp1 senv)
-                    (translation-of exp2 senv)
-                    (translation-of exp3 senv)))
-           (var-exp (var)
-                    (nameless-var-exp
-                     (apply-senv senv var)))
-           (let-exp (var exp1 body)
-                    (nameless-let-exp
-                     (translation-of exp1 senv)
-                     (translation-of body
-                                     (extend-senv var senv))))
-           (proc-exp (var body)
-                     (nameless-proc-exp
-                      (translation-of body
-                                      (extend-senv var senv))))
-           (call-exp (rator rand)
-                     (call-exp
-                      (translation-of rator senv)
-                      (translation-of rand senv)))
+                      (translation-of exp2 senv)
+                      (translation-of exp3 senv)))
+             (var-exp (var)
+                      (nameless-var-exp
+                       (apply-senv senv var)))
+             (let-exp (var exp1 body)
+                      (nameless-let-exp
+                       (translation-of exp1 senv)
+                       (translation-of body
+                                       (extend-senv var senv))))
+             (proc-exp (var body)
+                       (nameless-proc-exp
+                        (translation-of body
+                                        (extend-senv var senv))))
+             (call-exp (rator rand)
+                       (call-exp
+                        (translation-of rator senv)
+                        (translation-of rand senv)))
 
-           (cond-exp (exp1 exp2)
-                     (let ([translation-of-list
-                            (lambda (e)
-                               (translation-of e senv))])
-                     (cond-exp
-                      (map translation-of-list exp1)
-                      (map translation-of-list exp2))))
+             (cond-exp (exp1 exp2)
+                       (cond-exp
+                        (map translation-of* exp1)
+                        (map translation-of* exp2)))
 
-           (else (report-invalid-source-expression exp))
-           )))
+             (emptylist-exp ()
+                            (emptylist-exp))
+
+             (cons-exp (head tail)
+                       (cons-exp
+                        (translation-of head senv)
+                        (translation-of tail senv)))
+
+             (car-exp (exp)
+                      (car-exp
+                       (translation-of exp senv)))
+
+             (cdr-exp (exp)
+                      (cdr-exp
+                       (translation-of exp senv)))
+
+             (list-exp (exp)
+                       (list-exp
+                        (map translation-of* exp)))
+
+             (unpack-exp (syms lst body)
+                         (nameless-unpack-exp
+                          (translation-of lst senv)
+                          (translation-of body
+                                          (extend-senv* syms senv))))
+
+             (else (report-invalid-source-expression exp))
+             ))))
 
 (define report-invalid-source-expression
   (lambda (exp)
@@ -81,6 +106,14 @@
 (define extend-senv
   (lambda (var senv)
     (cons var senv)))
+
+(define extend-senv*
+  (lambda (vars senv)
+    (if (null? vars)
+        senv
+        (extend-senv* (cdr vars)
+                      (extend-senv (car vars) senv))))
+  )
 
 ;; apply-senv : Senv * Var -> Lexaddr
 ;; Page: 95

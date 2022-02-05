@@ -14,6 +14,8 @@
    (value number?))
   (bool-val
    (boolean boolean?))
+  (list-val
+   (lst list?))
   (proc-val
    (proc proc?)))
 
@@ -32,6 +34,12 @@
     (cases expval v
            (bool-val (bool) bool)
            (else (expval-extractor-error 'bool v)))))
+
+(define expval->list
+  (lambda (v)
+    (cases expval v
+           (list-val (lst) lst)
+           (else (expval-extractor-error 'list v)))))
 
 ;; expval->proc : ExpVal -> Proc
 (define expval->proc
@@ -84,6 +92,9 @@
   (lambda (val nameless-env)
     (cons val nameless-env)))
 
+(define extend-nameless-env*
+  (lambda (vals nameless-env)
+    (append (reverse vals) nameless-env)))
 ;; apply-nameless-env : Nameless-env * Lexaddr -> ExpVal
 ;; Page: 99
 (define apply-nameless-env

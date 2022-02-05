@@ -44,6 +44,7 @@
     (cond
       ((number? sloppy-val) (num-val sloppy-val))
       ((boolean? sloppy-val) (bool-val sloppy-val))
+      ((list? sloppy-val) (list-val (map sloppy->expval sloppy-val)))
       (else
        (eopl:error 'sloppy->expval
                    "Can't convert sloppy value to expval: ~s"

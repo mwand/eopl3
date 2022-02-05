@@ -70,6 +70,33 @@
                                 nameless-env
                                 )))))
 
+           (emptylist-exp () (list-val '()))
+
+           (cons-exp (head tail)
+                     (let* ([val1 (value-of head nameless-env)]
+                            [val2 (value-of tail nameless-env)]
+                            [num2 (expval->list  val2)])
+                       (list-val
+                        (cons val1 num2))))
+
+           (car-exp (exp)
+                    (let ((val1 (value-of exp nameless-env)))
+                      (let ((num1 (expval->list val1)))
+                        (car num1))))
+
+           (cdr-exp (exp)
+                    (let ((val1 (value-of exp nameless-env)))
+                      (let ((num1 (expval->list val1)))
+                        (list-val
+                         (cdr num1)))))
+
+           (list-exp (exp)
+                     (list-val
+                      (map
+                       (lambda (exp1)
+                         (value-of exp1 nameless-env))
+                       exp)))
+
            (nameless-var-exp (n)
                              (apply-nameless-env nameless-env n))
 
@@ -81,6 +108,11 @@
            (nameless-proc-exp (body)
                               (proc-val
                                (procedure body nameless-env)))
+
+           (nameless-unpack-exp (lst body)
+                                (let* [(lstval (expval->list (value-of lst nameless-env)))
+                                       (new-env (extend-nameless-env* lstval nameless-env))]
+                                  (value-of body new-env)))
 
            (else
             (eopl:error 'value-of
