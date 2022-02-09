@@ -82,7 +82,17 @@
      ("unpack" (arbno identifier) "=" expression "in" expression)
      unpack-exp)
 
+    (expression
+     ("letrec"
+       identifier "(" identifier ")" "=" expression
+      "in" expression)
+     letrec-exp)
+
     (expression ("%nameless-var" number) nameless-var-exp)
+
+    (expression
+     ("%nameless-letrec-var" number)
+     nameless-letrec-var-exp)
 
     (expression
      ("%let" expression "in" expression)
@@ -95,6 +105,10 @@
     (expression
      ("%unpack" expression "in" expression)
      nameless-unpack-exp)
+
+    (expression
+     ("%letrec" expression "in" expression)
+     nameless-letrec-exp)
 
     ))
 

@@ -54,11 +54,6 @@
                        (value-of exp1 nameless-env)
                        (value-of exp2 nameless-env)))
 
-           (call-exp (rator rand)
-                     (let ((proc (expval->proc (value-of rator nameless-env)))
-                           (arg (value-of rand nameless-env)))
-                       (apply-procedure proc arg)))
-
            (cond-exp (exp1 exp2)
                      (if (null? exp1)
                          (eopl:error "none of cond succeed")
@@ -97,13 +92,26 @@
                          (value-of exp1 nameless-env))
                        exp)))
 
+           (call-exp (rator rand)
+                     (let ((proc (expval->proc (value-of rator nameless-env)))
+                           (arg (value-of rand nameless-env)))
+                       (apply-procedure proc arg)))
+
            (nameless-var-exp (n)
                              (apply-nameless-env nameless-env n))
+
 
            (nameless-let-exp (exp1 body)
                              (let ((val (value-of exp1 nameless-env)))
                                (value-of body
                                          (extend-nameless-env val nameless-env))))
+
+           (nameless-letrec-var-exp (n)
+                                    (let ([proc1 (expval->proc (apply-nameless-env nameless-env n))])
+                                      (cases proc proc1
+                                             (procedure (body saved-env)
+                                                        (proc-val (procedure body
+                                                                             (extend-nameless-env (proc-val proc1) saved-env)))))))
 
            (nameless-proc-exp (body)
                               (proc-val
@@ -113,6 +121,15 @@
                                 (let* [(lstval (expval->list (value-of lst nameless-env)))
                                        (new-env (extend-nameless-env* lstval nameless-env))]
                                   (value-of body new-env)))
+
+           (nameless-letrec-exp (p-body letrec-body)
+                                (let* ([val (proc-val
+                                             (procedure
+                                              p-body
+                                              nameless-env))]
+                                       [new-env (extend-nameless-env val nameless-env)])
+                                  (value-of letrec-body new-env)))
+                                            ;; (extend-nameless-env val nameless-env))))
 
            (else
             (eopl:error 'value-of

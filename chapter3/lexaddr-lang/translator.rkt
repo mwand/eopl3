@@ -35,17 +35,21 @@
                       (translation-of exp2 senv)
                       (translation-of exp3 senv)))
              (var-exp (var)
-                      (nameless-var-exp
-                       (apply-senv senv var)))
+                      (let ([val (apply-senv senv var)])
+                        (if (cdr val)
+                            (nameless-letrec-var-exp (car val))
+                            (nameless-var-exp (car val)))))
+             ;; (nameless-var-exp
+             ;;  (apply-senv senv var)))
              (let-exp (var exp1 body)
                       (nameless-let-exp
                        (translation-of exp1 senv)
                        (translation-of body
-                                       (extend-senv var senv))))
+                                       (extend-senv var #f senv))))
              (proc-exp (var body)
                        (nameless-proc-exp
                         (translation-of body
-                                        (extend-senv var senv))))
+                                        (extend-senv var #f senv))))
              (call-exp (rator rand)
                        (call-exp
                         (translation-of rator senv)
@@ -82,6 +86,17 @@
                           (translation-of body
                                           (extend-senv* syms senv))))
 
+             (letrec-exp (p-name b-var p-body letrec-body)
+                         ;; (begin (display senv)
+                         ;;        (newline)
+                         ;;        (display "======="))
+                         (nameless-letrec-exp
+                          (translation-of p-body
+                                          (extend-senv b-var #f
+                                                       (extend-senv p-name #t senv)))
+                          (translation-of letrec-body
+                                          (extend-senv p-name #t senv))))
+
              (else (report-invalid-source-expression exp))
              ))))
 
@@ -104,27 +119,55 @@
 ;; extend-senv : Var * Senv -> Senv
 ;; Page: 95
 (define extend-senv
-  (lambda (var senv)
-    (cons var senv)))
+  (lambda (var letrec? senv)
+    (cons (cons var letrec?) senv)))
 
 (define extend-senv*
   (lambda (vars senv)
     (if (null? vars)
         senv
         (extend-senv* (cdr vars)
-                      (extend-senv (car vars) senv))))
-  )
+                      (extend-senv (car vars) #f senv)))))
 
-;; apply-senv : Senv * Var -> Lexaddr
+;; apply-senv : Senv * Var -> (Lexaddr, Letrec-var?)
 ;; Page: 95
+;; (define apply-senv
+;;   (lambda (senv var)
+;;     (let ([number-senv (number-elements senv)])
+;;     (cond
+;;       [(null? senv) (report-unbound-var var)]
+;;       [(and (cdar senv) (eqv? var (caar senv))) (cons 0 #t)] ;; letrec
+;;       [(eqv? var (caar senv)) (cons 0 #f)]
+;;       [else
+;;        (+ 1 (apply-senv (cdr senv) var))]))))
 (define apply-senv
   (lambda (senv var)
+    ;; (begin (display senv)
+    ;;        (display "++++++")
+    ;;        (newline))
     (cond
-      ((null? senv) (report-unbound-var var))
-      ((eqv? var (car senv))
-       0)
-      (else
-       (+ 1 (apply-senv (cdr senv) var))))))
+        [(null? senv) (report-unbound-var var)]
+        [(and (cdar senv) (eqv? var (caar senv))) (cons 0 #t)] ;; letrec
+        [(eqv? var (caar senv)) (cons 0 #f)]
+        [else
+         (add1-fisrt (apply-senv (cdr senv) var))])))
+
+;; helper for apply-senv, add first
+(define add1-fisrt
+  (lambda (elem)
+  (cons (+ 1 (car elem)) (cdr elem))))
+
+
+(define number-elements-from
+  (lambda (lst n)
+    (if (null? lst) '()
+        (cons
+         (list n (car lst))
+         (number-elements-from (cdr lst) (+ n 1))))))
+
+(define number-elements
+  (lambda (lst)
+    (number-elements-from lst 0)))
 
 (define report-unbound-var
   (lambda (var)
@@ -134,7 +177,7 @@
 ;; Page: 96
 (define init-senv
   (lambda ()
-    (extend-senv 'i
-                 (extend-senv 'v
-                              (extend-senv 'x
+    (extend-senv 'i #f
+                 (extend-senv 'v #f
+                              (extend-senv 'x #f
                                            (empty-senv))))))

@@ -10,7 +10,6 @@
 ;; (init-env) builds an environment in which i is bound to the
 ;; expressed value 1, v is bound to the expressed value 5, and x is
 ;; bound to the expressed value 10.
-
 (define init-nameless-env
   (lambda ()
     (extend-nameless-env

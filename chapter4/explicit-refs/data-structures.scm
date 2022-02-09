@@ -8,14 +8,14 @@
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
 
 ;;; an expressed value is either a number, a boolean, a procval, or a
-;;; reference. 
+;;; reference.
 
   (define-datatype expval expval?
     (num-val
       (value number?))
     (bool-val
       (boolean boolean?))
-    (proc-val 
+    (proc-val
       (proc proc?))
     (ref-val
       (ref reference?))
@@ -59,10 +59,10 @@
       (bvar symbol?)
       (body expression?)
       (env environment?)))
-  
+
   (define-datatype environment environment?
     (empty-env)
-    (extend-env 
+    (extend-env
       (bvar symbol?)
       (bval expval?)
       (saved-env environment?))

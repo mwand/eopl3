@@ -95,9 +95,9 @@
 (define extend-nameless-env*
   (lambda (vals nameless-env)
     (append (reverse vals) nameless-env)))
+
 ;; apply-nameless-env : Nameless-env * Lexaddr -> ExpVal
 ;; Page: 99
 (define apply-nameless-env
   (lambda (nameless-env n)
     (list-ref nameless-env n)))
-
