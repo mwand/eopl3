@@ -74,6 +74,10 @@ in let
 in let times4 = (fix t4m)
    in (times4 3)" 12)
 
+    (apply-multiple-para-in-rator-pos "(proc(x,y) -(x,y) 30 29)" 1)
+    (apply-multiple-para-proc "let f = proc(x,y) -(x,y) in (f 30 29)" 1)
+    (curry-proc "let f = proc(x) proc(y) -(x, -(0,y)) in ((f 2) 3)" 5)
+
     (cond-1 "let x = 2 in
             cond
                   zero?(-(x,2)) ==> 3
@@ -99,10 +103,13 @@ in let times4 = (fix t4m)
     (simple-list-2 "let x = 4
                  in list(x, -(x,1), -(x,3))" (4 3 1))
 
-    (unpack-list "
+    (unpack-list-1 "
       let u = 7
       in unpack x y = cons(u,cons(3,emptylist))
          in -(x,y)" 4)
+
+    (unpack-list-2 "unpack x y z = list (1,2,3) in x"  1)
+    (unpack-list-3 "unpack x y z = list (1,2,3) in -(-(x,y),z)" -4)
 
     ;; simple letrecs
     (simple-letrec-1 "letrec f(x) = -(x,1) in (f 33)" 32)

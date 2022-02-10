@@ -35,25 +35,30 @@
                       (translation-of exp2 senv)
                       (translation-of exp3 senv)))
              (var-exp (var)
-                      (let ([val (apply-senv senv var)])
-                        (if (cdr val)
-                            (nameless-letrec-var-exp (car val))
-                            (nameless-var-exp (car val)))))
+                      (let* ([val (apply-senv senv var)]
+                             [depth (car val)]
+                             [pos (cadr val)]
+                             [letrec? (cddr val)])
+                        (if letrec?
+                            (nameless-letrec-var-exp depth pos)
+                            (nameless-var-exp depth pos))))
              ;; (nameless-var-exp
              ;;  (apply-senv senv var)))
-             (let-exp (var exp1 body)
+             (let-exp (vars exps body)
                       (nameless-let-exp
-                       (translation-of exp1 senv)
+                       (map (lambda (e) (translation-of e senv)) exps)
                        (translation-of body
-                                       (extend-senv var #f senv))))
-             (proc-exp (var body)
+                                       (extend-senv vars #f senv))))
+             (proc-exp (vars body)
                        (nameless-proc-exp
                         (translation-of body
-                                        (extend-senv var #f senv))))
-             (call-exp (rator rand)
+                                        (extend-senv vars #f senv))))
+             (call-exp (rator rands)
                        (call-exp
                         (translation-of rator senv)
-                        (translation-of rand senv)))
+                         ;; (map (lambda (e) (translation-of e senv)) rands)))
+                        (map translation-of* rands)))
+                        ;; (translation-of rands senv)))
 
              (cond-exp (exp1 exp2)
                        (cond-exp
@@ -84,7 +89,7 @@
                          (nameless-unpack-exp
                           (translation-of lst senv)
                           (translation-of body
-                                          (extend-senv* syms senv))))
+                                          (extend-senv syms #f senv))))
 
              (letrec-exp (p-name b-var p-body letrec-body)
                          ;; (begin (display senv)
@@ -107,67 +112,81 @@
 
 ;;;;;;;;;;;;;;;; static environments ;;;;;;;;;;;;;;;;
 
-;;; Senv = Listof(Sym)
+;;; Senv = Listof(Listof(Sym),Bool)
 ;;; Lexaddr = N
+
+(define-datatype senv senv?
+  (empty-senv)
+  (extend-senv1
+   (var symbol?)
+   (saved-env senv?)
+   )
+  (extend-senv
+   (svars (list-of symbol?))
+   (letrec? boolean?)
+   (saved-env senv?)))
+
+(define apply-senv
+  (lambda (senv1 search-var)
+    (cases senv senv1
+           (empty-senv ()
+                       (report-unbound-var search-var))
+           (extend-senv1 (var saved-env)
+                         (if (eqv? var search-var)
+                             (cons 0 (cons 0 #f))
+                             (add1-first (extend-senv1 var (cdr saved-env)))))
+           (extend-senv (vars letrec? saved-env)
+                        (let loop ([vars vars]
+                                   [depth 0]
+                                   [pos 0])
+                          (cond
+                            [(null? vars)
+                             (add1-first (apply-senv saved-env search-var))]
+                            [(eqv? (car vars) search-var)
+                             (cons depth (cons pos letrec?))]
+                            [else
+                             (loop (cdr vars) depth (+ 1 pos))]))))))
 
 ;; empty-senv : () -> Senv
 ;; Page: 95
-(define empty-senv
+(define empty-senv-1
   (lambda ()
     '()))
 
 ;; extend-senv : Var * Senv -> Senv
 ;; Page: 95
-(define extend-senv
+(define extend-senv-1
   (lambda (var letrec? senv)
-    (cons (cons var letrec?) senv)))
+    (if (list? var)
+        (cons (cons var letrec?) senv)
+        (cons (cons (list var) letrec?) senv))))
 
-(define extend-senv*
-  (lambda (vars senv)
-    (if (null? vars)
-        senv
-        (extend-senv* (cdr vars)
-                      (extend-senv (car vars) #f senv)))))
+(define extend-senv* extend-senv)
+;; (define extend-senv*
+;;   (lambda (vars senv)
+;;     (if (null? vars)
+;;         senv
+;;         (extend-senv* (cdr vars)
+;;                       (extend-senv (car vars) #f senv)))))
 
 ;; apply-senv : Senv * Var -> (Lexaddr, Letrec-var?)
 ;; Page: 95
-;; (define apply-senv
-;;   (lambda (senv var)
-;;     (let ([number-senv (number-elements senv)])
-;;     (cond
-;;       [(null? senv) (report-unbound-var var)]
-;;       [(and (cdar senv) (eqv? var (caar senv))) (cons 0 #t)] ;; letrec
-;;       [(eqv? var (caar senv)) (cons 0 #f)]
-;;       [else
-;;        (+ 1 (apply-senv (cdr senv) var))]))))
-(define apply-senv
+(define apply-senv-1
   (lambda (senv var)
-    ;; (begin (display senv)
-    ;;        (display "++++++")
-    ;;        (newline))
-    (cond
-        [(null? senv) (report-unbound-var var)]
-        [(and (cdar senv) (eqv? var (caar senv))) (cons 0 #t)] ;; letrec
-        [(eqv? var (caar senv)) (cons 0 #f)]
-        [else
-         (add1-fisrt (apply-senv (cdr senv) var))])))
+    (let loop ([senv senv]
+               [depth 0]
+               [pos 0])
+      (if (null? senv) (report-unbound-var var)
+          (if (null? (caar senv))
+              (loop (cdr senv) (+ 1 depth) 0)
+              (if (eqv? var (caaar senv))
+                  (cons depth (cons pos (cdar senv)))
+                  (loop (cons (cons (cdaar senv) (cdar senv)) (cdr senv)) depth (+ 1 pos))))))))
 
 ;; helper for apply-senv, add first
-(define add1-fisrt
+(define add1-first
   (lambda (elem)
   (cons (+ 1 (car elem)) (cdr elem))))
-
-
-(define number-elements-from
-  (lambda (lst n)
-    (if (null? lst) '()
-        (cons
-         (list n (car lst))
-         (number-elements-from (cdr lst) (+ n 1))))))
-
-(define number-elements
-  (lambda (lst)
-    (number-elements-from lst 0)))
 
 (define report-unbound-var
   (lambda (var)
@@ -177,7 +196,7 @@
 ;; Page: 96
 (define init-senv
   (lambda ()
-    (extend-senv 'i #f
-                 (extend-senv 'v #f
-                              (extend-senv 'x #f
+    (extend-senv '(i) #f
+                 (extend-senv '(v) #f
+                              (extend-senv '(x) #f
                                            (empty-senv))))))

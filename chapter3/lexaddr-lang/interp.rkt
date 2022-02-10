@@ -92,22 +92,26 @@
                          (value-of exp1 nameless-env))
                        exp)))
 
-           (call-exp (rator rand)
+           (call-exp (rator rands)
                      (let ((proc (expval->proc (value-of rator nameless-env)))
-                           (arg (value-of rand nameless-env)))
-                       (apply-procedure proc arg)))
+                           (args (map
+                                  (lambda (e) (value-of e nameless-env))
+                                  rands)))
+                       (apply-procedure proc args)))
 
-           (nameless-var-exp (n)
-                             (apply-nameless-env nameless-env n))
+           (nameless-var-exp (depth pos)
+                             (apply-nameless-env nameless-env depth pos))
 
 
-           (nameless-let-exp (exp1 body)
-                             (let ((val (value-of exp1 nameless-env)))
+           (nameless-let-exp (exps body)
+                             (let ([vals (map
+                                         (lambda (e) (value-of e nameless-env))
+                                         exps)])
                                (value-of body
-                                         (extend-nameless-env val nameless-env))))
+                                         (extend-nameless-env vals nameless-env))))
 
-           (nameless-letrec-var-exp (n)
-                                    (let ([proc1 (expval->proc (apply-nameless-env nameless-env n))])
+           (nameless-letrec-var-exp (depth pos)
+                                    (let ([proc1 (expval->proc (apply-nameless-env nameless-env depth pos))])
                                       (cases proc proc1
                                              (procedure (body saved-env)
                                                         (proc-val (procedure body
@@ -119,7 +123,7 @@
 
            (nameless-unpack-exp (lst body)
                                 (let* [(lstval (expval->list (value-of lst nameless-env)))
-                                       (new-env (extend-nameless-env* lstval nameless-env))]
+                                       (new-env (extend-nameless-env lstval nameless-env))]
                                   (value-of body new-env)))
 
            (nameless-letrec-exp (p-body letrec-body)
@@ -141,7 +145,7 @@
 ;; apply-procedure : Proc * ExpVal -> ExpVal
 
 (define apply-procedure
-  (lambda (proc1 arg)
+  (lambda (proc1 args)
     (cases proc proc1
            (procedure (body saved-env)
-                      (value-of body (extend-nameless-env arg saved-env))))))
+                      (value-of body (extend-nameless-env args saved-env))))))
