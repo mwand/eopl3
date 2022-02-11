@@ -53,7 +53,6 @@
 ;; run-one : Sym -> ExpVal
 
 ;; (run-one sym) runs the test whose name is sym
-
 (define run-one
   (lambda (test-name)
     (let ((the-test (assoc test-name test-list)))

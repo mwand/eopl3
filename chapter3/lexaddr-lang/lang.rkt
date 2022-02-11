@@ -84,8 +84,10 @@
 
     (expression
      ("letrec"
-      identifier "(" identifier ")" "=" expression
-       ;; identifier "(" (separated-list identifier ",") ")" "=" expression
+      (arbno
+       ;; identifier "(" identifier ")" "=" expression
+       identifier "(" (separated-list identifier ",") ")" "=" expression
+       )
       "in" expression)
      letrec-exp)
 
@@ -108,7 +110,7 @@
      nameless-unpack-exp)
 
     (expression
-     ("%letrec" expression "in" expression)
+     ("%letrec" (arbno expression) "in" expression)
      nameless-letrec-exp)
 
     ))

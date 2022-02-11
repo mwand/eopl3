@@ -91,16 +91,19 @@
                           (translation-of body
                                           (extend-senv syms #f senv))))
 
-             (letrec-exp (p-name b-var p-body letrec-body)
-                         ;; (begin (display senv)
-                         ;;        (newline)
-                         ;;        (display "======="))
+             (letrec-exp (p-names b-vars p-bodies letrec-body)
                          (nameless-letrec-exp
-                          (translation-of p-body
-                                          (extend-senv b-var #f
-                                                       (extend-senv p-name #t senv)))
+                          (map (lambda (vars body)
+                                 (translation-of body
+                                                 (extend-senv vars #f
+                                                              (extend-senv p-names #t senv))))
+                               b-vars
+                               p-bodies)
+                          ;; (translation-of p-bodies
+                          ;;                 (extend-senv* b-vars #f
+                          ;;                               (extend-senv p-names #t senv)))
                           (translation-of letrec-body
-                                          (extend-senv p-name #t senv))))
+                                          (extend-senv p-names #t senv))))
 
              (else (report-invalid-source-expression exp))
              ))))
@@ -117,24 +120,27 @@
 
 (define-datatype senv senv?
   (empty-senv)
-  (extend-senv1
-   (var symbol?)
-   (saved-env senv?)
-   )
+  ;; (extend-senv1
+  ;;  (var symbol?)
+  ;;  (saved-env senv?))
   (extend-senv
    (svars (list-of symbol?))
    (letrec? boolean?)
    (saved-env senv?)))
+  ;; (extend-senv-rec
+  ;;  (svars (list-of (list-of symbol?)))
+  ;;  (letrec? boolean?)
+  ;;  (saved-env senv?)))
 
 (define apply-senv
   (lambda (senv1 search-var)
     (cases senv senv1
            (empty-senv ()
                        (report-unbound-var search-var))
-           (extend-senv1 (var saved-env)
-                         (if (eqv? var search-var)
-                             (cons 0 (cons 0 #f))
-                             (add1-first (extend-senv1 var (cdr saved-env)))))
+           ;; (extend-senv1 (var saved-env)
+           ;;               (if (eqv? var search-var)
+           ;;                   (cons 0 (cons 0 #f))
+           ;;                   (add1-first (extend-senv1 var (cdr saved-env)))))
            (extend-senv (vars letrec? saved-env)
                         (let loop ([vars vars]
                                    [depth 0]
@@ -146,6 +152,16 @@
                              (cons depth (cons pos letrec?))]
                             [else
                              (loop (cdr vars) depth (+ 1 pos))]))))))
+           ;; (extend-senv-rec (lst-vars letrec? saved-env)
+           ;;                  (let loop ([lst lst-vars]
+           ;;                             [depth 0]
+           ;;                             [pos 0])
+           ;;                    (cond
+           ;;                      [(null? lst)
+           ;;                       (add1-first (apply-senv saved-env search-var))]
+           ;;                      [(eqv? (caar lst) search-var)
+           ;;                       ]
+           ;;                    )))))
 
 ;; empty-senv : () -> Senv
 ;; Page: 95
@@ -161,7 +177,12 @@
         (cons (cons var letrec?) senv)
         (cons (cons (list var) letrec?) senv))))
 
-(define extend-senv* extend-senv)
+(define extend-senv*
+  (lambda (lst-vars letrec? senv)
+    (if (null? lst-vars)
+        senv
+        (extend-senv* (cdr lst-vars) letrec?
+                      (extend-senv (car lst-vars) letrec? senv)))))
 ;; (define extend-senv*
 ;;   (lambda (vars senv)
 ;;     (if (null? vars)
