@@ -102,7 +102,7 @@
      nameless-let-exp)
 
     (expression
-     ("%lexproc" expression)
+     ("%lexproc" "(" (arbno number number) ")" expression)
      nameless-proc-exp)
 
     (expression

@@ -6,6 +6,7 @@
 (require "lang.rkt")
 (require "data-structures.rkt")
 (require "environments.rkt")
+;; (require (only-in "trimmer.rkt" lookup-nameless-vars))
 
 (provide value-of-translation value-of)
 
@@ -19,13 +20,6 @@
            (a-program (exp1)
                       (value-of exp1 (init-nameless-env))))))
 
-;; value-of-translation : Nameless-program -> ExpVal
-;; Page: 100
-(define value-of-program
-  (lambda (pgm)
-    (cases program pgm
-           (a-program (exp1)
-                      (value-of exp1 (init-nameless-env))))))
 
 ;; value-of : Nameless-exp * Nameless-env -> ExpVal
 (define value-of
@@ -108,21 +102,35 @@
                                           (lambda (e) (value-of e nameless-env))
                                           exps)])
                                (value-of body
+                                         ;; (extend-nameless-env vals (empty-nameless-env)))))
                                          (extend-nameless-env vals nameless-env))))
 
            (nameless-letrec-var-exp (depth pos)
                                     (let ([proc1 (expval->proc (apply-nameless-env nameless-env depth pos))])
                                       (cases proc proc1
                                              (procedure (body saved-env)
-                                                        (proc-val (procedure body ;; saved-env))))))
+                                                        (proc-val (procedure body
                                                                              (extend-nameless-env
                                                                               (list-ref nameless-env depth)
                                                                               ;; (proc-val proc1)
                                                                               saved-env)))))))
 
-           (nameless-proc-exp (body)
-                              (proc-val
-                               (procedure body nameless-env)))
+           (nameless-proc-exp (depths positions body)
+                              (let ([want-vals (map (lambda (d p)
+                                                      (apply-nameless-env nameless-env d p))
+                                                    depths
+                                                    positions)])
+                                ;; (begin (display nameless-env)
+                                ;;        (newline)
+                                ;;        (display want-vals)
+                                ;;        (newline)
+                                ;;        (display body)
+                                ;;        (newline)
+                                ;;        (display "====")
+                                ;;        (newline))
+                                (proc-val
+                                 (procedure body
+                                            (extend-nameless-env want-vals (empty-nameless-env))))))
 
            (nameless-unpack-exp (lst body)
                                 (let* [(lstval (expval->list (value-of lst nameless-env)))
@@ -154,5 +162,17 @@
   (lambda (proc1 args)
     (cases proc proc1
            (procedure (body saved-env)
+                      ;; (begin (display args)
+                      ;;        (newline)
+                      ;;        (display saved-env)
+                      ;;        (newline)
+                      ;;        (display "-----------")
+                      ;;        (newline))
                       (value-of body (extend-nameless-env args saved-env))))))
-;; (cons (cons proc1 (car saved-env)) (cdr saved-env))))))))
+
+
+;; for debug propose
+;; (define get-program-body
+;;   (lambda (pgm)
+;;     (cases program pgm
+;;            (a-program (exp1) exp1))))

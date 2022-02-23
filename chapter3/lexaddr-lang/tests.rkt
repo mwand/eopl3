@@ -84,7 +84,7 @@ in let times4 = (fix t4m)
                   zero?(-(x,4)) ==> 2
             end" 3)
 
-    (cond-1 "let x = 4 in
+    (cond-2 "let x = 4 in
             cond
                   zero?(-(x,2)) ==> 3
                   zero?(-(x,4)) ==> 2
@@ -148,4 +148,12 @@ in (odd 13)" 1)
 even(x) = if zero?(x) then 1 else (odd -(x,1))
 odd(x) = if zero?(x) then 0 else (even -(x,1))
 in (even 13)" 0)
+
+    ;; trimmer environment test
+    (trimmed-1 "let x=3 y=4 in -(y,2)" 2)
+    (trimmed-2 "let x=3 y=4 in -(x,2)" 1)
+    (trimmed-proc-1 "(((proc(x) proc(y) proc(z) -(z, -(x,y)) 10) 2 ) 3)" -5)
+    (trimmed-proc-2 "(((proc(x) proc(y) proc(z) -(x, -(y,z)) 10) 2 ) 3)" 11)
+    (trimmed-proc-3 "(((proc(x1, x2) proc(y) proc(z) -(z, -(x1,y)) 10 9) 2 ) 3)" -5)
+    (trimmed-proc-4 "(((proc(x1, x2) proc(y) proc(z) -(z, -(x2,y)) 10 9) 2 ) 3)" -4)
     ))

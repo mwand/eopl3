@@ -1,8 +1,11 @@
 #lang eopl
 
-(require "lang.rkt")
+(require (only-in racket filter flatten))
 
-(provide translation-of-program)
+(require "lang.rkt")
+(require "trimmer.rkt")
+
+(provide translation-of-program has-binding?)
 ;;;;;;;;;;;;;;;; lexical address calculator ;;;;;;;;;;;;;;;;
 
 ;; translation-of-program : Program -> Nameless-program
@@ -13,6 +16,8 @@
            (a-program (exp1)
                       (a-program
                        (translation-of exp1 (init-senv)))))))
+                        ;; (filter (occurs-free?? exp1) '(i v x)) (init-senv))))))
+
 
 ;; translation-of : Exp * Senv -> Nameless-exp
 ;; Page 97
@@ -42,23 +47,39 @@
                         (if letrec?
                             (nameless-letrec-var-exp depth pos)
                             (nameless-var-exp depth pos))))
-             ;; (nameless-var-exp
-             ;;  (apply-senv senv var)))
+
              (let-exp (vars exps body)
-                      (nameless-let-exp
-                       (map (lambda (e) (translation-of e senv)) exps)
-                       (translation-of body
-                                       (extend-senv vars #f senv))))
+                      (let* ([want-vars (lookup-free-vars vars body)]
+                             [new-envs (if (null? want-vars)
+                                           (extend-senv vars #f (empty-senv))
+                                           (extend-senv vars #f
+                                                        (extend-senv want-vars #f (empty-senv))))])
+                        (nameless-let-exp
+                         ;; (map (lambda (e) (translation-of e senv)) exps)
+                         (map (lambda (e) (translation-of e senv)) exps)
+                         (translation-of body ;;new-envs))))
+                                         (extend-senv vars #f senv)))))
+
              (proc-exp (vars body)
-                       (nameless-proc-exp
-                        (translation-of body
-                                        (extend-senv vars #f senv))))
+                       (let* ([want-vars (lookup-free-vars vars body)]
+                              [bind-vars (filter (lambda (v) (has-binding? v senv)) want-vars)]
+                              [addrs (map (lambda (v) (apply-senv senv v)) bind-vars)]
+                              [depths (map (lambda (addr) (car addr)) addrs)]
+                              [postions (map (lambda (addr) (cadr addr)) addrs)]
+                              [new-senv (if (null? want-vars)
+                                            (extend-senv vars #f (empty-senv))
+                                            (extend-senv vars #f
+                                                         (extend-senv want-vars #f
+                                                                      (empty-senv))))])
+                         (nameless-proc-exp
+                          depths
+                          postions
+                          (translation-of body new-senv))))
+
              (call-exp (rator rands)
                        (call-exp
                         (translation-of rator senv)
-                         ;; (map (lambda (e) (translation-of e senv)) rands)))
                         (map translation-of* rands)))
-                        ;; (translation-of rands senv)))
 
              (cond-exp (exp1 exp2)
                        (cond-exp
@@ -99,9 +120,6 @@
                                                               (extend-senv p-names #t senv))))
                                b-vars
                                p-bodies)
-                          ;; (translation-of p-bodies
-                          ;;                 (extend-senv* b-vars #f
-                          ;;                               (extend-senv p-names #t senv)))
                           (translation-of letrec-body
                                           (extend-senv p-names #t senv))))
 
@@ -127,20 +145,12 @@
    (svars (list-of symbol?))
    (letrec? boolean?)
    (saved-env senv?)))
-  ;; (extend-senv-rec
-  ;;  (svars (list-of (list-of symbol?)))
-  ;;  (letrec? boolean?)
-  ;;  (saved-env senv?)))
 
 (define apply-senv
   (lambda (senv1 search-var)
     (cases senv senv1
            (empty-senv ()
                        (report-unbound-var search-var))
-           ;; (extend-senv1 (var saved-env)
-           ;;               (if (eqv? var search-var)
-           ;;                   (cons 0 (cons 0 #f))
-           ;;                   (add1-first (extend-senv1 var (cdr saved-env)))))
            (extend-senv (vars letrec? saved-env)
                         (let loop ([vars vars]
                                    [depth 0]
@@ -152,30 +162,6 @@
                              (cons depth (cons pos letrec?))]
                             [else
                              (loop (cdr vars) depth (+ 1 pos))]))))))
-           ;; (extend-senv-rec (lst-vars letrec? saved-env)
-           ;;                  (let loop ([lst lst-vars]
-           ;;                             [depth 0]
-           ;;                             [pos 0])
-           ;;                    (cond
-           ;;                      [(null? lst)
-           ;;                       (add1-first (apply-senv saved-env search-var))]
-           ;;                      [(eqv? (caar lst) search-var)
-           ;;                       ]
-           ;;                    )))))
-
-;; empty-senv : () -> Senv
-;; Page: 95
-(define empty-senv-1
-  (lambda ()
-    '()))
-
-;; extend-senv : Var * Senv -> Senv
-;; Page: 95
-(define extend-senv-1
-  (lambda (var letrec? senv)
-    (if (list? var)
-        (cons (cons var letrec?) senv)
-        (cons (cons (list var) letrec?) senv))))
 
 (define extend-senv*
   (lambda (lst-vars letrec? senv)
@@ -183,26 +169,19 @@
         senv
         (extend-senv* (cdr lst-vars) letrec?
                       (extend-senv (car lst-vars) letrec? senv)))))
-;; (define extend-senv*
-;;   (lambda (vars senv)
-;;     (if (null? vars)
-;;         senv
-;;         (extend-senv* (cdr vars)
-;;                       (extend-senv (car vars) #f senv)))))
 
-;; apply-senv : Senv * Var -> (Lexaddr, Letrec-var?)
-;; Page: 95
-(define apply-senv-1
-  (lambda (senv var)
-    (let loop ([senv senv]
-               [depth 0]
-               [pos 0])
-      (if (null? senv) (report-unbound-var var)
-          (if (null? (caar senv))
-              (loop (cdr senv) (+ 1 depth) 0)
-              (if (eqv? var (caaar senv))
-                  (cons depth (cons pos (cdar senv)))
-                  (loop (cons (cons (cdaar senv) (cdar senv)) (cdr senv)) depth (+ 1 pos))))))))
+(define has-binding?
+  (lambda (sym senv1)
+    (cases senv senv1
+           (empty-senv () #f)
+           (extend-senv (vars letrec? saved-env)
+                        (let loop ([vars vars])
+                          (cond
+                            [(null? vars)
+                             (has-binding? sym saved-env)]
+                            [(eqv? sym (car vars)) #t]
+                            [else
+                             (loop (cdr vars))]))))))
 
 ;; helper for apply-senv, add first
 (define add1-first
@@ -221,3 +200,10 @@
                  (extend-senv '(v) #f
                               (extend-senv '(x) #f
                                            (empty-senv))))))
+
+;; for debug propose
+;; (define get-program-body
+;;   (lambda (pgm)
+;;     (cases program (scan&parse pgm)
+;;            (a-program (exp1) exp1))))
+
