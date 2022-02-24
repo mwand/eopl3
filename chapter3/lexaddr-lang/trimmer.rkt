@@ -2,12 +2,13 @@
 
 (require (only-in racket
                   filter
-                  flatten))
+                  flatten
+                  andmap))
 
 (require "lang.rkt")
 
 ;; (provide lookup-vars occurs-free?? difference lookup-free-vars)
-(provide lookup-free-vars)
+(provide lookup-free-vars can-inline? proc-exp? inline-of inline-of* difference)
 
 
 ;;;;;;;;;;;;;;;; trimmed representation ;;;;;;;;;;;;;;
@@ -63,6 +64,159 @@
                          (lookup-free-vars (append syms p-names) letrec-body))
              (else '())
              ))))
+
+
+;;;;;;;;;;;;;; inline proc ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (define is-proc?
+;;   (lambda (search-var exp)
+;;     (cases expression exp
+;;            ())))
+(define proc-exp?
+  (lambda (exp)
+    (cases expression exp
+           (proc-exp (vars body)
+                     #t)
+           (else #f))))
+
+(define var-exp?
+  (lambda (exp)
+    (cases expression exp
+           (var-exp (var)
+                    #t)
+           (else #f))))
+
+(define can-inline?
+  (lambda (search-var exp)
+    (let ([can-inline-curry (lambda (e) (can-inline? search-var e))])
+      (cases expression exp
+             (diff-exp (exp1 exp2)
+                       (and (can-inline? search-var exp1)
+                            (can-inline? search-var exp2)))
+             (zero?-exp (exp1)
+                        (can-inline? search-var exp1))
+             (if-exp (exp1 exp2 exp3)
+                     (and
+                      (can-inline? search-var exp1)
+                      (can-inline? search-var exp2)
+                      (can-inline? search-var exp3)))
+             (let-exp (vars exps body)
+                      (and
+                       (andmap can-inline-curry exps)
+                       (can-inline? search-var body)))
+             (proc-exp (vars body)
+                       (can-inline? search-var body))
+             (call-exp (rator rands)
+                       (and
+                        (not (member (var-exp search-var) (filter var-exp? rands)))
+                        (can-inline? search-var rator)
+                        (andmap can-inline-curry (filter (lambda (e) (not (var-exp? e))) rands))))
+             (cond-exp (exps1 exps2)
+                       (and (andmap can-inline-curry exps1)
+                            (andmap can-inline-curry exps2)))
+             (cons-exp (head tail)
+                      (and (can-inline? search-var head)
+                           (can-inline? search-var tail)))
+             (car-exp (exp1)
+                      (can-inline? search-var exp1))
+             (cdr-exp (exp1)
+                      (can-inline? search-var exp1))
+             (list-exp (exps1)
+                       (and (andmap can-inline-curry exps1)))
+             (unpack-exp (syms lst body)
+                         (and (andmap can-inline-curry lst)
+                              (can-inline? search-var body)))
+             (letrec-exp (p-names b-vars p-bodies letrec-body)
+                         (and (andmap can-inline-curry p-bodies)
+                              (can-inline? search-var letrec-body)))
+             (else #t)))))
+
+(define inline-of
+  (lambda (sym replace exp)
+    (let ([inline-of-curry (lambda (e) (inline-of sym replace e))])
+    (cases expression exp
+           (diff-exp (exp1 exp2)
+                     (begin (display exp1)
+                            (newline)
+                            (display exp2)
+                            (newline)
+                            (display replace)
+                            (newline)
+                            (display (inline-of-curry exp1))
+                            (newline)
+                            (display (inline-of-curry exp2))
+                            (newline))
+                     (diff-exp
+                      (inline-of-curry exp1)
+                      (inline-of-curry exp2)))
+           (zero?-exp (exp1)
+                      (zero?-exp (inline-of-curry exp1)))
+           (if-exp (exp1 exp2 exp3)
+                   (if-exp
+                    (inline-of-curry exp1)
+                    (inline-of-curry exp2)
+                    (inline-of-curry exp3)))
+           (var-exp (var1)
+                    (if (eqv? sym var1)
+                        replace
+                        (var-exp var1)))
+           (let-exp (vars exps body)
+                    (if (not (member sym vars))
+                        (let-exp vars
+                                 (map inline-of-curry exps)
+                                 (inline-of-curry body))
+                        (let-exp vars exps body)))
+           (proc-exp (vars body)
+                     (if (not (member sym vars))
+                         (proc-exp vars (inline-of-curry body))
+                         (proc-exp vars body)))
+           (call-exp (rator rands)
+                     (call-exp
+                      (inline-of-curry rator)
+                      (map inline-of-curry rands)))
+           (cond-exp (exps1 exps2)
+                     (cond-exp
+                      (map inline-of-curry exps1)
+                      (map inline-of-curry exps2)))
+           (cons-exp (head tail)
+                     (cons-exp (inline-of-curry head)
+                               (inline-of-curry tail)))
+           (car-exp (exp1)
+                    (car-exp (inline-of-curry exp1)))
+           (cdr-exp (exp1)
+                    (cdr-exp (inline-of-curry exp1)))
+           (list-exp (exps1)
+                     (list-exp (inline-of-curry exps1)))
+           (unpack-exp (vars lst body)
+                       (if (not (member sym vars))
+                           (unpack-exp vars
+                                       (map inline-of-curry lst)
+                                       (inline-of-curry body))
+                           (unpack-exp vars lst body)))
+           (letrec-exp (p-names b-vars p-bodies letrec-body)
+                        (if (and (not (member sym p-names))
+                                 (not (member sym b-vars)))
+                            (letrec-exp p-names b-vars
+                                        (map inline-of-curry p-bodies)
+                                        (inline-of-curry letrec-body))
+                            (letrec-exp p-names b-vars p-bodies letrec-body)))
+           (else exp)
+           ))))
+
+
+(define inline-of*
+  (lambda (vars exps body)
+    ;; (begin (display vars)
+    ;;        (newline)
+    ;;        (display exps)
+    ;;        (newline)
+    ;;        (display body)
+    ;;        (newline))
+    (if (null? vars)
+        body
+        (inline-of* (cdr vars)
+                    (cdr exps)
+                    (inline-of (car vars) (car exps) body)))))
 
 ;; (define lookup-free-vars1
 ;;   (lambda (vars body)
@@ -219,7 +373,11 @@
 ;;         initial
 ;;         (or-lst-iter (cdr lst) (or (car lst) initial)))))
 
-;; (define difference
-;;   (lambda (lst1 lst2)
-;;     (filter (lambda (v) (not (member v lst2))) lst1)))
+(define difference
+  (lambda (lst1 lst2)
+    (filter (lambda (v) (not (member v lst2))) lst1)))
 
+(define get-program-body
+  (lambda (pgm)
+    (cases program (scan&parse pgm)
+           (a-program (exp1) exp1))))

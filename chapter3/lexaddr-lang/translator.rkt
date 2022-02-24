@@ -49,16 +49,27 @@
                             (nameless-var-exp depth pos))))
 
              (let-exp (vars exps body)
-                      (let* ([want-vars (lookup-free-vars vars body)]
-                             [new-envs (if (null? want-vars)
-                                           (extend-senv vars #f (empty-senv))
-                                           (extend-senv vars #f
-                                                        (extend-senv want-vars #f (empty-senv))))])
-                        (nameless-let-exp
-                         ;; (map (lambda (e) (translation-of e senv)) exps)
-                         (map (lambda (e) (translation-of e senv)) exps)
-                         (translation-of body ;;new-envs))))
-                                         (extend-senv vars #f senv)))))
+                      (let* ([procs (filter (lambda (elem) (proc-exp? (cdr elem)))
+                                            (map cons vars exps))]
+                             [inlines (filter (lambda (elem) (can-inline? (car elem) body))
+                                              procs)]
+                             [new-body (inline-of* (map car inlines) (map cdr inlines) body)]
+                             [new-vars (difference vars (map car inlines))]
+                             [new-exps (difference exps (map cdr inlines))]
+                             )
+                        (begin (newline)
+                               (display inlines)
+                               (newline)
+                               (display new-vars)
+                               (newline)
+                               ;; (display new-body)
+                               (newline))
+                        (if (null? new-vars)
+                            (translation-of new-body senv)
+                            (nameless-let-exp
+                             (map (lambda (e) (translation-of e senv)) new-exps)
+                             (translation-of new-body
+                                             (extend-senv new-vars #f senv))))))
 
              (proc-exp (vars body)
                        (let* ([want-vars (lookup-free-vars vars body)]
@@ -81,10 +92,10 @@
                         (translation-of rator senv)
                         (map translation-of* rands)))
 
-             (cond-exp (exp1 exp2)
+             (cond-exp (exps1 exps2)
                        (cond-exp
-                        (map translation-of* exp1)
-                        (map translation-of* exp2)))
+                        (map translation-of* exps1)
+                        (map translation-of* exps2)))
 
              (emptylist-exp ()
                             (emptylist-exp))
@@ -94,17 +105,17 @@
                         (translation-of head senv)
                         (translation-of tail senv)))
 
-             (car-exp (exp)
+             (car-exp (exp1)
                       (car-exp
-                       (translation-of exp senv)))
+                       (translation-of exp1 senv)))
 
-             (cdr-exp (exp)
+             (cdr-exp (exp1)
                       (cdr-exp
-                       (translation-of exp senv)))
+                       (translation-of exp1 senv)))
 
-             (list-exp (exp)
+             (list-exp (exps1)
                        (list-exp
-                        (map translation-of* exp)))
+                        (map translation-of* exps1)))
 
              (unpack-exp (syms lst body)
                          (nameless-unpack-exp
@@ -202,8 +213,8 @@
                                            (empty-senv))))))
 
 ;; for debug propose
-;; (define get-program-body
-;;   (lambda (pgm)
-;;     (cases program (scan&parse pgm)
-;;            (a-program (exp1) exp1))))
+(define get-program-body
+  (lambda (pgm)
+    (cases program (scan&parse pgm)
+           (a-program (exp1) exp1))))
 
