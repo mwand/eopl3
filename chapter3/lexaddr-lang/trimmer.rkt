@@ -3,7 +3,8 @@
 (require (only-in racket
                   filter
                   flatten
-                  andmap))
+                  andmap
+                  ormap))
 
 (require "lang.rkt")
 
@@ -86,6 +87,20 @@
                     #t)
            (else #f))))
 
+(define call-exp?
+  (lambda (exp)
+    (cases expression exp
+           (call-exp (rator rands)
+                     #t)
+           (else #f))))
+
+(define let-exp?
+  (lambda (exp)
+    (cases expression exp
+           (let-exp (vars exps body)
+                    #t)
+           (else #f))))
+
 (define can-inline?
   (lambda (search-var exp)
     (let ([can-inline-curry (lambda (e) (can-inline? search-var e))])
@@ -108,7 +123,10 @@
                        (can-inline? search-var body))
              (call-exp (rator rands)
                        (and
-                        (not (member (var-exp search-var) (filter var-exp? rands)))
+                        (or
+                         (not (member (var-exp search-var) (filter var-exp? rands)))
+                         (and (not (equal? rator (var-exp search-var)))
+                              (member (var-exp search-var) (filter var-exp? rands))))
                         (can-inline? search-var rator)
                         (andmap can-inline-curry (filter (lambda (e) (not (var-exp? e))) rands))))
              (cond-exp (exps1 exps2)
@@ -136,16 +154,6 @@
     (let ([inline-of-curry (lambda (e) (inline-of sym replace e))])
     (cases expression exp
            (diff-exp (exp1 exp2)
-                     (begin (display exp1)
-                            (newline)
-                            (display exp2)
-                            (newline)
-                            (display replace)
-                            (newline)
-                            (display (inline-of-curry exp1))
-                            (newline)
-                            (display (inline-of-curry exp2))
-                            (newline))
                      (diff-exp
                       (inline-of-curry exp1)
                       (inline-of-curry exp2)))
@@ -171,9 +179,19 @@
                          (proc-exp vars (inline-of-curry body))
                          (proc-exp vars body)))
            (call-exp (rator rands)
-                     (call-exp
-                      (inline-of-curry rator)
-                      (map inline-of-curry rands)))
+                     (let* ([new-exp (call-exp
+                                      (inline-of-curry rator)
+                                      (map inline-of-curry rands))]
+                            [real-exp
+                             (if (ormap call-exp? rands)
+                                 new-exp
+                                 (cases expression replace
+                                        (proc-exp (vars body)
+                                                  (if (equal? (var-exp sym) rator)
+                                                      (inline-of* vars rands body)
+                                                      new-exp))
+                                        (else new-exp)))])
+                       real-exp))
            (cond-exp (exps1 exps2)
                      (cond-exp
                       (map inline-of-curry exps1)
@@ -206,12 +224,6 @@
 
 (define inline-of*
   (lambda (vars exps body)
-    ;; (begin (display vars)
-    ;;        (newline)
-    ;;        (display exps)
-    ;;        (newline)
-    ;;        (display body)
-    ;;        (newline))
     (if (null? vars)
         body
         (inline-of* (cdr vars)

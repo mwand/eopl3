@@ -57,13 +57,6 @@
                              [new-vars (difference vars (map car inlines))]
                              [new-exps (difference exps (map cdr inlines))]
                              )
-                        (begin (newline)
-                               (display inlines)
-                               (newline)
-                               (display new-vars)
-                               (newline)
-                               ;; (display new-body)
-                               (newline))
                         (if (null? new-vars)
                             (translation-of new-body senv)
                             (nameless-let-exp

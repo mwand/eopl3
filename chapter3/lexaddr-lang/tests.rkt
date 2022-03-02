@@ -74,6 +74,20 @@ in let
 in let times4 = (fix t4m)
    in (times4 3)" 12)
 
+    ;; " let t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
+    ;;   in
+    ;;     (let f = t4m
+    ;;             in let d = proc (x) proc (z) ((f (x x)) z)
+    ;;                    in proc (n) ((f (d d)) n)
+    ;;       3)"
+
+    ;; "(let d = proc(x) proc(z) ((proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
+    ;;                           (x x)) z)
+    ;;      in
+    ;;         proc(n) ((proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4))
+    ;;                  (d d) n)
+    ;;  3) "
+
     (y-combinator-mult4 "
 let makemult = proc (maker) proc (x)
                  if zero?(x)
