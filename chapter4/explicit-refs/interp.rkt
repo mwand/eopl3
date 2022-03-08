@@ -93,6 +93,18 @@
                                     (value-of-begins (car es) (cdr es)))))))
                         (value-of-begins exp1 exps)))
 
+           (list-exp (exps)
+                     (letrec
+                         ([value-of-lst
+                           (lambda (lst)
+                             (cond
+                               [(null? lst) (list-val '())]
+                               [(null? (cdr lst)) (list (value-of (car lst) env))]
+                               [else
+                                (cons (value-of (car lst) env)
+                                      (value-of-lst (cdr lst)))]))])
+                       (list-val (value-of-lst exps))))
+
            (newref-exp (exp1)
                        (let ((v1 (value-of exp1 env)))
                          (ref-val (newref v1))))

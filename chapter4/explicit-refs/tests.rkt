@@ -159,4 +159,16 @@ in begin
    end"
               11)
 
+    ;; ex4.11
+    (simple-list-1 "list(2,3,4)" (2 3 4))
+
+    (simple-list-2 "let x = 4
+                 in list(x, -(x,1), -(x,3))" (4 3 1))
+
+    (gemsym-list-1 "let x = newref(17)
+                        in list(deref(x), -(deref(x),1), -(deref(x), 2))"
+                   (17 16 15))
+    (gemsym-list-2 "let x = newref(17) in
+                      list(deref(x), -(begin setref(x,10);deref(x) end, 1), -(deref(x), 2))"
+                   (17 9 8))
     ))

@@ -19,6 +19,8 @@
    (proc proc?))
   (ref-val
    (ref reference?))
+  (list-val
+   (lst list?))
   )
 
 ;;; extractors:
@@ -46,6 +48,12 @@
     (cases expval v
            (ref-val (ref) ref)
            (else (expval-extractor-error 'reference v)))))
+
+(define expval->list
+  (lambda (v)
+    (cases expval v
+           (list-val (lst) lst)
+           (else (expval-extractor-error 'list v)))))
 
 (define expval-extractor-error
   (lambda (variant value)
@@ -89,7 +97,7 @@
 
 ;; expval->printable : ExpVal -> List
 ;; returns a value like its argument, except procedures get cleaned
-;; up with env->list 
+;; up with env->list
 (define expval->printable
   (lambda (val)
     (cases expval val

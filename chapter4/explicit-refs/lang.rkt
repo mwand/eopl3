@@ -61,6 +61,10 @@
      begin-exp)
 
     (expression
+     ("list" "(" (separated-list expression ",") ")")
+     list-exp)
+
+    (expression
      ("newref" "(" expression ")")
      newref-exp)
 
