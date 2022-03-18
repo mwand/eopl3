@@ -108,3 +108,24 @@
            (else val))))
 
 
+;;;;;;;;;;;;;;;;; Answer ;;;;;;;;;;;;;;;;;
+(define store?
+  (lambda (sto)
+    (vector? sto)))
+
+(define-datatype answer answer?
+  (an-answer
+   (val expval?)
+   (store store?)))
+
+;; apply-store: Sto * ExpVal -> ExpVal
+(define apply-store
+  (lambda (store val)
+    (cases expval val
+           (ref-val (ref) (vector-ref store ref))
+           (else val))))
+           ;; (num-val (num) (num-val num))
+           ;; (bool-val (bool) (bool-val bool))
+           ;; (proc-val (proc) (proc-val proc))
+           ;; (ref-val (ref) (ref-val ref))
+           ;; (list-val (lst) (list-val lst)))))

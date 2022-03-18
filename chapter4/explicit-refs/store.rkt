@@ -4,9 +4,16 @@
                   vector-append))
 
 (require "drscheme-init.rkt")
+;; (require "data-structures.rkt")
 
-(provide initialize-store! reference? newref deref setref!
-         instrument-newref get-store-as-list)
+(provide reference? newref deref setref!
+         instrument-newref get-store-as-list
+         init-store)
+
+
+;; (provide initialize-store! reference? newref deref setref!
+;;          instrument-newref get-store-as-list
+;;          init-store)
 
 (define instrument-newref (make-parameter #f))
 
@@ -17,7 +24,7 @@
 
 ;; the-store: a Scheme variable containing the current state of the
 ;; store.  Initially set to a dummy variable.
-(define the-store 'uninitialized)
+;; (define the-store 'uninitialized)
 
 ;; empty-store : () -> Sto
 ;; Page: 111
@@ -25,18 +32,20 @@
   (lambda () (make-vector 0)))
   ;; (lambda () '()))
 
+(define init-store empty-store)
+
 ;; initialize-store! : () -> Sto
 ;; usage: (initialize-store!) sets the-store to the empty-store
 ;; Page 111
-(define initialize-store!
-  (lambda ()
-    (set! the-store (empty-store))))
+;; (define initialize-store!
+;;   (lambda ()
+;;     (set! the-store (empty-store))))
 
 ;; get-store : () -> Sto
 ;; Page: 111
 ;; This is obsolete.  Replaced by get-store-as-list below
-(define get-store
-  (lambda () the-store))
+;; (define get-store
+;;   (lambda () the-store))
 
 ;; reference? : SchemeVal -> Bool
 ;; Page: 111
@@ -44,10 +53,10 @@
   (lambda (v)
     (integer? v)))
 
-;; newref : ExpVal -> Ref
+;; newref : ExpVal -> (Ref, Sto)
 ;; Page: 111
 (define newref
-  (lambda (val)
+  (lambda (val the-store)
     (let ((next-ref (vector-length the-store)))
       (set! the-store
             (vector-append the-store (vector val)))
@@ -55,21 +64,25 @@
         (eopl:printf
          "newref: allocating location ~s with initial contents ~s~%"
          next-ref val))
-      next-ref)))
+      (cons next-ref the-store))))
 
 ;; deref : Ref -> ExpVal
 ;; Page 111
+;; (define apply-store
+;;   (lambda )
+;;   (cases ))
 (define deref
-  (lambda (ref)
+  (lambda (ref the-store)
     (vector-ref the-store ref)))
 
 ;; setref! : Ref * ExpVal -> Unspecified
 ;; Page: 112
 (define setref!
-  (lambda (ref val)
-    (begin (display ref)
-           (newline))
-    (cond [(> ref (vector-length the-store)) (report-invalid-reference ref the-store)]
+  (lambda (ref val the-store)
+    ;; (begin (display ref)
+    ;;        (newline))
+    (cond [(> ref (vector-length the-store))
+           (report-invalid-reference ref the-store)]
           [else (vector-set! the-store ref val)])))
     ;; (set! the-store
     ;;       (letrec
@@ -103,7 +116,7 @@
 ;; replaced by something cleverer.
 ;; Replaces get-store (p. 111)
 (define get-store-as-list
-  (lambda ()
+  (lambda (the-store)
     (vector->list the-store)))
     ;; (letrec
     ;;     ((inner-loop
@@ -115,3 +128,5 @@
     ;;              (list n (car sto))
     ;;              (inner-loop (cdr sto) (+ n 1)))))))
     ;;   (inner-loop the-store 0))))
+
+
