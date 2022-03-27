@@ -64,7 +64,8 @@
 
 (define-datatype proc proc?
   (procedure
-   (bvar symbol?)
+   ;; (bvar symbol?)
+   (bvar (list-of symbol?))
    (body expression?)
    (env environment?)))
 
@@ -74,9 +75,13 @@
    (bvar symbol?)
    (bval expval?)
    (saved-env environment?))
+  (extend-env*
+   (bvars (list-of symbol?))
+   (bvals (list-of expval?))
+   (saved-env environment?))
   (extend-env-rec*
    (proc-names (list-of symbol?))
-   (b-vars (list-of symbol?))
+   (b-vars (list-of (list-of symbol?)))
    (proc-bodies (list-of expression?))
    (saved-env environment?)))
 
@@ -90,6 +95,12 @@
                        (cons
                         (list sym (expval->printable val))
                         (env->list saved-env)))
+           (extend-env* (syms vals saved-env)
+                        (cons
+                         (map (lambda (s v)
+                                (list s (expval->printable v)))
+                              syms vals)
+                         (env->list saved-env)))
            (extend-env-rec* (p-names b-vars p-bodies saved-env)
                             (cons
                              (list 'letrec p-names '...)

@@ -33,6 +33,16 @@
                        (if (eqv? search-sym bvar)
                            bval
                            (apply-env saved-env search-sym)))
+           (extend-env* (bvars bvals saved-env)
+                        (if (or (null? bvars) (null? bvals))
+                            (apply-env saved-env search-sym)
+                            (if (eqv? search-sym (car bvars))
+                                (car bvals)
+                                (apply-env
+                                 (extend-env* (cdr bvars)
+                                              (cdr bvals)
+                                              saved-env)
+                                 search-sym))))
            (extend-env-rec* (p-names b-vars p-bodies saved-env)
                             (cond
                               ((location search-sym p-names)

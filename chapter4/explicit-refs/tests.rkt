@@ -171,4 +171,16 @@ in begin
     (gemsym-list-2 "let x = newref(17) in
                       list(deref(x), -(begin setref(x,10);deref(x) end, 1), -(deref(x), 2))"
                    (17 9 8))
+
+    ;; multi-let, ex4.13
+    (multi-let-1 "let z=0 x=newref(19)
+                    in let t=1 y = newref(18)
+                         in -(deref(x), deref(y))" 1)
+    (multi-let-2 "let x=newref(19) y = newref(18)
+                    in -(deref(x), deref(y))" 1)
+
+    (multi-proc-para-1 "let x = newref(3)
+                          in let f = proc(y,z) -(begin setref(x, 2); deref(x) end, y)
+                           in (f 3 4)" -1)
+    (multi-letrec-para-1 "let f(x,y) = -(x,y) in (f 32 30)" 2)
     ))
