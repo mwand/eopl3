@@ -132,4 +132,11 @@ let f = proc (x) proc (y)
 in ((f 44) 33)"
                         12)
 
+    (multi-let-1  "let x=2 y=3 in -(x,y)" -1)
+    (multi-para-in-rator-pos "(proc(x,y) -(x,y) 30 29)" 1)
+    (multiple-para-proc "let f = proc(x,y) -(x,y) in (f 30 29)" 1)
+
+    (multi-letrec-1 "letrec f(x,y) = if zero?(x)  then 0 else -((f -(x,y) y), -2) in (f 4 1)" 8)
+    (multi-letrec-2 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in (f (g 2 3) 1) " 4)
+    (multi-letrec-3 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in -((f 2 1), (g 2 1))" -2)
     ))

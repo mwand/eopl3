@@ -37,7 +37,7 @@
            ;\commentbox{ (value-of (const-exp \n{}) \r) = \n{}}
            (const-exp (num) (num-val num))
 
-           ;\commentbox{ (value-of (var-exp \x{}) \r) 
+           ;\commentbox{ (value-of (var-exp \x{}) \r)
            ;              = (deref (apply-env \r \x{}))}
            (var-exp (var) (deref (apply-env env var)))
 
@@ -66,18 +66,21 @@
                          (value-of exp3 env))))
 
            ;\commentbox{\ma{\theletspecsplit}}
-           (let-exp (var exp1 body)
-                    (let ((v1 (value-of exp1 env)))
+           (let-exp (vars exps body)
+                    (let ([vals (map
+                                 (lambda (e) (value-of e env))
+                                 exps)])
                       (value-of body
-                                (extend-env var (newref v1) env))))
+                                (extend-env* vars (map newref vals) env))))
 
-           (proc-exp (var body)
-                     (proc-val (procedure var body env)))
+           (proc-exp (vars body)
+                     (proc-val (procedure vars body env)))
 
-           (call-exp (rator rand)
-                     (let ((proc (expval->proc (value-of rator env)))
-                           (arg (value-of rand env)))
-                       (apply-procedure proc arg)))
+           (call-exp (rator rands)
+                     (let ([proc (expval->proc (value-of rator env))]
+                           [args ;;(value-of rand env)))
+                            (map (lambda (e) (value-of e env)) rands)])
+                       (apply-procedure proc args)))
 
            (letrec-exp (p-names b-vars p-bodies letrec-body)
                        (value-of letrec-body
@@ -116,21 +119,22 @@
 
 ;; instrumented version
 (define apply-procedure
-  (lambda (proc1 arg)
+  (lambda (proc1 args)
     (cases proc proc1
-           (procedure (var body saved-env)
-                      (let ((r (newref arg)))
-                        (let ((new-env (extend-env var r saved-env)))
-                          (when (instrument-let)
-                            (begin
-                              (eopl:printf
-                               "entering body of proc ~s with env =~%"
-                               var)
-                              (pretty-print (env->list new-env))
-                              (eopl:printf "store =~%")
-                              (pretty-print (store->readable (get-store-as-list)))
-                              (eopl:printf "~%")))
-                          (value-of body new-env)))))))
+           (procedure (vars body saved-env)
+                      (let* ([r (map newref args)]
+                             [new-env (extend-env* vars r saved-env)])
+                        ;; (let ((new-env (extend-env var r saved-env)))
+                        (when (instrument-let)
+                          (begin
+                            (eopl:printf
+                             "entering body of proc ~s with env =~%"
+                             vars)
+                            (pretty-print (env->list new-env))
+                            (eopl:printf "store =~%")
+                            (pretty-print (store->readable (get-store-as-list)))
+                            (eopl:printf "~%")))
+                        (value-of body new-env))))))
 
 ;; store->readable : Listof(List(Ref,Expval))
 ;;                    -> Listof(List(Ref,Something-Readable))

@@ -37,21 +37,27 @@
     (expression (identifier) var-exp)
 
     (expression
-     ("let" identifier "=" expression "in" expression)
+     ;; ("let" identifier "=" expression "in" expression)
+     ("let" (arbno identifier "=" expression) "in" expression)
      let-exp)
 
     (expression
-     ("proc" "(" identifier ")" expression)
+     ;; ("proc" "(" identifier ")" expression)
+     ("proc" "(" (separated-list identifier "," )")" expression)
      proc-exp)
 
     (expression
-     ("(" expression expression ")")
+     ;; ("(" expression expression ")")
+     ("(" expression (arbno expression) ")")
      call-exp)
 
     (expression
      ("letrec"
-      (arbno identifier "(" identifier ")" "=" expression)
-      "in" expression)
+      ;; (arbno identifier "(" identifier ")" "=" expression)
+      ;; "in" expression)
+      (arbno
+       identifier "(" (separated-list identifier ",") ")" "=" expression)
+            "in" expression)
      letrec-exp)
 
     (expression

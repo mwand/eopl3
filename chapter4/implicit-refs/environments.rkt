@@ -32,6 +32,18 @@
                        (if (eqv? search-var bvar)
                            bval
                            (apply-env saved-env search-var)))
+           (extend-env* (bvars bvals saved-env)
+                        (cond
+                          [(null? bvars)
+                           (apply-env saved-env search-var)]
+                          [(eqv? search-var (car bvars))
+                           (car bvals)]
+                          [else
+                           (apply-env (extend-env*
+                                       (cdr bvars)
+                                       (cdr bvals)
+                                       saved-env)
+                                      search-var)]))
            (extend-env-rec* (p-names b-vars p-bodies saved-env)
                             (let ((n (location search-var p-names)))
                               ;; n : (maybe int)
