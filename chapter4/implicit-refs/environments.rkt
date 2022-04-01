@@ -45,16 +45,27 @@
                                        saved-env)
                                       search-var)]))
            (extend-env-rec* (p-names b-vars p-bodies saved-env)
-                            (let ((n (location search-var p-names)))
+                            (let* ([n (location search-var p-names)]
+                                   [proc-vec (make-vector (length p-names))]
+                                   [proc-ref (map newref p-names)]
+                                   ;; [proc-ref (map newref (vector->list proc-vec))]
+                                   [new-env
+                                    (extend-env* p-names
+                                                 proc-ref
+                                                 saved-env)])
+                              (begin (map setref! proc-ref
+                                          (map (lambda (v b)
+                                                 (proc-val
+                                                  (procedure v b
+                                                             (extend-env* p-names proc-ref new-env))))
+                                               b-vars
+                                               p-bodies)))
                               ;; n : (maybe int)
                               (if n
-                                  (newref
-                                   (proc-val
-                                    (procedure
-                                     (list-ref b-vars n)
-                                     (list-ref p-bodies n)
-                                     env)))
-                                  (apply-env saved-env search-var)))))))
+                                  (list-ref proc-ref n)
+                                  (apply-env
+                                   (extend-env* p-names proc-ref saved-env)
+                                   search-var)))))))
 
 ;; location : Sym * Listof(Sym) -> Maybe(Int)
 ;; (location sym syms) returns the location of sym in syms or #f is
