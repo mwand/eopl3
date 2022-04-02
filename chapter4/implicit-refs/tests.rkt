@@ -101,20 +101,20 @@ in let times4 = (fix t4m)
 
     ;; extremely primitive testing for mutable variables
 
-    (assignment-test-1 "let x = 17
+    (assignment-test-1 "letmutable x = 17
                           in begin set x = 27; x end"
                        27)
 
 
     (gensym-test
-     "let g = let count = 0 in proc(d)
+     "let g = letmutable count = 0 in proc(d)
                         let d = set count = -(count,-1)
                         in count
 in -((g 11), (g 22))"
      -1)
 
     (even-odd-via-set "
-let x = 0
+letmutable x = 0
 in letrec even(d) = if zero?(x) then 1
                                   else let d = set x = -(x,1)
                                        in (odd d)

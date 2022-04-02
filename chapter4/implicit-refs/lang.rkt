@@ -70,6 +70,11 @@
      ("set" identifier "=" expression)
      assign-exp)
 
+    ;; letmutable
+    (expression
+     ("letmutable" (arbno identifier "=" expression) "in" expression)
+     letmutable-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

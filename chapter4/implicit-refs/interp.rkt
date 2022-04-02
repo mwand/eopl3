@@ -39,7 +39,12 @@
 
            ;\commentbox{ (value-of (var-exp \x{}) \r)
            ;              = (deref (apply-env \r \x{}))}
-           (var-exp (var) (deref (apply-env env var)))
+           (var-exp (var)
+                    (let ([val (apply-env env var)])
+                      (if (expval? val)
+                          val
+                          (deref val))))
+                     ;; (deref (apply-env env var)))
 
            ;\commentbox{\diffspec}
            (diff-exp (exp1 exp2)
@@ -71,7 +76,19 @@
                                  (lambda (e) (value-of e env))
                                  exps)])
                       (value-of body
-                                (extend-env* vars (map newref vals) env))))
+                                (extend-env*
+                                 vars vals env))))
+                                ;; (extend-env vars (map newref vals) env))))
+
+           (letmutable-exp (vars exps body)
+                           (let ([vals (map
+                                        (lambda (e) (value-of e env))
+                                        exps)])
+                             (value-of body
+                                       (extend-env*
+                                        vars
+                                         (map newref vals)
+                                         env))))
 
            (proc-exp (vars body)
                      (proc-val (procedure vars body env)))
