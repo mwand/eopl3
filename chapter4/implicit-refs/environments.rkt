@@ -2,7 +2,7 @@
 
 (require "data-structures.rkt")
 (require "store.rkt")
-(provide init-env empty-env extend-env apply-env)
+(provide init-env empty-env extend-env apply-env has-binding?)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
 
@@ -83,3 +83,30 @@
             (+ n 1)))
       (else #f))))
 
+
+
+;; had-binding? : Env * Sym -> Maybe(Sym)
+(define empty-env? null?)
+
+(define has-binding?
+  (lambda (env search-sym)
+    (cases environment env
+           (empty-env () #f)
+           (extend-env (bvar bval saved-env)
+                       (if (eqv? search-sym bvar)
+                           search-sym
+                           (has-binding? saved-env search-sym)))
+           (extend-env* (bvars bvals saved-env)
+                        (if (member search-sym bvars)
+                            search-sym
+                            (has-binding? saved-env search-sym)))
+           (extend-env-rec* (p-names b-vars p-bodies saved-env)
+                            (if (or (member search-sym p-names)
+                                    (member search-sym b-vars))
+                                search-sym
+                                (has-binding? saved-env search-sym))))))
+    ;; (cond
+    ;;   [(equal? (empty-env) env) #f]
+    ;;   [(eqv? search-sym (car env)) search-sym]
+    ;;   [else
+    ;;    (has-binding? (cdr env) search-sym)])))

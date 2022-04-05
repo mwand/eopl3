@@ -101,20 +101,20 @@ in let times4 = (fix t4m)
 
     ;; extremely primitive testing for mutable variables
 
-    (assignment-test-1 "letmutable x = 17
+    (assignment-test-1 "let x = 17
                           in begin set x = 27; x end"
                        27)
 
 
     (gensym-test
-     "let g = letmutable count = 0 in proc(d)
+     "let g = let count = 0 in proc(d)
                         let d = set count = -(count,-1)
                         in count
 in -((g 11), (g 22))"
      -1)
 
     (even-odd-via-set "
-letmutable x = 0
+let x = 0
 in letrec even(d) = if zero?(x) then 1
                                   else let d = set x = -(x,1)
                                        in (odd d)
@@ -139,4 +139,9 @@ in ((f 44) 33)"
     (multi-letrec-1 "letrec f(x,y) = if zero?(x)  then 0 else -((f -(x,y) y), -2) in (f 4 1)" 8)
     (multi-letrec-2 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in (f (g 2 3) 1) " 4)
     (multi-letrec-3 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in -((f 2 1), (g 2 1))" -2)
+
+    ;; ex4.21 dynmaic set
+    (dynamic-set-1 "let x = 11
+      in let p = proc (y) -(y,x)
+in -(setdynamic x = 17 during (p 22), (p 13))" 3)
     ))

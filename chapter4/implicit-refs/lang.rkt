@@ -70,10 +70,10 @@
      ("set" identifier "=" expression)
      assign-exp)
 
-    ;; letmutable
+    ;; setdynamic
     (expression
-     ("letmutable" (arbno identifier "=" expression) "in" expression)
-     letmutable-exp)
+     ("setdynamic" (arbno identifier "=" expression) "during" expression)
+     setdynamic-exp)
 
     ))
 

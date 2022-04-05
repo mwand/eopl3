@@ -64,14 +64,11 @@
   (empty-env)
   (extend-env
    (bvar symbol?)
-   ;; (bval reference?)                 ; new for implicit-refs
-   (bval (lambda (v) (or (reference? v)
-                         (expval? v))))
+   (bval reference?)                 ; new for implicit-refs
    (saved-env environment?))
   (extend-env*
    (bvars (list-of symbol?))
-   (bvals (lambda (v) (or (list-of (expval? v))
-                          (list-of (reference? v)))))
+   (bvals (list-of reference?))
    (saved-env environment?))
   (extend-env-rec*
    (proc-names (list-of symbol?))
