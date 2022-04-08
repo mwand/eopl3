@@ -63,7 +63,7 @@
 (define expval->array
   (lambda (v)
     (cases expval v
-           (array-val (ref) ref)
+           (array-val (arr) arr)
            (else (expval-extractor-error 'array v)))))
 
 (define expval-extractor-error

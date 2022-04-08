@@ -7,9 +7,13 @@
 
 (provide (all-defined-out))
 
-(define array?
-  (lambda (v)
-    (reference? v)))
+;; (define array?
+;;   (lambda (v)
+;;     (reference? v)))
+(define-datatype array array?
+  (a-array
+   (start reference?)
+   (len integer?)))
 
 (define newarray
   (lambda (size initial)
@@ -17,13 +21,24 @@
            (map newref (make-list size initial))])
       (if (null? refs)
           (eopl:error 'newarray "array size must bigger than 0")
-          (car refs)))))
+          (a-array (car refs)
+                   size)))))
 
 (define arrayref
   (lambda (arr idx)
-    (deref (+ idx arr))))
+    (cases array arr
+           (a-array (start len)
+                    (if (> idx len)
+                        (eopl:error 'arrayref "out of array index")
+                        (deref (+ idx start)))))))
+    ;; (deref (+ idx arr))))
 
 (define arrayset!
   (lambda (arr idx val)
-    (setref! (+ idx arr) val)))
+    (cases array arr
+           (a-array (start len)
+                    (if (> idx len)
+                        (eopl:error 'arrayset! "out of array index")
+                        (setref! (+ idx start) val))))))
+    ;; (setref! (+ idx arr) val)))
 

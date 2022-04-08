@@ -185,4 +185,6 @@ let v = arrayref(x,1)
 in arrayset(x,1,-(v,-1))
 in begin arrayset(a,1,0); (p a); (p a); arrayref(a,1) end" 2)
 
+    (array-length-1 "let a = newarray(100, 1) in arraylength(a)" 100)
+
     ))

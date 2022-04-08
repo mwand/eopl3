@@ -97,6 +97,10 @@
      ("arrayset" "(" expression "," number "," expression ")")
      arrset-exp)
 
+    (expression
+     ("arraylength" "(" expression ")")
+     arrlen-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

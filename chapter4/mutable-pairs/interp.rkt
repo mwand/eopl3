@@ -157,6 +157,13 @@
                        (let ([v1 (value-of exp1 env)]
                              [v2 (value-of exp2 env)])
                          (arrayset! (expval->array v1) num v2)))
+
+           (arrlen-exp (exp1)
+                       (let* ([v (value-of exp1 env)]
+                              [a (expval->array v)])
+                         (cases array a
+                               (a-array (start len)
+                                        (num-val len)))))
            )))
 
 ;; apply-procedure : Proc * ExpVal -> ExpVal
