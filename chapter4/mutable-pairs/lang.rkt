@@ -84,6 +84,19 @@
      ("setright" expression "=" expression)
      setright-exp)
 
+    ;; new for arry
+    (expression
+     ("newarray" "(" number "," expression ")")
+     newarr-exp)
+
+    (expression
+     ("arrayref" "(" expression "," number ")")
+     arrref-exp)
+
+    (expression
+     ("arrayset" "(" expression "," number "," expression ")")
+     arrset-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

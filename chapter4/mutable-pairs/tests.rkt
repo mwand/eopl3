@@ -174,5 +174,15 @@ in let f = proc (loc)
 in (f glo)"
                                        88)
 
+    ;; new for array
+    (simple-array-1 "let a = newarray(2, -99) in arrayref(a,1)" -99)
+    (simple-array-2 "let a = newarray(2, -99) in begin arrayset(a, 0, 2); arrayref(a,0) end" 2)
+    (simple-array-3 "let a = newarray(2, -99) in begin arrayset(a, 0, 2); arrayref(a,1) end" -99)
+    (array-in-proc-1 "let a = newarray(2,-99) in
+let
+p = proc (x)
+let v = arrayref(x,1)
+in arrayset(x,1,-(v,-1))
+in begin arrayset(a,1,0); (p a); (p a); arrayref(a,1) end" 2)
 
     ))
