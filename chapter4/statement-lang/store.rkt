@@ -3,7 +3,8 @@
 (require "drscheme-init.rkt")
 
 (provide initialize-store! reference? newref deref setref!
-         instrument-newref get-store-as-list)
+         instrument-newref get-store-as-list
+         get-store)
 
 (define instrument-newref (make-parameter #f))
 

@@ -1,6 +1,6 @@
 #lang eopl
 
-;; language for IMPLICIT-REFS
+;; language for STATEMENT-LANG
 
 (require "drscheme-init.rkt")
 
@@ -19,7 +19,29 @@
     ))
 
 (define the-grammar
-  '((program (expression) a-program)
+  '((program (statement) a-program)
+
+    ;; new for statement
+    (statement (identifier "=" expression) assign-stmt)
+
+    (statement ("print" expression) print-stmt)
+
+    (statement
+     ("{" (separated-list statement ";") "}")
+     block-stmt)
+
+    (statement
+     ("if" expression statement statement)
+     if-stmt)
+
+    (statement
+     ("while" expression statement)
+     while-stmt)
+
+    (statement
+     ("var" (separated-list identifier ",") ";" statement)
+     declare-stmt)
+    ;; end of statement
 
     (expression (number) const-exp)
     (expression
@@ -27,8 +49,20 @@
      diff-exp)
 
     (expression
+     ("+" "(" expression "," expression ")")
+     plus-exp)
+
+    (expression
+     ("*" "(" expression "," expression ")")
+     multiple-exp)
+
+    (expression
      ("zero?" "(" expression ")")
      zero?-exp)
+
+    (expression
+     ("not" "(" expression ")")
+     not-exp)
 
     (expression
      ("if" expression "then" expression "else" expression)

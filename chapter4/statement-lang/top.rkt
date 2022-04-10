@@ -6,7 +6,8 @@
 (require "drscheme-init.rkt")
 (require "data-structures.rkt")  ; for expval constructors
 (require "lang.rkt")             ; for scan&parse
-(require "interp.rkt")           ; for value-of-program
+;; (require "interp.rkt")           ; for value-of-program
+(require "result.rkt")           ; for result-of-program
 (require "tests.rkt")            ; for test-list
 
 (provide run run-all)
@@ -22,7 +23,7 @@
 
 (define run
   (lambda (string)
-    (value-of-program (scan&parse string))))
+    (result-of-program (scan&parse string))))
 
 ;; run-all : () -> Unspecified
 

@@ -1,8 +1,6 @@
 #lang eopl
 
 ;; interpreter for the IMPLICIT-REFS language
-(require (only-in racket
-                  filter))
 
 (require "drscheme-init.rkt")
 
@@ -11,7 +9,9 @@
 (require "environments.rkt")
 (require "store.rkt")
 
-(provide value-of-program value-of instrument-let instrument-newref)
+;; (provide value-of-program value-of instrument-let instrument-newref)
+(provide value-of instrument-let instrument-newref
+         store->readable)
 
 ;;;;;;;;;;;;;;;; switches for instrument-let ;;;;;;;;;;;;;;;;
 
@@ -23,12 +23,12 @@
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
 ;; value-of-program : Program -> ExpVal
-(define value-of-program
-  (lambda (pgm)
-    (initialize-store!)
-    (cases program pgm
-           (a-program (exp1)
-                      (value-of exp1 (init-env))))))
+;; (define value-of-program
+;;   (lambda (pgm)
+;;     (initialize-store!)
+;;     (cases program pgm
+;;            (a-program (exp1)
+;;                       (value-of exp1 (init-env))))))
 
 ;; value-of : Exp * Env -> ExpVal
 ;; Page: 118, 119
@@ -52,6 +52,23 @@
                          (num-val
                           (- num1 num2)))))
 
+           (plus-exp (exp1 exp2)
+                     (let ((val1 (value-of exp1 env))
+                           (val2 (value-of exp2 env)))
+                       (let ((num1 (expval->num val1))
+                             (num2 (expval->num val2)))
+                         (num-val
+                          (+ num1 num2)))))
+
+           (multiple-exp (exp1 exp2)
+                     (let ((val1 (value-of exp1 env))
+                           (val2 (value-of exp2 env)))
+                       (let ((num1 (expval->num val1))
+                             (num2 (expval->num val2)))
+                         (num-val
+                          (* num1 num2)))))
+
+
            ;\commentbox{\zerotestspec}
            (zero?-exp (exp1)
                       (let ((val1 (value-of exp1 env)))
@@ -59,6 +76,11 @@
                           (if (zero? num1)
                               (bool-val #t)
                               (bool-val #f)))))
+
+           (not-exp (exp1)
+                      (let ((val1 (value-of exp1 env)))
+                        (let ((b (expval->bool val1)))
+                          (bool-val (not b)))))
 
            ;\commentbox{\ma{\theifspec}}
            (if-exp (exp1 exp2 exp3)
@@ -127,6 +149,7 @@
                                       (setref! r v))
                                     refs old-vals)
                                vbody)))
+
            )))
 
 
