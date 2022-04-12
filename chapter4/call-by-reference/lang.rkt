@@ -41,6 +41,10 @@
      let-exp)
 
     (expression
+     ("letref" identifier "=" expression "in" expression)
+     letref-exp)
+
+    (expression
      ("proc" "(" (separated-list identifier ",") ")" expression)
      proc-exp)
 

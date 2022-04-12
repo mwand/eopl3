@@ -248,5 +248,7 @@ in begin
              -(a,b)
             end"
      11)
+
+    (letref1 "let a = 2 in letref b = a in b" 2) ;; we can see store didn't increase
     ))
 

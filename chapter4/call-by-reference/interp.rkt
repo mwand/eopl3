@@ -84,6 +84,21 @@
                             ))
                         (value-of body new-env))))
 
+           (letref-exp (var exp1 body)
+                       (when (instrument-let)
+                         (eopl:printf "entering letref ~s~%" var))
+                       (let* ([val (value-of-operand exp1 env)]
+                              [new-env (extend-env var val env)])
+                         (when (instrument-let)
+                           (begin
+                             (eopl:printf "entering body of letref ~s with env =~%" var)
+                             (pretty-print (env->list new-env))
+                             (eopl:printf "store =~%")
+                             (pretty-print (store->readable (get-store-as-list)))
+                             (eopl:printf "~%")
+                             ))
+                         (value-of body new-env)))
+
            (proc-exp (vars body)
                      (proc-val
                       (procedure vars body env)))
