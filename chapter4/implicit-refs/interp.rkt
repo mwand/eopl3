@@ -127,6 +127,24 @@
                                       (setref! r v))
                                     refs old-vals)
                                vbody)))
+
+           ;; new for ref-exp
+           (ref-exp (var)
+                    (apply-env env var))
+
+           (deref-exp (var)
+                      (deref
+                       (value-of (var-exp var) env)))
+                      ;; (deref var))
+
+           (setref-exp (var exp1)
+                       (begin
+                         (setref! (value-of (var-exp var) env)
+                                  (value-of exp1 env))
+                         ;; (setref! (apply-env env var) (value-of exp1 env))
+                         ;; (setref! var
+                         ;;          (value-of exp1 env))
+                         (num-val 28)))
            )))
 
 

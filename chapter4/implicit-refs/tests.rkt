@@ -144,4 +144,16 @@ in ((f 44) 33)"
     (dynamic-set-1 "let x = 11
       in let p = proc (y) -(y,x)
 in -(setdynamic x = 17 during (p 22), (p 13))" 3)
+
+
+    ;; ex4.35, ref for call-by-value
+    (ref-cbv-1 "
+      let a = 3
+      in let b = 4
+in let swap = proc (x) proc (y) let temp = deref(x)
+                        in begin
+                            setref(x,deref(y));
+                            setref(y,temp)
+end
+in begin ((swap ref a) ref b); -(a,b) end" 1)
     ))

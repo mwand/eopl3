@@ -75,6 +75,13 @@
      ("setdynamic" (arbno identifier "=" expression) "during" expression)
      setdynamic-exp)
 
+    ;; new for ref-exp, ex 4.35
+    (expression ("ref" identifier) ref-exp)
+
+    (expression ("deref" "(" identifier ")" ) deref-exp)
+
+    (expression ("setref" "(" identifier "," expression ")") setref-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
