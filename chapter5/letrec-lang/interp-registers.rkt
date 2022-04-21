@@ -1,13 +1,13 @@
-(module interp-registers "eopl-without-exp.scm"
-  
+(module interp-registers "eopl-without-exp.rkt"
+
   ;; imperative cps interpreter for the LETREC language, using the
   ;; data structure representation of continuations (Figure 5.3)
 
-  (require "drscheme-init.scm")
+  (require "drscheme-init.rkt")
 
-  (require "lang.scm")
-  (require "data-structures.scm")
-  (require "environments.scm")
+  (require "lang.rkt")
+  (require "data-structures.rkt")
+  (require "environments.rkt")
 
   (provide value-of-program value-of/k)
 
@@ -27,7 +27,7 @@
 
   ;; value-of-program : Program -> FinalAnswer
   ;; Page: 167
-  (define value-of-program 
+  (define value-of-program
     (lambda (pgm)
       (cases program pgm
         (a-program (body)
@@ -38,26 +38,26 @@
 
   ;; value-of : Exp * Env * Cont -> FinalAnswer
   ;; value-of/k : () -> FinalAnswer
-  ;; usage : relies on registers 
+  ;; usage : relies on registers
   ;;      exp  : Exp
   ;;      env  : Env
   ;;      cont : Cont
   ;; Page 167 and 168
   ;;
-  ;; The code from the corresponding portions of interp.scm is shown
+  ;; The code from the corresponding portions of interp.rkt is shown
   ;; as comments.
   (define value-of/k
-    (lambda ()                         
+    (lambda ()
       (cases expression exp
         (const-exp (num)
-          ;; (apply-cont cont (num-val num)))                   
+          ;; (apply-cont cont (num-val num)))
           (set! val (num-val num))
-          ;; cont is unchanged          
+          ;; cont is unchanged
           (apply-cont))
         (var-exp (var)
-          ;; (apply-cont cont (apply-env env id)))                 
+          ;; (apply-cont cont (apply-env env id)))
           (set! val (apply-env env var))
-          ;; cont is unchanged          
+          ;; cont is unchanged
           (apply-cont))
         (proc-exp (var body)
           ;; (apply-cont cont (proc-val (procedure bvar body env))
@@ -76,8 +76,8 @@
           (set! cont (zero1-cont cont))
           (set! exp exp1)
           (value-of/k))
-        (let-exp (var exp1 body) 
-          ;; (value-of/k rhs env (let-exp-cont id body env cont)) 
+        (let-exp (var exp1 body)
+          ;; (value-of/k rhs env (let-exp-cont id body env cont))
           (set! cont (let-exp-cont var body env cont))
           (set! exp exp1)
           (value-of/k))
@@ -87,10 +87,10 @@
           (set! exp exp1)
           (value-of/k))
         (diff-exp (exp1 exp2)
-          ;; (value-of/k exp1 env (diff1-cont exp2 env cont))              
+          ;; (value-of/k exp1 env (diff1-cont exp2 env cont))
           (set! cont (diff1-cont exp2 env cont))
           (set! exp exp1)
-          ;; env is unchanged          
+          ;; env is unchanged
           (value-of/k))
         (call-exp (rator rand)
           ;; (value-of/k rator env (rator-cont rand env cont))
@@ -105,13 +105,13 @@
   ;;     val  : ExpVal
   ;; Page 169 and 170
   (define apply-cont
-    (lambda ()                          
+    (lambda ()
       (cases continuation cont
-          
+
         (end-cont ()
           (eopl:printf "End of computation.~%")
           val)
-        ;; or (logged-print val)  ; if you use drscheme-init-cps.scm
+        ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
         (zero1-cont (saved-cont)
           ;; (apply-cont cont
           ;;   (bool-val
@@ -120,7 +120,7 @@
           (set! val (bool-val (zero? (expval->num val))))
           (apply-cont))
         (let-exp-cont (var body saved-env saved-cont)
-          ;; (value-of/k body (extend-env id val env) cont)                     
+          ;; (value-of/k body (extend-env id val env) cont)
           (set! cont saved-cont)
           (set! exp body)
           (set! env (extend-env var val saved-env))
@@ -168,7 +168,7 @@
   ;;      cont : Cont
   ;; Page 170
   (define apply-procedure/k
-    (lambda ()                          
+    (lambda ()
       (cases proc proc1
         (procedure (var body saved-env)
           (set! exp body)
@@ -181,7 +181,7 @@
   ;;     (if (trace-apply-procedure)
   ;;       (begin
   ;;         (eopl:printf
-  ;;           "~%entering apply-procedure:~%proc1=~s~%val=~s~%cont=~s~%" 
+  ;;           "~%entering apply-procedure:~%proc1=~s~%val=~s~%cont=~s~%"
   ;;           proc1 val cont)))
   ;;     (cases proc proc1
   ;;       (procedure (var body saved-env)
