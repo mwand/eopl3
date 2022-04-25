@@ -9,6 +9,7 @@
 (require "environments.rkt")
 (require "store.rkt")
 (require "pairvals.rkt")
+(require "arrayval.rkt")
 
 (provide value-of-program value-of instrument-let instrument-newref)
 
@@ -163,6 +164,27 @@
                                (setright p v2)
                                (num-val 83)))))
 
+           ;; new for array
+           (newarr-exp (num exp1)
+                       (let ([v (value-of exp1 env)])
+                         (array-val (newarray num v))))
+
+           (arrref-exp (exp1 num)
+                       (let ([v (value-of exp1 env)])
+                         (arrayref (expval->array v) num)))
+
+           (arrset-exp (exp1 num exp2)
+                       (let ([v1 (value-of exp1 env)]
+                             [v2 (value-of exp2 env)])
+                         (arrayset! (expval->array v1) num v2)))
+
+           (arrlen-exp (exp1)
+                       (let* ([v (value-of exp1 env)]
+                              [a (expval->array v)])
+                         (cases array a
+                                (a-array (start len)
+                                         (num-val len)))))
+
            )))
 
 ;; apply-procedure : Proc * Ref -> ExpVal
@@ -205,6 +227,12 @@
   (lambda (exp env)
     (cases expression exp
            (var-exp (var) (apply-env env var))
+           (arrref-exp (exp1 idx)
+                       (let* ([arrv (value-of exp1 env)]
+                              [arr (expval->array arrv)])
+                         (cases array arr
+                                (a-array (start len)
+                                         (+ idx start)))))
            (else
             (newref (value-of exp env))))))
 
