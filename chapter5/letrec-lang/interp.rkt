@@ -46,6 +46,9 @@
            (let-exp (var exp1 body)
                     (value-of/k exp1 env
                                 (let-exp-cont var body env cont)))
+           (let2-exp (var1 exp1 var2 exp2 body)
+                     (value-of/k exp1 env
+                                 (let2-exp-cont var1 var2 exp2 body env cont)))
            (if-exp (exp1 exp2 exp3)
                    (value-of/k exp1 env
                                (if-test-cont exp2 exp3 env cont)))
@@ -59,96 +62,100 @@
 
 ;; apply-cont : Cont * ExpVal -> FinalAnswer
 ;; Page: 148
-;; (define apply-cont
-;;   (lambda (cont val)
-;;     (cases continuation cont
-;;            (end-cont ()
-;;                      (begin
-;;                        (eopl:printf
-;;                         "End of computation.~%")
-;;                        val))
-;;            ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
-;;            (zero1-cont (saved-cont)
-;;                        (apply-cont saved-cont
-;;                                    (bool-val
-;;                                     (zero? (expval->num val)))))
-;;            (let-exp-cont (var body saved-env saved-cont)
-;;                          (value-of/k body
-;;                                      (extend-env var val saved-env) saved-cont))
-;;            (if-test-cont (exp2 exp3 saved-env saved-cont)
-;;                          (if (expval->bool val)
-;;                              (value-of/k exp2 saved-env saved-cont)
-;;                              (value-of/k exp3 saved-env saved-cont)))
-;;            (diff1-cont (exp2 saved-env saved-cont)
-;;                        (value-of/k exp2
-;;                                    saved-env (diff2-cont val saved-cont)))
-;;            (diff2-cont (val1 saved-cont)
-;;                        (let ((num1 (expval->num val1))
-;;                              (num2 (expval->num val)))
-;;                          (apply-cont saved-cont
-;;                                      (num-val (- num1 num2)))))
-;;            (rator-cont (rand saved-env saved-cont)
-;;                        (value-of/k rand saved-env
-;;                                    (rand-cont val saved-cont)))
-;;            (rand-cont (val1 saved-cont)
-;;                       (let ((proc (expval->proc val1)))
-;;                         (apply-procedure/k proc val saved-cont)))
-;;            )))
-
-(define end-cont
-  (lambda ()
-    (lambda (val)
-      (begin (eopl:printf "End of computation. ~%")
-             val))))
-
-(define zero1-cont
-  (lambda (saved-cont)
-    (lambda (val)
-      (apply-cont saved-cont
-                  (bool-val
-                   (zero? (expval->num val)))))))
-
-(define let-exp-cont
-  (lambda (var body saved-env saved-cont)
-    (lambda (val)
-      (value-of/k body
-                  (extend-env var val saved-env) saved-cont))))
-
-(define if-test-cont
-  (lambda (exp2 exp3 saved-env saved-cont)
-    (lambda (val)
-      (if (expval->bool val)
-          (value-of/k exp2 saved-env saved-cont)
-          (value-of/k exp3 saved-env saved-cont)))))
-
-(define diff1-cont
-  (lambda (exp2 saved-env saved-cont)
-    (lambda (val)
-      (value-of/k exp2
-                  saved-env (diff2-cont val saved-cont)))))
-
-(define diff2-cont
-  (lambda (val1 saved-cont)
-    (lambda (val)
-      (apply-cont saved-cont
-                  (num-val (- (expval->num val1)
-                              (expval->num val)))))))
-
-(define rator-cont
-  (lambda (rand saved-env saved-cont)
-    (lambda (val)
-      (value-of/k rand saved-env
-                  (rand-cont val saved-cont)))))
-
-(define rand-cont
-  (lambda (val1 saved-cont)
-    (lambda (val)
-      (apply-procedure/k (expval->proc val1)
-                         val saved-cont))))
-
 (define apply-cont
   (lambda (cont val)
-    (cont val)))
+    (cases continuation cont
+           (end-cont ()
+                     (begin
+                       (eopl:printf
+                        "End of computation.~%")
+                       val))
+           ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
+           (zero1-cont (saved-cont)
+                       (apply-cont saved-cont
+                                   (bool-val
+                                    (zero? (expval->num val)))))
+           (let-exp-cont (var body saved-env saved-cont)
+                         (value-of/k body
+                                     (extend-env var val saved-env) saved-cont))
+           (let2-exp-cont (var1 var2 exp2 body saved-env saved-cont)
+                          (let ([new-env (extend-env var1 val saved-env)]
+                                [lexp [let-exp var2 exp2 body]])
+                            (value-of/k lexp new-env saved-cont)))
+           (if-test-cont (exp2 exp3 saved-env saved-cont)
+                         (if (expval->bool val)
+                             (value-of/k exp2 saved-env saved-cont)
+                             (value-of/k exp3 saved-env saved-cont)))
+           (diff1-cont (exp2 saved-env saved-cont)
+                       (value-of/k exp2
+                                   saved-env (diff2-cont val saved-cont)))
+           (diff2-cont (val1 saved-cont)
+                       (let ((num1 (expval->num val1))
+                             (num2 (expval->num val)))
+                         (apply-cont saved-cont
+                                     (num-val (- num1 num2)))))
+           (rator-cont (rand saved-env saved-cont)
+                       (value-of/k rand saved-env
+                                   (rand-cont val saved-cont)))
+           (rand-cont (val1 saved-cont)
+                      (let ((proc (expval->proc val1)))
+                        (apply-procedure/k proc val saved-cont)))
+           )))
+
+;; (define end-cont
+;;   (lambda ()
+;;     (lambda (val)
+;;       (begin (eopl:printf "End of computation. ~%")
+;;              val))))
+
+;; (define zero1-cont
+;;   (lambda (saved-cont)
+;;     (lambda (val)
+;;       (apply-cont saved-cont
+;;                   (bool-val
+;;                    (zero? (expval->num val)))))))
+
+;; (define let-exp-cont
+;;   (lambda (var body saved-env saved-cont)
+;;     (lambda (val)
+;;       (value-of/k body
+;;                   (extend-env var val saved-env) saved-cont))))
+
+;; (define if-test-cont
+;;   (lambda (exp2 exp3 saved-env saved-cont)
+;;     (lambda (val)
+;;       (if (expval->bool val)
+;;           (value-of/k exp2 saved-env saved-cont)
+;;           (value-of/k exp3 saved-env saved-cont)))))
+
+;; (define diff1-cont
+;;   (lambda (exp2 saved-env saved-cont)
+;;     (lambda (val)
+;;       (value-of/k exp2
+;;                   saved-env (diff2-cont val saved-cont)))))
+
+;; (define diff2-cont
+;;   (lambda (val1 saved-cont)
+;;     (lambda (val)
+;;       (apply-cont saved-cont
+;;                   (num-val (- (expval->num val1)
+;;                               (expval->num val)))))))
+
+;; (define rator-cont
+;;   (lambda (rand saved-env saved-cont)
+;;     (lambda (val)
+;;       (value-of/k rand saved-env
+;;                   (rand-cont val saved-cont)))))
+
+;; (define rand-cont
+;;   (lambda (val1 saved-cont)
+;;     (lambda (val)
+;;       (apply-procedure/k (expval->proc val1)
+;;                          val saved-cont))))
+
+;; (define apply-cont
+;;   (lambda (cont val)
+;;     (cont val)))
 
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
