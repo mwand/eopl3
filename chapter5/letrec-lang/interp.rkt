@@ -49,6 +49,9 @@
            (let2-exp (var1 exp1 var2 exp2 body)
                      (value-of/k exp1 env
                                  (let2-exp-cont var1 var2 exp2 body env cont)))
+           (let3-exp (var1 exp1 var2 exp2 var3 exp3 body)
+                     (value-of/k exp1 env
+                                 (let3-exp-cont var1 var2 exp2 var3 exp3 body env cont)))
            (if-exp (exp1 exp2 exp3)
                    (value-of/k exp1 env
                                (if-test-cont exp2 exp3 env cont)))
@@ -80,8 +83,12 @@
                                      (extend-env var val saved-env) saved-cont))
            (let2-exp-cont (var1 var2 exp2 body saved-env saved-cont)
                           (let ([new-env (extend-env var1 val saved-env)]
-                                [lexp [let-exp var2 exp2 body]])
-                            (value-of/k lexp new-env saved-cont)))
+                                [new-exp [let-exp var2 exp2 body]])
+                            (value-of/k new-exp new-env saved-cont)))
+           (let3-exp-cont (var1 var2 exp2 var3 exp3 body saved-env saved-cont)
+                          (let ([new-env (extend-env var1 val saved-env)]
+                                [new-exp (let2-exp var2 exp2 var3 exp3 body)])
+                            (value-of/k new-exp new-env saved-cont)))
            (if-test-cont (exp2 exp3 saved-env saved-cont)
                          (if (expval->bool val)
                              (value-of/k exp2 saved-env saved-cont)

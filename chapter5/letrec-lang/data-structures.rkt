@@ -62,6 +62,15 @@
    (body expression?)
    (saved-env environment?)
    (saved-cont continuation?))
+  (let3-exp-cont
+   (var1 identifier?)
+   (var2 identifier?)
+   (exp2 expression?)
+   (var3 identifier?)
+   (exp3 expression?)
+   (body expression?)
+   (saved-env environment?)
+   (saved-cont continuation?))
   (if-test-cont
    (exp2 expression?)
    (exp3 expression?)

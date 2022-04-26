@@ -41,8 +41,15 @@
      let-exp)
 
     (expression
-     ("let2" identifier "=" expression identifier "=" expression "in" expression)
+     ("let2" identifier "=" expression
+             identifier "=" expression "in" expression)
      let2-exp)
+
+    (expression
+     ("let3" identifier "=" expression
+             identifier "=" expression
+             identifier "=" expression "in" expression)
+     let3-exp)
 
     (expression
      ("proc" "(" identifier ")" expression)
