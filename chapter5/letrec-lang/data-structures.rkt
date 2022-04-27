@@ -14,7 +14,9 @@
   (bool-val
    (boolean boolean?))
   (proc-val
-   (proc proc?)))
+   (proc proc?))
+  (list-val
+   (li list?)))
 
 ;;; extractors:
 
@@ -36,10 +38,24 @@
            (proc-val (proc) proc)
            (else (expval-extractor-error 'proc v)))))
 
+(define expval->list
+  (lambda (v)
+    (cases expval v
+           (list-val (li) li)
+           (else (expval-extractor-error 'list)))))
+
 (define expval-extractor-error
   (lambda (variant value)
     (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
                 variant value)))
+
+(define expval->denval
+  (lambda (v)
+    (cases expval v
+           (num-val (n) n)
+           (bool-val (b) b)
+           (proc-val (p) p)
+           (list-val (l) l))))
 
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
@@ -89,6 +105,10 @@
    (saved-cont continuation?))
   (rand-cont
    (val1 expval?)
+   (saved-cont continuation?))
+  (cons-cont
+   (tail expression?)
+   (saved-env environment?)
    (saved-cont continuation?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;

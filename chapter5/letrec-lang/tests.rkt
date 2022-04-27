@@ -94,4 +94,12 @@ in let times4 = (fix t4m)
    in letrec  odd(x)  = if zero?(x) then 0 else ((even odd) -(x,1))
    in (odd 13)" 1)
 
+    ;; ex5.5
+    (emptylist "emptylist" ())
+    (null?-list "null? (emptylist)" #t)
+    (cons-car-cdr "let x = 4
+                   in cons(x,
+                           cons(cons(-(x,1),
+                                emptylist),
+                           emptylist))"  (4 (3)))
     ))

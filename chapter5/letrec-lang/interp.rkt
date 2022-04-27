@@ -61,6 +61,25 @@
            (call-exp (rator rand)
                      (value-of/k rator env
                                  (rator-cont rand env cont)))
+           (emptylist-exp ()
+                          (apply-cont cont (list-val '())))
+           (cons-exp (head tail)
+                     (value-of/k head env
+                                 (cons-cont tail env cont)))
+           (car-exp (lst)
+                    (num-val
+                     (car
+                      (expval->list
+                       (value-of/k lst env cont)))))
+           (cdr-exp (lst)
+                    (list-val
+                     (cdr
+                      (expval->list
+                       (value-of/k lst env cont)))))
+           (null?-exp (lst)
+                      (null?
+                       (expval->list
+                        (value-of/k lst env cont))))
            )))
 
 ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -107,6 +126,13 @@
            (rand-cont (val1 saved-cont)
                       (let ((proc (expval->proc val1)))
                         (apply-procedure/k proc val saved-cont)))
+           (cons-cont (tail saved-env saved-cont)
+                      (list-val
+                       (cons val
+                             (value-of/k tail saved-env saved-cont))))
+                       ;; (cons (expval->denval val)
+                       ;;       (expval->list
+                       ;;        (value-of/klue-of/k tail saved-env saved-cont)))))
            )))
 
 ;; (define end-cont
