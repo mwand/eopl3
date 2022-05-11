@@ -67,19 +67,19 @@
                      (value-of/k head env
                                  (cons-cont tail env cont)))
            (car-exp (lst)
-                    (num-val
                      (car
                       (expval->list
-                       (value-of/k lst env cont)))))
+                       (value-of/k lst env cont))))
            (cdr-exp (lst)
                     (list-val
                      (cdr
                       (expval->list
                        (value-of/k lst env cont)))))
            (null?-exp (lst)
-                      (null?
-                       (expval->list
-                        (value-of/k lst env cont))))
+                      (bool-val
+                       (null?
+                        (expval->list
+                         (value-of/k lst env cont)))))
            )))
 
 ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -127,13 +127,24 @@
                       (let ((proc (expval->proc val1)))
                         (apply-procedure/k proc val saved-cont)))
            (cons-cont (tail saved-env saved-cont)
-                      (list-val
-                       (cons val
-                             (value-of/k tail saved-env saved-cont))))
-                       ;; (cons (expval->denval val)
-                       ;;       (expval->list
-                       ;;        (value-of/klue-of/k tail saved-env saved-cont)))))
+                      (if (equal? tail (emptylist-exp))
+                          (apply-cont saved-cont
+                                      (list-val (list val)))
+                          (list-val
+                           (cons val
+                                 (expval->list
+                                  (value-of/k tail saved-env saved-cont))))))
            )))
+
+;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
+;; Page 152 and 155
+(define apply-procedure/k
+  (lambda (proc1 arg cont)
+    (cases proc proc1
+           (procedure (var body saved-env)
+                      (value-of/k body
+                                  (extend-env var arg saved-env)
+                                  cont)))))
 
 ;; (define end-cont
 ;;   (lambda ()
@@ -189,20 +200,3 @@
 ;; (define apply-cont
 ;;   (lambda (cont val)
 ;;     (cont val)))
-
-
-;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
-;; Page 152 and 155
-(define apply-procedure/k
-  (lambda (proc1 arg cont)
-    (cases proc proc1
-           (procedure (var body saved-env)
-                      (value-of/k body
-                                  (extend-env var arg saved-env)
-                                  cont)))))
-
-
-
-
-
-
