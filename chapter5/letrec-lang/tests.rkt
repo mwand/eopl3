@@ -102,4 +102,6 @@ in let times4 = (fix t4m)
                            cons(cons(-(x,1),
                                 emptylist),
                            emptylist))"  (4 (3)))
+
+    (list-1 "list(1,2,3)" (1 2 3))
     ))

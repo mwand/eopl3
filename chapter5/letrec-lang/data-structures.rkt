@@ -109,6 +109,13 @@
   (cons-cont
    (tail expression?)
    (saved-env environment?)
+   (saved-cont continuation?))
+  (lst-head-cont
+   (tail (list-of expression?))
+   (saved-env environment?)
+   (saved-cont continuation?))
+  (lst-tail-cont
+   (val1 expval?)
    (saved-cont continuation?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;

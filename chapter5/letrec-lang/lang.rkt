@@ -85,6 +85,10 @@
      ("null?" "(" expression ")")
      null?-exp)
 
+    (expression
+     ("list" "(" (separated-list expression ",") ")")
+     list-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

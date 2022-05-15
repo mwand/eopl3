@@ -80,6 +80,12 @@
                        (null?
                         (expval->list
                          (value-of/k lst env cont)))))
+
+           (list-exp (lst)
+                     (if (null? lst)
+                         (apply-cont cont (list-val '()))
+                         (value-of/k (car lst) env
+                                     (lst-head-cont (cdr lst) env cont))))
            )))
 
 ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -134,6 +140,18 @@
                            (cons val
                                  (expval->list
                                   (value-of/k tail saved-env saved-cont))))))
+           (lst-head-cont (tail saved-env saved-cont)
+                          (if (null? tail)
+                              (apply-cont saved-cont
+                                          (list-val
+                                           (cons val '())))
+                              (value-of/k (list-exp tail)
+                                          saved-env
+                                          (lst-tail-cont val saved-cont))))
+           (lst-tail-cont (val1 saved-cont)
+                          (apply-cont saved-cont
+                                      (list-val
+                                       (cons val1 (expval->list val)))))
            )))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
