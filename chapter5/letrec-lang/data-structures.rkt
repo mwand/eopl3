@@ -71,6 +71,12 @@
    (body expression?)
    (saved-env environment?)
    (saved-cont continuation?))
+  (let-head-cont
+   (vars (list-of identifier?))
+   (exps (list-of expression?))
+   (body expression?)
+   (saved-env environment?)
+   (saved-cont continuation?))
   (let2-exp-cont
    (var1 identifier?)
    (var2 identifier?)

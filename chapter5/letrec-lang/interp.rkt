@@ -43,9 +43,13 @@
            (zero?-exp (exp1)
                       (value-of/k exp1 env
                                   (zero1-cont cont)))
-           (let-exp (var exp1 body)
-                    (value-of/k exp1 env
-                                (let-exp-cont var body env cont)))
+           (let-exp (vars exps body)
+                    (if (null? vars)
+                        (value-of/k body env cont)
+                        (value-of/k (car exps) env
+                                    (let-head-cont vars (cdr exps) body env cont))))
+                    ;; (value-of/k exp1 env
+                    ;;             (let-exp-cont var body env cont)))
            (let2-exp (var1 exp1 var2 exp2 body)
                      (value-of/k exp1 env
                                  (let2-exp-cont var1 var2 exp2 body env cont)))
@@ -106,6 +110,14 @@
            (let-exp-cont (var body saved-env saved-cont)
                          (value-of/k body
                                      (extend-env var val saved-env) saved-cont))
+           (let-head-cont (vars exps body saved-env saved-cont)
+                          (if (null? exps)
+                              (value-of/k body
+                                          (extend-env (car vars) val saved-env)
+                                          saved-cont)
+                              (value-of/k (let-exp (cdr vars) exps body)
+                                          (extend-env (car vars) val saved-env)
+                                          saved-cont)))
            (let2-exp-cont (var1 var2 exp2 body saved-env saved-cont)
                           (let ([new-env (extend-env var1 val saved-env)]
                                 [new-exp [let-exp var2 exp2 body]])
