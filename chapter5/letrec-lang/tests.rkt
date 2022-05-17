@@ -104,4 +104,25 @@ in let times4 = (fix t4m)
                            emptylist))"  (4 (3)))
 
     (list-1 "list(1,2,3)" (1 2 3))
+
+    ;; multi proc args
+    (apply-multiple-para-in-rator-pos "(proc(x,y) -(x,y) 30 29)" 1)
+    (apply-multiple-para-proc "let f = proc(x,y) -(x,y) in (f 30 29)" 1)
+    (curry-proc "let f = proc(x) proc(y) -(x, -(0,y)) in ((f 2) 3)" 5)
+
+    ;; multi letrec args
+    (multiple-letrec-1 "letrec f(x,y) = if zero?(x)  then 0 else -((f -(x,y) y), -2) in (f 4 1)" 8)
+    (multiple-letrec-2 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in (f (g 2 3) 1) " 4)
+    (multiple-letrec-3 "letrec f(x,y) = -(x,y) g(x,y) = -(x, -(0,y)) in -((f 2 1), (g 2 1))" -2)
+
+    (letret-multiple-1 "letrec
+even(x) = if zero?(x) then 1 else (odd -(x,1))
+odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (odd 13)" 1)
+
+    (letret-multiple-2 "letrec
+even(x) = if zero?(x) then 1 else (odd -(x,1))
+odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (even 13)" 0)
+
     ))

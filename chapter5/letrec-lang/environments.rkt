@@ -38,8 +38,45 @@
                        (if (eqv? search-sym var)
                            val
                            (apply-env saved-env search-sym)))
-           (extend-env-rec (p-name b-var p-body saved-env)
-                           (if (eqv? search-sym p-name)
-                               (proc-val (procedure b-var p-body env))
-                               (apply-env saved-env search-sym))))))
+           (extend-env* (vars vals saved-env)
+                        (cond
+                          [(null? vars)
+                           (apply-env saved-env search-sym)]
+                          [(eqv? search-sym (car vars))
+                           (car vals)]
+                          [else
+                           (apply-env (extend-env*
+                                       (cdr vars)
+                                       (cdr vals)
+                                       saved-env)
+                                      search-sym)]))
+           (extend-env-rec* (p-names b-vars p-bodies saved-env)
+                            (cond
+                              ((location search-sym p-names)
+                               => (lambda (n)
+                                    (proc-val
+                                     (procedure
+                                      (list-ref b-vars n)
+                                      (list-ref p-bodies n)
+                                      env))))
+                              (else (apply-env saved-env search-sym)))))))
+
+;; location : Sym * Listof(Sym) -> Maybe(Int)
+;; (location sym syms) returns the location of sym in syms or #f is
+;; sym is not in syms.  We can specify this as follows:
+;; if (memv sym syms)
+;;   then (list-ref syms (location sym syms)) = sym
+;;   else (location sym syms) = #f
+(define location
+  (lambda (sym syms)
+    (cond
+      ((null? syms) #f)
+      ((eqv? sym (car syms)) 0)
+      ((location sym (cdr syms))
+       => (lambda (n)
+            (+ n 1)))
+      (else #f))))
+                           ;; (if (eqv? search-sym p-name)
+                           ;;     (proc-val (procedure b-var p-body env))
+                           ;;     (apply-env saved-env search-sym))))))
 
