@@ -13,8 +13,9 @@
 (require "lang.rkt")
 (require "data-structures.rkt")
 (require "environments.rkt")
+(require "store.rkt")
 
-(provide value-of-program value-of/k)
+(provide value-of-program value-of/k instrument-newref)
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -22,6 +23,7 @@
 ;; Page: 143 and 154
 (define value-of-program
   (lambda (pgm)
+    (initialize-store!)
     (cases program pgm
            (a-program (exp1)
                       (value-of/k exp1 (init-env) (end-cont))))))
@@ -32,7 +34,7 @@
   (lambda (exp env cont)
     (cases expression exp
            (const-exp (num) (apply-cont cont (num-val num)))
-           (var-exp (var) (apply-cont cont (apply-env env var)))
+           (var-exp (var) (apply-cont cont (deref (apply-env env var))))
            (proc-exp (vars body)
                      (apply-cont cont
                                  (proc-val (procedure vars body env))))
@@ -117,21 +119,21 @@
                                     (zero? (expval->num val)))))
            (let-exp-cont (var body saved-env saved-cont)
                          (value-of/k body
-                                     (extend-env var val saved-env) saved-cont))
+                                     (extend-env var (newref val) saved-env) saved-cont))
            (let-head-cont (vars exps body saved-env saved-cont)
                           (if (null? exps)
                               (value-of/k body
-                                          (extend-env (car vars) val saved-env)
+                                          (extend-env (car vars) (newref val) saved-env)
                                           saved-cont)
                               (value-of/k (let-exp (cdr vars) exps body)
-                                          (extend-env (car vars) val saved-env)
+                                          (extend-env (car vars) (newref val) saved-env)
                                           saved-cont)))
            (let2-exp-cont (var1 var2 exp2 body saved-env saved-cont)
-                          (let ([new-env (extend-env var1 val saved-env)]
+                          (let ([new-env (extend-env var1 (newref val) saved-env)]
                                 [new-exp [let-exp var2 exp2 body]])
                             (value-of/k new-exp new-env saved-cont)))
            (let3-exp-cont (var1 var2 exp2 var3 exp3 body saved-env saved-cont)
-                          (let ([new-env (extend-env var1 val saved-env)]
+                          (let ([new-env (extend-env var1 (newref val) saved-env)]
                                 [new-exp (let2-exp var2 exp2 var3 exp3 body)])
                             (value-of/k new-exp new-env saved-cont)))
            (if-test-cont (exp2 exp3 saved-env saved-cont)
@@ -190,7 +192,7 @@
     (cases proc proc1
            (procedure (vars body saved-env)
                       (value-of/k body
-                                  (extend-env* vars args saved-env)
+                                  (extend-env* vars (map newref args) saved-env)
                                   cont)))))
 
 ;; (define end-cont

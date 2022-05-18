@@ -1,6 +1,7 @@
 #lang eopl
 
 (require "lang.rkt")                  ; for expression?
+(require "store.rkt")                 ; for reference?
 
 (provide (all-defined-out))               ; too many things to list
 
@@ -16,7 +17,9 @@
   (proc-val
    (proc proc?))
   (list-val
-   (li list?)))
+   (li list?))
+  (ref-val
+   (ref reference?)))
 
 ;;; extractors:
 
@@ -44,18 +47,24 @@
            (list-val (li) li)
            (else (expval-extractor-error 'list)))))
 
+(define expval->ref
+  (lambda (v)
+    (cases expval v
+           (ref-val (r) r)
+           (else (expval-extractor-error 'reference v)))))
+
 (define expval-extractor-error
   (lambda (variant value)
     (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
                 variant value)))
 
-(define expval->denval
-  (lambda (v)
-    (cases expval v
-           (num-val (n) n)
-           (bool-val (b) b)
-           (proc-val (p) p)
-           (list-val (l) l))))
+;; (define expval->denval
+;;   (lambda (v)
+;;     (cases expval v
+;;            (num-val (n) n)
+;;            (bool-val (b) b)
+;;            (proc-val (p) p)
+;;            (list-val (l) l))))
 
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
@@ -141,11 +150,11 @@
   (empty-env)
   (extend-env
    (bvar symbol?)
-   (bval expval?)
+   (bval reference?)
    (saved-env environment?))
   (extend-env*
    (bvars (list-of symbol?))
-   (bvals (list-of expval?))
+   (bvals (list-of reference?))
    (saved-env environment?))
   (extend-env-rec*
    (p-names (list-of symbol?))

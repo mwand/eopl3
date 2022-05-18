@@ -4,6 +4,7 @@
 ;; data-structures.rkt.
 
 (require "data-structures.rkt")
+(require "store.rkt")
 
 (provide init-env empty-env extend-env apply-env)
 
@@ -19,11 +20,11 @@
 (define init-env
   (lambda ()
     (extend-env
-     'i (num-val 1)
+     'i (newref (num-val 1))
      (extend-env
-      'v (num-val 5)
+      'v (newref (num-val 5))
       (extend-env
-       'x (num-val 10)
+       'x (newref (num-val 10))
        (empty-env))))))
 
 ;;;;;;;;;;;;;;;; environment constructors and observers ;;;;;;;;;;;;;;;;
@@ -51,15 +52,24 @@
                                        saved-env)
                                       search-sym)]))
            (extend-env-rec* (p-names b-vars p-bodies saved-env)
-                            (cond
-                              ((location search-sym p-names)
-                               => (lambda (n)
-                                    (proc-val
-                                     (procedure
-                                      (list-ref b-vars n)
-                                      (list-ref p-bodies n)
-                                      env))))
-                              (else (apply-env saved-env search-sym)))))))
+                            (let ([n (location search-sym p-names)])
+                              (if n
+                                  (newref
+                                   (proc-val
+                                    (procedure
+                                     (list-ref b-vars n)
+                                     (list-ref p-bodies n)
+                                     env)))
+                                  (apply-env saved-env search-sym)))))))
+                            ;; (cond
+                            ;;   ((location search-sym p-names)
+                            ;;    => (lambda (n)
+                            ;;         (proc-val
+                            ;;          (procedure
+                            ;;           (list-ref b-vars n)
+                            ;;           (list-ref p-bodies n)
+                            ;;           env))))
+                            ;;   (else (apply-env saved-env search-sym)))))))
 
 ;; location : Sym * Listof(Sym) -> Maybe(Int)
 ;; (location sym syms) returns the location of sym in syms or #f is
