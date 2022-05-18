@@ -93,8 +93,9 @@
                          (value-of/k (car lst) env
                                      (lst-head-cont (cdr lst) env cont))))
            (assign-exp (var exp1)
-                       (value-of/k exp1 env
-                                   (set-rhs-cont env var cont)))
+                       (let ([ref (apply-env env var)])
+                         (value-of/k exp1 env
+                                     (set-rhs-cont ref cont))))
            )))
 
 ;; value-of/k* : (listof Exp) * Env * Cont -> (list-of ExpVal)
@@ -185,8 +186,9 @@
                           (apply-cont saved-cont
                                       (list-val
                                        (cons val1 (expval->list val)))))
-           (set-rhs-cont (saved-env var1 saved-cont)
-                         (begin (setref! (apply-env saved-env var1) val)
+           (set-rhs-cont (ref1 saved-cont)
+                         ;; (begin (setref! (apply-env saved-env var1) val)
+                         (begin (setref! ref1 val)
                                 (apply-cont saved-cont (num-val 27))))
            )))
 

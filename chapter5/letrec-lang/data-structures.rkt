@@ -136,8 +136,9 @@
    (val1 expval?)
    (saved-cont continuation?))
   (set-rhs-cont
-   (saved-env environment?)
-   (var1 identifier?)
+   ;; (saved-env environment?)
+   (ref reference?)
+   ;; (var1 identifier?)
    (saved-cont continuation?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
