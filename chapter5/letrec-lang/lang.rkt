@@ -93,6 +93,11 @@
      ("list" "(" (separated-list expression ",") ")")
      list-exp)
 
+    ;; new for implicit-refs
+    (expression
+     ("set" identifier "=" expression)
+     assign-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

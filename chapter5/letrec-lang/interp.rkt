@@ -92,6 +92,9 @@
                          (apply-cont cont (list-val '()))
                          (value-of/k (car lst) env
                                      (lst-head-cont (cdr lst) env cont))))
+           (assign-exp (var exp1)
+                       (value-of/k exp1 env
+                                   (set-rhs-cont env var cont)))
            )))
 
 ;; value-of/k* : (listof Exp) * Env * Cont -> (list-of ExpVal)
@@ -161,8 +164,7 @@
                             (value-of/k (car tail-rands) saved-env
                                         (rands-cont val1
                                                     (append val2 (list val))
-                                                    (cdr tail-rands) saved-env saved-cont))
-                            )))
+                                                    (cdr tail-rands) saved-env saved-cont)))))
            (cons-cont (tail saved-env saved-cont)
                       (if (equal? tail (emptylist-exp))
                           (apply-cont saved-cont
@@ -183,6 +185,9 @@
                           (apply-cont saved-cont
                                       (list-val
                                        (cons val1 (expval->list val)))))
+           (set-rhs-cont (saved-env var1 saved-cont)
+                         (begin (setref! (apply-env saved-env var1) val)
+                                (apply-cont saved-cont (num-val 27))))
            )))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
