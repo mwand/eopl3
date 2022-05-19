@@ -15,7 +15,10 @@
 (require "environments.rkt")
 (require "store.rkt")
 
-(provide value-of-program value-of/k instrument-newref)
+(provide value-of-program value-of/k instrument-newref instrument-cont)
+
+
+(define instrument-cont (make-parameter #f))
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -114,6 +117,10 @@
 ;; Page: 148
 (define apply-cont
   (lambda (cont val)
+    (when (instrument-cont)
+      (eopl:printf
+       "apply-cont: ~s~%"
+       cont))
     (cases continuation cont
            (end-cont ()
                      (begin
