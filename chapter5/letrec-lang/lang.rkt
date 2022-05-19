@@ -98,6 +98,10 @@
      ("set" identifier "=" expression)
      assign-exp)
 
+    (expression
+     ("begin" expression (arbno ";" expression) "end")
+     begin-exp)
+
     ))
 
 ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

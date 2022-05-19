@@ -139,7 +139,11 @@
    ;; (saved-env environment?)
    (ref reference?)
    ;; (var1 identifier?)
-   (saved-cont continuation?)))
+   (saved-cont continuation?))
+  (begin-cont
+    (exps (list-of expression?))
+    (saved-env environment?)
+    (saved-cont continuation?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 

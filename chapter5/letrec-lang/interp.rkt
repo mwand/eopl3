@@ -96,6 +96,10 @@
                        (let ([ref (apply-env env var)])
                          (value-of/k exp1 env
                                      (set-rhs-cont ref cont))))
+
+           (begin-exp (exp1 exps)
+                      (value-of/k exp1 env
+                                  (begin-cont exps env cont)))
            )))
 
 ;; value-of/k* : (listof Exp) * Env * Cont -> (list-of ExpVal)
@@ -190,6 +194,11 @@
                          ;; (begin (setref! (apply-env saved-env var1) val)
                          (begin (setref! ref1 val)
                                 (apply-cont saved-cont (num-val 27))))
+           (begin-cont (exps saved-env saved-cont)
+                       (if (null? exps)
+                           (apply-cont saved-cont val)
+                           (value-of/k (car exps) saved-env
+                                       (begin-cont (cdr exps) saved-env saved-cont))))
            )))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
