@@ -27,6 +27,10 @@
      diff-exp)
 
     (expression
+     ("*" "(" expression "," expression ")")
+     multi-exp)
+
+    (expression
      ("zero?" "(" expression ")")
      zero?-exp)
 

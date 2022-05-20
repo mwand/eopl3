@@ -67,6 +67,9 @@
            (diff-exp (exp1 exp2)
                      (value-of/k exp1 env
                                  (diff1-cont exp2 env cont)))
+           (multi-exp (exp1 exp2)
+                      (value-of/k exp1 env
+                                  (multi1-cont exp2 env cont)))
            (call-exp (rator rands)
                      (value-of/k rator env
                                  (rator-cont rands env cont)))
@@ -163,6 +166,14 @@
                              (num2 (expval->num val)))
                          (apply-cont saved-cont
                                      (num-val (- num1 num2)))))
+           (multi1-cont (exp2 saved-env saved-cont)
+                        (value-of/k exp2 saved-env
+                                    (multi2-cont val saved-cont)))
+           (multi2-cont (val1 saved-cont)
+                        (apply-cont saved-cont
+                                    (num-val
+                                     (* (expval->num val1)
+                                        (expval->num val)))))
            (rator-cont (rands saved-env saved-cont)
                        (if (null? rands)
                            (apply-procedure/k (expval->proc val)

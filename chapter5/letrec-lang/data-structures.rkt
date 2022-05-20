@@ -114,6 +114,13 @@
   (diff2-cont
    (val1 expval?)
    (saved-cont continuation?))
+  (multi1-cont
+   (exp2 expression?)
+   (saved-env environment?)
+   (saved-cont continuation?))
+  (multi2-cont
+   (val1 expval?)
+   (saved-cont continuation?))
   (rator-cont
    (rands (list-of expression?))
    (saved-env environment?)
