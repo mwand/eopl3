@@ -19,6 +19,7 @@
 
 
 (define instrument-cont (make-parameter #f))
+(define cont-max-depth 0)
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -27,6 +28,7 @@
 (define value-of-program
   (lambda (pgm)
     (initialize-store!)
+    (set! cont-max-depth 0)
     (cases program pgm
            (a-program (exp1)
                       (value-of/k exp1 (init-env) (end-cont))))))
@@ -121,9 +123,12 @@
 (define apply-cont
   (lambda (cont val)
     (when (instrument-cont)
-      (eopl:printf
-       "apply-cont: ~s~%"
-       cont))
+      (let ([d (continuation-depth cont)])
+        (when (> d cont-max-depth)
+          (begin (set! cont-max-depth d)
+                 (eopl:printf
+                  "apply-cont: ~s~%"
+                  cont)))))
     (cases continuation cont
            (end-cont ()
                      (begin
@@ -229,6 +234,50 @@
                                   (extend-env* vars (map newref args) saved-env)
                                   cont)))))
 
+
+
+(define continuation-depth
+  (lambda (cont)
+  (cases continuation cont
+         (end-cont () 1)
+         (zero1-cont (saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (let-exp-cont (var body env saved-cont)
+                       (+ 1 (continuation-depth saved-cont)))
+         (let-head-cont (vars exps body env saved-cont)
+                        (+ 1 (continuation-depth saved-cont)))
+         (let2-exp-cont (v1 v2 e2 b saved-env saved-cont)
+                        (+ 1 (continuation-depth saved-cont)))
+         (let3-exp-cont (v1 v2 e2 v3 e3 b e saved-cont)
+                        (+ 1 (continuation-depth saved-cont)))
+         (if-test-cont (e2 e3 e saved-cont)
+                       (+ 1 (continuation-depth saved-cont)))
+         (diff1-cont (e2 e saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (diff2-cont (v1 saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (multi1-cont (e2 e saved-cont)
+                      (+ 1 (continuation-depth saved-cont)))
+         (multi2-cont (v1 saved-cont)
+                      (+ 1 (continuation-depth saved-cont)))
+         (rator-cont (v1 e saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (rands-cont (v1 v2 t e saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (cons-cont (t e saved-cont)
+                    (+ 1 (continuation-depth saved-cont)))
+         (lst-head-cont (t e saved-cont)
+                        (+ 1 (continuation-depth saved-cont)))
+         (lst-tail-cont (v1 saved-cont)
+                        (+ 1 (continuation-depth saved-cont)))
+         (set-rhs-cont (r saved-cont)
+                       (+ 1 (continuation-depth saved-cont)))
+         (begin-cont (es e saved-cont)
+                     (+ 1 (continuation-depth saved-cont)))
+         (else
+          (eopl:error 'continuation
+                      "not a continuation: ~s"
+                      cont)))))
 ;; (define end-cont
 ;;   (lambda ()
 ;;     (lambda (val)

@@ -179,3 +179,20 @@
    (saved-env environment?)))
 
 
+;; (define-syntax (cont-depth stx)
+;;   (syntax-rules ()
+;;     ;; ((_  end-cont) 1)
+;;     ((_ ... cont)
+;;      (if (not (continuation? cont))
+;;          (eopl:error 'cont-depth
+;;                      "not a continuation:~s"
+;;                      cont)
+;;          (if (equal? (end-cont) cont)
+;;              1
+;;              (+ 1 (cont-depth cont)))))))
+
+;; (define-syntax (lst-depth stx)
+;;   (syntax-rules ()
+;;     ((_) 0)
+;;     ((_ e1) 1)
+;;     ((_ e1 e2 ...) (+ 1 (lst-depth e2 ...)))))

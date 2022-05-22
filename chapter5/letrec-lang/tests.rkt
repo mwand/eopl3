@@ -156,7 +156,7 @@ in letrec even(d) = if zero?(x) then 1
 
     ;; ex5.13 fact fact-iter
     (fact-1 "letrec fact(n) = if zero?(n) then 1 else
-                              *(n, fact(-(n,1))) in (f 5)" 120)
+                              *(n, (fact -(n,1))) in (fact 5)" 120)
 
     (fact-iter-1 "letrec fact-iter(n,a) =
                      if zero?(n) then a
