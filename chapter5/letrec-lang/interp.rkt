@@ -31,9 +31,19 @@
     (set! cont-max-depth 0)
     (cases program pgm
            (a-program (exp1)
-                      (value-of/k exp1 (init-env) (end-cont))))))
+                      (trampoline
+                       (value-of/k exp1 (init-env) (end-cont)))))))
+
+;; Bounce = ExpVal ∪ (() → Bounce)
+;; trampoline : Bounce → FinalAnswer
+(define trampoline
+  (lambda (bounce)
+    (if (expval? bounce)
+        bounce
+        (trampoline (bounce)))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
+;; value-of/k : Exp * Env * Cont → Bounce
 ;; Page: 143--146, and 154
 (define value-of/k
   (lambda (exp env cont)
@@ -119,6 +129,7 @@
 ;;       vals)))
 
 ;; apply-cont : Cont * ExpVal -> FinalAnswer
+;; apply-cont : Cont * ExpVal -> Bounce
 ;; Page: 148
 (define apply-cont
   (lambda (cont val)
@@ -225,14 +236,16 @@
            )))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
+;; apply-procedure/k : Proc * ExpVal * Cont -> Bounce
 ;; Page 152 and 155
 (define apply-procedure/k
   (lambda (proc1 args cont)
-    (cases proc proc1
-           (procedure (vars body saved-env)
-                      (value-of/k body
-                                  (extend-env* vars (map newref args) saved-env)
-                                  cont)))))
+    (lambda ()
+      (cases proc proc1
+             (procedure (vars body saved-env)
+                        (value-of/k body
+                                    (extend-env* vars (map newref args) saved-env)
+                                    cont))))))
 
 
 
