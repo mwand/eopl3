@@ -135,6 +135,15 @@
    (tail expression?)
    (saved-env environment?)
    (saved-cont continuation?))
+  (cons2-cont
+   (val1 expval?)
+   (saved-cont continuation?))
+  (car-cont
+   (saved-cont continuation?))
+  (cdr-cont
+   (saved-cont continuation?))
+  (null?-cont
+   (saved-cont continuation?))
   (lst-head-cont
    (tail (list-of expression?))
    (saved-env environment?)
@@ -151,6 +160,13 @@
     (exps (list-of expression?))
     (saved-env environment?)
     (saved-cont continuation?)))
+
+;;;;;;;;;;;;;;;; Bounce ;;;;;;;;;;;;;;;;;
+(define-datatype bounce bounce?
+  (expbounce
+   (val expval?))
+  (procbounce
+   (proc procedure?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
