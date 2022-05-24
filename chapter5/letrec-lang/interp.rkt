@@ -192,14 +192,16 @@
                                         (expval->num val)))))
            (rator-cont (rands saved-env saved-cont)
                        (if (null? rands)
-                           (apply-procedure/k (expval->proc val)
-                                              (list) saved-cont)
+                           (lambda ()
+                             (apply-procedure/k (expval->proc val)
+                                                (list) saved-cont))
                            (value-of/k (car rands) saved-env
                                        (rands-cont val (list) (cdr rands) saved-env saved-cont))))
            (rands-cont (val1 val2 tail-rands saved-env saved-cont)
                       (let ([proc (expval->proc val1)])
                         (if (null? tail-rands)
-                            (apply-procedure/k proc (append val2 (list val)) saved-cont)
+                            (lambda ()
+                              (apply-procedure/k proc (append val2 (list val)) saved-cont))
                             (value-of/k (car tail-rands) saved-env
                                         (rands-cont val1
                                                     (append val2 (list val))
@@ -240,12 +242,13 @@
 ;; Page 152 and 155
 (define apply-procedure/k
   (lambda (proc1 args cont)
-    (lambda ()
+    ;; (lambda ()
       (cases proc proc1
              (procedure (vars body saved-env)
                         (value-of/k body
                                     (extend-env* vars (map newref args) saved-env)
-                                    cont))))))
+                                    cont)))))
+;; )
 
 
 
