@@ -15,10 +15,11 @@
 (require "environments.rkt")
 (require "store.rkt")
 
-(provide value-of-program value-of/k instrument-newref instrument-cont)
+(provide value-of-program value-of/k instrument-newref instrument-cont instrument-bounce)
 
 
 (define instrument-cont (make-parameter #f))
+(define instrument-bounce (make-parameter #f))
 (define cont-max-depth 0)
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
@@ -38,13 +39,23 @@
 ;; trampoline : Bounce → FinalAnswer
 (define trampoline
   (lambda (bne)
+    (when (instrument-bounce)
+      (begin (display bne)
+             (newline)
+             (display "======")
+             (newline)))
     (cases bounce bne
            (expbounce (val) val)
            (procbounce (proc)
-                       (trampoline proc)))))
-    ;; (if (expval? bounce)
-    ;;     bounce
-    ;;     (trampoline (bounce)))))
+                       (trampoline (proc))))))
+  ;; (lambda (bounce)
+  ;;   (begin (display bounce)
+  ;;          (newline)
+  ;;          (display "==========")
+  ;;          (newline))
+  ;;   (if (expval? bounce)
+  ;;       bounce
+  ;;       (trampoline (bounce)))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
 ;; value-of/k : Exp * Env * Cont → Bounce
@@ -154,6 +165,7 @@
                      (begin
                        (eopl:printf
                         "End of computation.~%")
+                       ;; val))
                        (expbounce val)))
            ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
            (zero1-cont (saved-cont)
@@ -267,12 +279,13 @@
 ;; Page 152 and 155
 (define apply-procedure/k
   (lambda (proc1 args cont)
-    ;; (lambda ()
-    (cases proc proc1
-           (procedure (vars body saved-env)
-                      (value-of/k body
-                                  (extend-env* vars (map newref args) saved-env)
-                                  cont)))))
+    (procbounce
+     (lambda ()
+      (cases proc proc1
+             (procedure (vars body saved-env)
+                        (value-of/k body
+                                    (extend-env* vars (map newref args) saved-env)
+                                    cont)))))))
 
 
 (define continuation-depth

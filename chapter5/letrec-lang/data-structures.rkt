@@ -58,14 +58,6 @@
     (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
                 variant value)))
 
-;; (define expval->denval
-;;   (lambda (v)
-;;     (cases expval v
-;;            (num-val (n) n)
-;;            (bool-val (b) b)
-;;            (proc-val (p) p)
-;;            (list-val (l) l))))
-
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
 ;; Page: 148
