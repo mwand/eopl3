@@ -38,25 +38,25 @@
 ;; Bounce = ExpVal ∪ (() → Bounce)
 ;; trampoline : Bounce → FinalAnswer
 (define trampoline
-  ;; (lambda (bne)
-  ;;   (when (instrument-bounce)
-  ;;     (begin (display bne)
-  ;;            (newline)
-  ;;            (display "======")
-  ;;            (newline)))
-  ;;   (cases bounce bne
-  ;;          (expbounce (val) val)
-  ;;          (procbounce (proc)
-  ;;                      (trampoline (proc))))))
-  (lambda (bounce)
+  (lambda (bne)
     (when (instrument-bounce)
-      (begin (display bounce)
+      (begin (display bne)
              (newline)
-             (display "==========")
+             (display "======")
              (newline)))
-    (if (expval? bounce)
-        bounce
-        (trampoline (bounce)))))
+    (cases bounce bne
+           (expbounce (val) val)
+           (procbounce (proc)
+                       (trampoline (proc))))))
+  ;; (lambda (bounce)
+  ;;   (when (instrument-bounce)
+  ;;     (begin (display bounce)
+  ;;            (newline)
+  ;;            (display "==========")
+  ;;            (newline)))
+  ;;   (if (expval? bounce)
+  ;;       bounce
+  ;;       (trampoline (bounce)))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
 ;; value-of/k : Exp * Env * Cont → Bounce
@@ -112,20 +112,9 @@
            (cdr-exp (lst)
                     (value-of/k lst env
                                 (cdr-cont cont)))
-                    ;; (expbounce
-                     ;; (list-val
-                     ;;  (cdr
-                     ;;   (expval->list
-                     ;;    (value-of/k lst env cont)))))
            (null?-exp (lst)
                       (value-of/k lst env
                                   (null?-cont cont)))
-                      ;; (expbounce
-                      ;;  (bool-val
-                      ;;   (null?
-                      ;;    (expval->list
-                      ;;     (value-of/k lst env cont))))))
-
            (list-exp (lst)
                      (if (null? lst)
                          (apply-cont cont (list-val '()))
@@ -154,6 +143,7 @@
 ;; Page: 148
 (define apply-cont
   (lambda (cont val)
+    (procbounce
     (lambda ()
     (when (instrument-cont)
       (let ([d (continuation-depth cont)])
@@ -167,8 +157,8 @@
                      (begin
                        (eopl:printf
                         "End of computation.~%")
-                       val))
-                       ;; (expbounce val)))
+                       ;; val))
+                       (expbounce val)))
            ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
            (zero1-cont (saved-cont)
                        (apply-cont saved-cont
@@ -233,11 +223,6 @@
                                       (list-val (list val)))
                           (value-of/k tail saved-env
                                       (cons2-cont val saved-cont))))
-                          ;; (expbounce
-                          ;;  (list-val
-                          ;;   (cons val
-                          ;;         (expval->list
-                          ;;          (value-of/k tail saved-env saved-cont)))))))
            (cons2-cont (val1 saved-cont)
                        (apply-cont saved-cont
                                    (list-val
@@ -274,7 +259,7 @@
                            (apply-cont saved-cont val)
                            (value-of/k (car exps) saved-env
                                        (begin-cont (cdr exps) saved-env saved-cont))))
-           ))))
+           )))))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
 ;; apply-procedure/k : Proc * ExpVal * Cont -> Bounce
