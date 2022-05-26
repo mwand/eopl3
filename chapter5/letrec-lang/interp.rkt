@@ -38,24 +38,25 @@
 ;; Bounce = ExpVal ∪ (() → Bounce)
 ;; trampoline : Bounce → FinalAnswer
 (define trampoline
-  (lambda (bne)
+  ;; (lambda (bne)
+  ;;   (when (instrument-bounce)
+  ;;     (begin (display bne)
+  ;;            (newline)
+  ;;            (display "======")
+  ;;            (newline)))
+  ;;   (cases bounce bne
+  ;;          (expbounce (val) val)
+  ;;          (procbounce (proc)
+  ;;                      (trampoline (proc))))))
+  (lambda (bounce)
     (when (instrument-bounce)
-      (begin (display bne)
+      (begin (display bounce)
              (newline)
-             (display "======")
+             (display "==========")
              (newline)))
-    (cases bounce bne
-           (expbounce (val) val)
-           (procbounce (proc)
-                       (trampoline (proc))))))
-  ;; (lambda (bounce)
-  ;;   (begin (display bounce)
-  ;;          (newline)
-  ;;          (display "==========")
-  ;;          (newline))
-  ;;   (if (expval? bounce)
-  ;;       bounce
-  ;;       (trampoline (bounce)))))
+    (if (expval? bounce)
+        bounce
+        (trampoline (bounce)))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
 ;; value-of/k : Exp * Env * Cont → Bounce
@@ -153,6 +154,7 @@
 ;; Page: 148
 (define apply-cont
   (lambda (cont val)
+    (lambda ()
     (when (instrument-cont)
       (let ([d (continuation-depth cont)])
         (when (> d cont-max-depth)
@@ -165,8 +167,8 @@
                      (begin
                        (eopl:printf
                         "End of computation.~%")
-                       ;; val))
-                       (expbounce val)))
+                       val))
+                       ;; (expbounce val)))
            ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
            (zero1-cont (saved-cont)
                        (apply-cont saved-cont
@@ -272,21 +274,20 @@
                            (apply-cont saved-cont val)
                            (value-of/k (car exps) saved-env
                                        (begin-cont (cdr exps) saved-env saved-cont))))
-           )))
+           ))))
 
 ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
 ;; apply-procedure/k : Proc * ExpVal * Cont -> Bounce
 ;; Page 152 and 155
 (define apply-procedure/k
   (lambda (proc1 args cont)
-    (procbounce
-     (lambda ()
+    ;; (procbounce
+     ;; (lambda ()
       (cases proc proc1
              (procedure (vars body saved-env)
                         (value-of/k body
                                     (extend-env* vars (map newref args) saved-env)
-                                    cont)))))))
-
+                                    cont)))))
 
 (define continuation-depth
   (lambda (cont)
