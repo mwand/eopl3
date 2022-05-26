@@ -45,9 +45,14 @@
              (display "======")
              (newline)))
     (cases bounce bne
-           (expbounce (val) val)
-           (procbounce (proc)
-                       (trampoline (proc))))))
+           (a-bounce (b)
+                     (if (expval? b)
+                         b
+                         (trampoline (b)))))))
+    ;; (cases bounce bne
+    ;;        (expbounce (val) val)
+    ;;        (procbounce (proc)
+    ;;                    (trampoline (proc))))))
   ;; (lambda (bounce)
   ;;   (when (instrument-bounce)
   ;;     (begin (display bounce)
@@ -143,7 +148,7 @@
 ;; Page: 148
 (define apply-cont
   (lambda (cont val)
-    (procbounce
+    (a-bounce
     (lambda ()
     (when (instrument-cont)
       (let ([d (continuation-depth cont)])
@@ -157,8 +162,8 @@
                      (begin
                        (eopl:printf
                         "End of computation.~%")
-                       ;; val))
-                       (expbounce val)))
+                       (a-bounce val)))
+                       ;; (expbounce val)))
            ;; or (logged-print val)  ; if you use drscheme-init-cps.rkt
            (zero1-cont (saved-cont)
                        (apply-cont saved-cont

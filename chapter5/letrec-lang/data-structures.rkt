@@ -155,10 +155,11 @@
 
 ;;;;;;;;;;;;;;;; Bounce ;;;;;;;;;;;;;;;;;
 (define-datatype bounce bounce?
-  (expbounce
-   (val expval?))
-  (procbounce
-   (proc procedure?)))
+  (a-bounce
+   (b
+    (lambda (v)
+      (or (expval? v)
+          (procedure? v))))))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
