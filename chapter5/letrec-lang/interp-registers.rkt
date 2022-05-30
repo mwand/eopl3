@@ -10,11 +10,12 @@
   (require "environments.rkt")
   (require "store.rkt")
 
-  (provide value-of-program value-of/k)
+  (provide value-of-program value-of/k instrument-newref)
 
-  (provide trace-apply-procedure)
+  (provide trace-apply-procedure trace-value-of/k)
 
   (define trace-apply-procedure (make-parameter #f))
+  (define trace-value-of/k (make-parameter #f))
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -50,6 +51,9 @@
   ;; as comments.
   (define value-of/k
     (lambda ()
+      (when (trace-value-of/k)
+        (eopl:printf "exp=~s~%val=~s~%env=~s~%cont=~s~%~%"
+                     exp val env cont))
       (cases expression exp
         (const-exp (num)
           ;; (apply-cont cont (num-val num)))
@@ -230,8 +234,9 @@
                           (set! cont (multi2-cont val saved-cont))
                           (value-of/k))
              (multi2-cont (val1 saved-cont)
-                          (set! val (* (expval->num val1)
-                                       (expval->num val)))
+                          (set! val (num-val
+                                     (* (expval->num val1)
+                                        (expval->num val))))
                           (set! cont saved-cont)
                           (apply-cont))
              (rator-cont (rands saved-env saved-cont)
@@ -324,11 +329,16 @@
   ;; Page 170
   (define apply-procedure/k
     (lambda ()
+      (when (trace-apply-procedure)
+        (begin
+          (eopl:printf
+           "~%entering apply-procedure:~%proc1=~s~%val=~s~%cont=~s~%"
+           proc1 val cont)))
       (cases proc proc1
-        (procedure (vars body saved-env)
-          (set! exp body)
-          (set! env (extend-env* vars (map newref val) saved-env))
-          (value-of/k)))))
+             (procedure (vars body saved-env)
+                        (set! exp body)
+                        (set! env (extend-env* vars (map newref val) saved-env))
+                        (value-of/k)))))
 
   ;; instrumented version
   ;; (define apply-procedure/k
