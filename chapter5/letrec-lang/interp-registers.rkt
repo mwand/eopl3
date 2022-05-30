@@ -53,9 +53,7 @@
       (if pc
           (begin
             (pc)
-            ;; (set! pc #f)
             (trampoline))
-            ;; (set! pc #f))
           val)))
 
   ;; value-of : Exp * Env * Cont -> FinalAnswer
@@ -115,7 +113,8 @@
                        (value-of/k))
              (let3-exp (var1 exp1 var2 exp2 var3 exp3 body)
                        (set! exp exp1)
-                       (set! cont (let3-exp-cont var1 var2 exp2 var3 exp3 body env cont)))
+                       (set! cont (let3-exp-cont var1 var2 exp2 var3 exp3 body env cont))
+                       (value-of/k))
              (if-exp (exp1 exp2 exp3)
                      ;; (value-of/k exp0 env (if-test-cont exp2 exp3 env cont))
                      (set! cont (if-test-cont exp2 exp3 env cont))
