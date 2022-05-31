@@ -11,6 +11,8 @@
 
 (define trace-apply-procedure (make-parameter #f))
 
+(define try 'uninitialized)
+
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
 
@@ -54,6 +56,7 @@
   (lambda (pgm)
     (cases program pgm
            (a-program (body)
+                      (set! try end-cont)
                       (value-of/k body (init-env) (end-cont))))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
@@ -106,8 +109,10 @@
                         cont))
 
            (try-exp (exp1 var handler-exp)
-                    (value-of/k exp1 env
-                                (try-cont var handler-exp env cont)))
+                    (begin
+                      (set! try (try-cont var handler-exp env cont))
+                      (value-of/k exp1 env
+                                  (try-cont var handler-exp env cont))))
 
            (raise-exp (exp1)
                       (value-of/k exp1 env
@@ -145,7 +150,8 @@
            ;; val is the value of the argument to raise
            (raise1-cont (saved-cont)
                         ;; we put the short argument first to make the trace more readable.
-                        (apply-handler val saved-cont))
+                        ;; (apply-handler val saved-cont))
+                        (apply-handler val try))
            )))
 
 ;; apply-handler : ExpVal * Cont -> FinalAnswer
@@ -154,27 +160,31 @@
     (cases continuation cont
            ;; interesting cases
            (try-cont (var handler-exp saved-env saved-cont)
-                     (value-of/k handler-exp
-                                 (extend-env var val saved-env)
-                                 saved-cont))
+                     (begin
+                       (set! try saved-cont)
+                       (value-of/k handler-exp
+                                   (extend-env var val saved-env)
+                                   saved-cont)))
 
            (end-cont () (eopl:error 'apply-handler "uncaught exception!"))
 
            ;; otherwise, just look for the handler...
-           (diff1-cont (exp2 saved-env saved-cont)
-                       (apply-handler val saved-cont))
-           (diff2-cont (val1 saved-cont)
-                       (apply-handler val saved-cont))
-           (if-test-cont (exp2 exp3 env saved-cont)
-                         (apply-handler val saved-cont))
-           (unop-arg-cont (unop saved-cont)
-                          (apply-handler val saved-cont))
-           (rator-cont (rand saved-env saved-cont)
-                       (apply-handler val saved-cont))
-           (rand-cont (val1 saved-cont)
-                      (apply-handler val saved-cont))
-           (raise1-cont (cont)
-                        (apply-handler val cont))
+           (else
+            (eopl:error "cont is not try-cont ~s~%" try))
+           ;; (diff1-cont (exp2 saved-env saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (diff2-cont (val1 saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (if-test-cont (exp2 exp3 env saved-cont)
+           ;;               (apply-handler val saved-cont))
+           ;; (unop-arg-cont (unop saved-cont)
+           ;;                (apply-handler val saved-cont))
+           ;; (rator-cont (rand saved-env saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (rand-cont (val1 saved-cont)
+           ;;            (apply-handler val saved-cont))
+           ;; (raise1-cont (cont)
+           ;;              (apply-handler val cont))
            )))
 
 
