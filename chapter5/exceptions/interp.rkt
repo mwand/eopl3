@@ -54,42 +54,48 @@
   (lambda (pgm)
     (cases program pgm
            (a-program (body)
-                      (value-of/k body (init-env) (end-cont))))))
+                      (value-of/k body (init-env) (end-cont) (end-cont))))))
 
 ;; value-of/k : Exp * Env * Cont -> FinalAnswer
 ;; Page: 173
 (define value-of/k
-  (lambda (exp env cont)
+  (lambda (exp env cont except)
     (cases expression exp
 
-           (const-exp (num) (apply-cont cont (num-val num)))
+           (const-exp (num) (apply-cont cont (num-val num) except))
 
            (const-list-exp (nums)
                            (apply-cont cont
-                                       (list-val (map num-val nums))))
+                                       (list-val (map num-val nums))
+                                       except))
 
-           (var-exp (var) (apply-cont cont (apply-env env var)))
+           (var-exp (var) (apply-cont cont (apply-env env var) except))
 
            (diff-exp (exp1 exp2)
                      (value-of/k exp1 env
-                                 (diff1-cont exp2 env cont)))
+                                 (diff1-cont exp2 env cont)
+                                 except))
 
            (unop-exp (unop exp1)
                      (value-of/k exp1 env
-                                 (unop-arg-cont unop cont)))
+                                 (unop-arg-cont unop cont)
+                                 except))
 
            (if-exp (exp1 exp2 exp3)
                    (value-of/k exp1 env
-                               (if-test-cont exp2 exp3 env cont)))
+                               (if-test-cont exp2 exp3 env cont)
+                               except))
 
            (proc-exp (var body)
                      (apply-cont cont
                                  (proc-val
-                                  (procedure var body env))))
+                                  (procedure var body env))
+                                 except))
 
            (call-exp (rator rand)
                      (value-of/k rator env
-                                 (rator-cont rand env cont)))
+                                 (rator-cont rand env cont)
+                                 except))
 
            ;; make let a macro, because I'm too lazy to add the extra
            ;; continuation
@@ -97,96 +103,108 @@
                     (value-of/k
                      (call-exp (proc-exp var body) exp1)
                      env
-                     cont))
+                     cont
+                     except))
 
            (letrec-exp (p-name b-var p-body letrec-body)
                        (value-of/k
                         letrec-body
                         (extend-env-rec p-name b-var p-body env)
-                        cont))
+                        cont
+                        except))
 
            (try-exp (exp1 var handler-exp)
                     (value-of/k exp1 env
-                                (try-cont var handler-exp env cont)))
+                                (try-cont var handler-exp env cont)
+                                (try-cont var handler-exp env cont)
+                                ))
 
            (raise-exp (exp1)
                       (value-of/k exp1 env
-                                  (raise1-cont cont))))))
+                                  (raise1-cont cont)
+                                  except)))))
 
 ;; apply-cont : continuation * expval -> final-expval
 
 (define apply-cont
-  (lambda (cont val)
+  (lambda (cont val except)
     (cases continuation cont
            (end-cont () val)
            (diff1-cont (exp2 saved-env saved-cont)
-                       (value-of/k exp2 saved-env (diff2-cont val saved-cont)))
+                       (value-of/k exp2 saved-env (diff2-cont val saved-cont) except))
            (diff2-cont (val1 saved-cont)
                        (let ((n1 (expval->num val1))
                              (n2 (expval->num val)))
                          (apply-cont saved-cont
-                                     (num-val (- n1 n2)))))
+                                     (num-val (- n1 n2))
+                                     except)))
            (unop-arg-cont (unop cont)
                           (apply-cont cont
-                                      (apply-unop unop val)))
+                                      (apply-unop unop val)
+                                      except))
            (if-test-cont (exp2 exp3 env cont)
                          (if (expval->bool val)
-                             (value-of/k exp2 env cont)
-                             (value-of/k exp3 env cont)))
+                             (value-of/k exp2 env cont except)
+                             (value-of/k exp3 env cont except)))
            (rator-cont (rand saved-env saved-cont)
                        (value-of/k rand saved-env
-                                   (rand-cont val saved-cont)))
+                                   (rand-cont val saved-cont)
+                                   except))
            (rand-cont (val1 saved-cont)
                       (let ((proc (expval->proc val1)))
-                        (apply-procedure proc val saved-cont)))
+                        (apply-procedure proc val saved-cont except)))
            ;; the body of the try finished normally-- don't evaluate the handler
            (try-cont (var handler-exp saved-env saved-cont)
-                     (apply-cont saved-cont val))
+                     (apply-cont saved-cont val except))
            ;; val is the value of the argument to raise
            (raise1-cont (saved-cont)
                         ;; we put the short argument first to make the trace more readable.
-                        (apply-handler val saved-cont))
+                        (apply-handler val saved-cont except))
            )))
 
 ;; apply-handler : ExpVal * Cont -> FinalAnswer
 (define apply-handler
-  (lambda (val cont)
-    (cases continuation cont
+  (lambda (val cont except)
+    (cases continuation except
            ;; interesting cases
            (try-cont (var handler-exp saved-env saved-cont)
                      (value-of/k handler-exp
                                  (extend-env var val saved-env)
+                                 saved-cont
                                  saved-cont))
 
            (end-cont () (eopl:error 'apply-handler "uncaught exception!"))
 
            ;; otherwise, just look for the handler...
-           (diff1-cont (exp2 saved-env saved-cont)
-                       (apply-handler val saved-cont))
-           (diff2-cont (val1 saved-cont)
-                       (apply-handler val saved-cont))
-           (if-test-cont (exp2 exp3 env saved-cont)
-                         (apply-handler val saved-cont))
-           (unop-arg-cont (unop saved-cont)
-                          (apply-handler val saved-cont))
-           (rator-cont (rand saved-env saved-cont)
-                       (apply-handler val saved-cont))
-           (rand-cont (val1 saved-cont)
-                      (apply-handler val saved-cont))
-           (raise1-cont (cont)
-                        (apply-handler val cont))
+           (else
+            (eopl:error "not a exception cont:~s~%" cont))
+           ;; (diff1-cont (exp2 saved-env saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (diff2-cont (val1 saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (if-test-cont (exp2 exp3 env saved-cont)
+           ;;               (apply-handler val saved-cont))
+           ;; (unop-arg-cont (unop saved-cont)
+           ;;                (apply-handler val saved-cont))
+           ;; (rator-cont (rand saved-env saved-cont)
+           ;;             (apply-handler val saved-cont))
+           ;; (rand-cont (val1 saved-cont)
+           ;;            (apply-handler val saved-cont))
+           ;; (raise1-cont (cont)
+           ;;              (apply-handler val cont))
            )))
 
 
 ;; apply-procedure : procedure * expval * cont -> final-expval
 
 (define apply-procedure
-  (lambda (proc1 arg cont)
+  (lambda (proc1 arg cont except)
     (cases proc proc1
            (procedure (var body saved-env)
                       (value-of/k body
                                   (extend-env var arg saved-env)
-                                  cont)))))
+                                  cont
+                                  except)))))
 
 
 (define apply-unop
@@ -206,4 +224,5 @@
 
 ;; to get the detailed trace:
 ;; (trace value-of/k apply-cont apply-handler)
+;; (trace apply-handler)
 
