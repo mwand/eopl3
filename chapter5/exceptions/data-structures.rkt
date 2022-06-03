@@ -58,7 +58,7 @@
 
 (define-datatype proc proc?
   (procedure
-   (bvar symbol?)
+   (bvars (list-of symbol?))
    (body expression?)
    (env environment?)))
 
@@ -80,5 +80,9 @@
    (lambda (p)
      (and
       (pair? p)
-      (symbol? (car p))))))
+      (or
+       (symbol? (car p))
+       (and
+        (list? (car p))
+        (symbol? (caar p))))))))
 

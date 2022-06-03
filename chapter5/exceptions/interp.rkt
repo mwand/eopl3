@@ -32,11 +32,14 @@
    (env environment?)
    (cont continuation?))
   (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
-   (rand expression?)
+   (rands (list-of expression?))
    (env environment?)
    (cont continuation?))
-  (rand-cont                          ; cont[(apply-proc val1 [])]
+  (rands-cont                          ; cont[(apply-proc val1 [])]
    (val1 expval?)
+   (val2 (list-of expval?))
+   (rest (list-of expression?))
+   (env environment?)
    (cont continuation?))
   (try-cont
    (var symbol?)
@@ -86,10 +89,10 @@
                                (if-test-cont exp2 exp3 env cont)
                                except))
 
-           (proc-exp (var body)
+           (proc-exp (vars body)
                      (apply-cont cont
                                  (proc-val
-                                  (procedure var body env))
+                                  (procedure vars body env))
                                  except))
 
            (call-exp (rator rand)
@@ -109,7 +112,7 @@
            (letrec-exp (p-name b-var p-body letrec-body)
                        (value-of/k
                         letrec-body
-                        (extend-env-rec p-name b-var p-body env)
+                        (extend-env-rec* p-name b-var p-body env)
                         cont
                         except))
 
@@ -146,13 +149,34 @@
                          (if (expval->bool val)
                              (value-of/k exp2 env cont except)
                              (value-of/k exp3 env cont except)))
-           (rator-cont (rand saved-env saved-cont)
-                       (value-of/k rand saved-env
-                                   (rand-cont val saved-cont)
-                                   except))
-           (rand-cont (val1 saved-cont)
-                      (let ((proc (expval->proc val1)))
-                        (apply-procedure proc val saved-cont except)))
+           ;; (rator-cont (rands saved-env saved-cont)
+           ;;             (value-of/k rand saved-env
+           ;;                         (rand-cont val saved-cont)
+           ;;                         except))
+           ;; (rands-cont (val1 saved-cont)
+           ;;            (let ((proc (expval->proc val1)))
+           ;;              (apply-procedure proc val saved-cont except)))
+           (rator-cont (rands saved-env saved-cont)
+                       (if (null? rands)
+                           (apply-procedure (expval->proc val)
+                                            (list) saved-cont
+                                            except)
+                           (value-of/k (car rands) saved-env
+                                       (rands-cont val (list) (cdr rands) saved-env saved-cont)
+                                       except)))
+           (rands-cont (val1 val2 tail-rands saved-env saved-cont)
+                       (let ([proc (expval->proc val1)])
+                         (if (null? tail-rands)
+                             (apply-procedure proc
+                                              (append val2 (list val))
+                                              saved-cont
+                                              except)
+                             (value-of/k (car tail-rands)
+                                         saved-env
+                                         (rands-cont val1
+                                                     (append val2 (list val))
+                                                     (cdr tail-rands) saved-env saved-cont)
+                                         except))))
            ;; the body of the try finished normally-- don't evaluate the handler
            (try-cont (var handler-exp saved-env saved-cont)
                      (apply-cont saved-cont val except))
@@ -198,11 +222,11 @@
 ;; apply-procedure : procedure * expval * cont -> final-expval
 
 (define apply-procedure
-  (lambda (proc1 arg cont except)
+  (lambda (proc1 args cont except)
     (cases proc proc1
-           (procedure (var body saved-env)
+           (procedure (vars body saved-env)
                       (value-of/k body
-                                  (extend-env var arg saved-env)
+                                  (extend-env* vars args saved-env)
                                   cont
                                   except)))))
 
@@ -224,5 +248,5 @@
 
 ;; to get the detailed trace:
 ;; (trace value-of/k apply-cont apply-handler)
-;; (trace apply-handler)
+;; (trace value-of/k)
 
