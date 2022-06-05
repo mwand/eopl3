@@ -225,10 +225,12 @@
   (lambda (proc1 args cont except)
     (cases proc proc1
            (procedure (vars body saved-env)
-                      (value-of/k body
-                                  (extend-env* vars args saved-env)
-                                  cont
-                                  except)))))
+                      (if (eq? (length vars) (length args))
+                          (value-of/k body
+                                      (extend-env* vars args saved-env)
+                                      cont
+                                      except)
+                          (value-of/k (raise-exp (const-exp 98)) saved-env cont except))))))
 
 
 (define apply-unop

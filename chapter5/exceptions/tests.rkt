@@ -233,6 +233,15 @@
        in ((index 5) list(2, 3))"
      -1)
 
+    ;; ex5.37, error call procedure parameters
+    (except-call-wrong-paras-1
+     "let f = proc(x,y) -(x,y) in (f 2)"
+     error)
+
+    (except-call-wrong-paras-2
+     "let f = proc(x,y) -(x,y) in (f 2 3 4)"
+     error)
+
     ))
 
 
