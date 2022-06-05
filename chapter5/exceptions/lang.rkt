@@ -32,6 +32,10 @@
      diff-exp)
 
     (expression
+     ("div" "(" expression "," expression ")")
+     div-exp)
+
+    (expression
      ("if" expression "then" expression "else" expression)
      if-exp)
 

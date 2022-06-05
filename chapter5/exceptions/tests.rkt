@@ -242,6 +242,10 @@
      "let f = proc(x,y) -(x,y) in (f 2 3 4)"
      error)
 
+    (div-zero-except-1
+     "div(2,0)"
+     error)
+
     ))
 
 

@@ -23,6 +23,14 @@
   (diff2-cont                         ; cont[(- val1 [])]
    (val1 expval?)
    (cont continuation?))
+  (div1-cont                       ; cont[(- [] (value-of e2 env))]
+   (exp2 expression?)
+   (env environment?)
+   (cont continuation?))
+  (div2-cont                         ; cont[(- val1 [])]
+   (val1 expval?)
+   (env environment?)
+   (cont continuation?))
   (unop-arg-cont
    (unop unary-op?)
    (cont continuation?))
@@ -78,6 +86,11 @@
                      (value-of/k exp1 env
                                  (diff1-cont exp2 env cont)
                                  except))
+
+           (div-exp (exp1 exp2)
+                    (value-of/k exp1 env
+                                (div1-cont exp2 env cont)
+                                except))
 
            (unop-exp (unop exp1)
                      (value-of/k exp1 env
@@ -141,6 +154,22 @@
                          (apply-cont saved-cont
                                      (num-val (- n1 n2))
                                      except)))
+           (div1-cont (exp2 saved-env saved-cont)
+                       (value-of/k exp2
+                                   saved-env
+                                   (div2-cont val saved-env saved-cont)
+                                   except))
+           (div2-cont (val1 saved-env saved-cont)
+                      (let ((n1 (expval->num val1))
+                            (n2 (expval->num val)))
+                        (if (zero? n2)
+                            (value-of/k (raise-exp (const-exp 98))
+                                        saved-env
+                                        saved-cont
+                                        except)
+                            (apply-cont saved-cont
+                                        (num-val (/ n1 n2))
+                                        except))))
            (unop-arg-cont (unop cont)
                           (apply-cont cont
                                       (apply-unop unop val)
