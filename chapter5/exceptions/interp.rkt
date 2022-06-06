@@ -14,49 +14,49 @@
 ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
 
-(define-datatype continuation continuation?
-  (end-cont)                          ; []
-  (diff1-cont                       ; cont[(- [] (value-of e2 env))]
-   (exp2 expression?)
-   (env environment?)
-   (cont continuation?))
-  (diff2-cont                         ; cont[(- val1 [])]
-   (val1 expval?)
-   (cont continuation?))
-  (div1-cont                       ; cont[(- [] (value-of e2 env))]
-   (exp2 expression?)
-   (env environment?)
-   (cont continuation?))
-  (div2-cont                         ; cont[(- val1 [])]
-   (val1 expval?)
-   (env environment?)
-   (cont continuation?))
-  (unop-arg-cont
-   (unop unary-op?)
-   (cont continuation?))
-  (if-test-cont
-   (exp2 expression?)
-   (exp3 expression?)
-   (env environment?)
-   (cont continuation?))
-  (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
-   (rands (list-of expression?))
-   (env environment?)
-   (cont continuation?))
-  (rands-cont                          ; cont[(apply-proc val1 [])]
-   (val1 expval?)
-   (val2 (list-of expval?))
-   (rest (list-of expression?))
-   (env environment?)
-   (cont continuation?))
-  (try-cont
-   (var symbol?)
-   (handler-exp expression?)
-   (env environment?)
-   (cont continuation?))
-  (raise1-cont
-   (saved-cont continuation?))
-  )
+;; (define-datatype continuation continuation?
+;;   (end-cont)                          ; []
+;;   (diff1-cont                       ; cont[(- [] (value-of e2 env))]
+;;    (exp2 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (diff2-cont                         ; cont[(- val1 [])]
+;;    (val1 expval?)
+;;    (cont continuation?))
+;;   (div1-cont                       ; cont[(- [] (value-of e2 env))]
+;;    (exp2 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (div2-cont                         ; cont[(- val1 [])]
+;;    (val1 expval?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (unop-arg-cont
+;;    (unop unary-op?)
+;;    (cont continuation?))
+;;   (if-test-cont
+;;    (exp2 expression?)
+;;    (exp3 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
+;;    (rands (list-of expression?))
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (rands-cont                          ; cont[(apply-proc val1 [])]
+;;    (val1 expval?)
+;;    (val2 (list-of expval?))
+;;    (rest (list-of expression?))
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (try-cont
+;;    (var symbol?)
+;;    (handler-exp expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (raise1-cont
+;;    (saved-cont continuation?))
+;;   )
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -223,8 +223,8 @@
            (try-cont (var handler-exp saved-env saved-cont)
                      (value-of/k handler-exp
                                  (extend-env var val saved-env)
-                                 ;; saved-cont
-                                 resume
+                                 saved-cont
+                                 ;; resume
                                  saved-cont))
 
            (end-cont () (eopl:error 'apply-handler "uncaught exception!"))
