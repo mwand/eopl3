@@ -217,20 +217,21 @@
 
 ;; apply-handler : ExpVal * Cont -> FinalAnswer
 (define apply-handler
-  (lambda (val cont except)
+  (lambda (val resume except)
     (cases continuation except
            ;; interesting cases
            (try-cont (var handler-exp saved-env saved-cont)
                      (value-of/k handler-exp
                                  (extend-env var val saved-env)
-                                 saved-cont
+                                 ;; saved-cont
+                                 resume
                                  saved-cont))
 
            (end-cont () (eopl:error 'apply-handler "uncaught exception!"))
 
            ;; otherwise, just look for the handler...
            (else
-            (eopl:error "not a exception cont:~s~%" cont))
+            (eopl:error "not a exception cont:~s~%" except))
            ;; (diff1-cont (exp2 saved-env saved-cont)
            ;;             (apply-handler val saved-cont))
            ;; (diff2-cont (val1 saved-cont)
