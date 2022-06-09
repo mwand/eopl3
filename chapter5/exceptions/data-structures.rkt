@@ -103,6 +103,9 @@
    (cont continuation?))
   (raise1-cont
    (saved-cont continuation?))
+  (raise2-cont
+   (val1 expval?)
+   (cont continuation?))
   )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
