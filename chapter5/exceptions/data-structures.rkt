@@ -17,9 +17,9 @@
   (proc-val
    (proc proc?))
   (list-val
-   (lst (list-of expval?)))
-  (cont-val
-   (k continuation?)))
+   (lst (list-of expval?))))
+  ;; (cont-val
+  ;;  (k continuation?)))
 
 ;;; extractors:
 
@@ -47,11 +47,11 @@
            (list-val (lst) lst)
            (else (expval-extractor-error 'list v)))))
 
-(define expval->cont
-  (lambda (v)
-    (cases expval v
-           (cont-val (k) k)
-           (else (expval-extractor-error 'continuation v)))))
+;; (define expval->cont
+;;   (lambda (v)
+;;     (cases expval v
+;;            (cont-val (k) k)
+;;            (else (expval-extractor-error 'continuation v)))))
 
 (define expval-extractor-error
   (lambda (variant value)
@@ -61,52 +61,52 @@
 ;; ;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
 
 ;; moved to interp.rkt
-(define-datatype continuation continuation?
-  (end-cont)                          ; []
-  (diff1-cont                       ; cont[(- [] (value-of e2 env))]
-   (exp2 expression?)
-   (env environment?)
-   (cont continuation?))
-  (diff2-cont                         ; cont[(- val1 [])]
-   (val1 expval?)
-   (cont continuation?))
-  (div1-cont                       ; cont[(- [] (value-of e2 env))]
-   (exp2 expression?)
-   (env environment?)
-   (cont continuation?))
-  (div2-cont                         ; cont[(- val1 [])]
-   (val1 expval?)
-   (env environment?)
-   (cont continuation?))
-  (unop-arg-cont
-   (unop unary-op?)
-   (cont continuation?))
-  (if-test-cont
-   (exp2 expression?)
-   (exp3 expression?)
-   (env environment?)
-   (cont continuation?))
-  (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
-   (rands (list-of expression?))
-   (env environment?)
-   (cont continuation?))
-  (rands-cont                          ; cont[(apply-proc val1 [])]
-   (val1 expval?)
-   (val2 (list-of expval?))
-   (rest (list-of expression?))
-   (env environment?)
-   (cont continuation?))
-  (try-cont
-   (var symbol?)
-   (handler-exp expression?)
-   (env environment?)
-   (cont continuation?))
-  (raise1-cont
-   (saved-cont continuation?))
-  (raise2-cont
-   (val1 expval?)
-   (cont continuation?))
-  )
+;; (define-datatype continuation continuation?
+;;   (end-cont)                          ; []
+;;   (diff1-cont                       ; cont[(- [] (value-of e2 env))]
+;;    (exp2 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (diff2-cont                         ; cont[(- val1 [])]
+;;    (val1 expval?)
+;;    (cont continuation?))
+;;   (div1-cont                       ; cont[(- [] (value-of e2 env))]
+;;    (exp2 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (div2-cont                         ; cont[(- val1 [])]
+;;    (val1 expval?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (unop-arg-cont
+;;    (unop unary-op?)
+;;    (cont continuation?))
+;;   (if-test-cont
+;;    (exp2 expression?)
+;;    (exp3 expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
+;;    (rands (list-of expression?))
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (rands-cont                          ; cont[(apply-proc val1 [])]
+;;    (val1 expval?)
+;;    (val2 (list-of expval?))
+;;    (rest (list-of expression?))
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (try-cont
+;;    (var symbol?)
+;;    (handler-exp expression?)
+;;    (env environment?)
+;;    (cont continuation?))
+;;   (raise1-cont
+;;    (saved-cont continuation?))
+;;   ;; (raise2-cont
+;;   ;;  (val1 expval?)
+;;   ;;  (cont continuation?))
+;;   )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
