@@ -84,6 +84,7 @@
                         cont
                         ))
 
+
            (try-exp (exp1 var handler-exp)
                     (value-of/k exp1 env
                                 (try-cont var handler-exp env cont )
@@ -92,7 +93,19 @@
            (raise-exp (exp1)
                       (value-of/k exp1 env
                                   (raise1-cont cont )
-                                  )))))
+                                  ))
+
+           (letcc-exp (var body)
+                      ;; (eopl:printf "cont is ~s~%" cont)
+                      (value-of/k body
+                                  (extend-env var (cont-val cont) env)
+                                  cont))
+
+           (throw-exp (exp1 exp2)
+                      (value-of/k exp1 env
+                                  (throw1-cont exp2 env cont)))
+
+           )))
 
 ;; apply-cont : continuation * expval -> final-expval
 (define end-cont
@@ -208,7 +221,7 @@
 
 ;; the body of the try finished normally-- don't evaluate the handler
 (define try-cont
-  (lambda (var handler-exp saved-env saved-cont )
+  (lambda (var handler-exp saved-env saved-cont)
     (case-lambda
       ((val)
        (apply-cont saved-cont val))
@@ -226,6 +239,34 @@
       ;; (apply-handler val saved-cont))))
       (exception val)
       (apply-handler saved-cont))))
+
+;; ref1 https://stackoverflow.com/questions/40141905/understanding-let-cc-and-throw-in-racket
+;; ref2 https://docs.racket-lang.org/reference/cont.html
+(define throw1-cont
+  (lambda (exp2 saved-env saved-cont)
+    (case-lambda
+      ((val)
+       ;; (eopl:printf "exp2 is ~s, val is ~s~%" exp2 val)
+       ;; (apply-cont (expval->cont exp2) val)
+       (value-of/k exp2 saved-env
+                   (throw2-cont val))
+       )
+      (()
+       (apply-handler saved-cont))
+      )))
+
+(define throw2-cont
+  (lambda (val1)
+    (case-lambda
+      ((val)
+       (cases expval val
+              (cont-val (k)
+                        (apply-cont k val1))
+              (else
+               (eopl:error 'throw2-cont "not a continuation val"))))
+      (()
+       (apply-handler (end-cont)))
+      )))
 
 (define apply-cont
   (lambda (cont val)
@@ -267,6 +308,6 @@
 
 
 ;; to get the detailed trace:
-;; (trace value-of/k apply-cont end-cont) ;; apply-handler)
+;; (trace value-of/k apply-cont apply-handler)
 ;; (trace value-of/k)
 
