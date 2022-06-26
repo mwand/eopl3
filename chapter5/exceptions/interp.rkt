@@ -95,17 +95,11 @@
                                   (raise1-cont cont )
                                   ))
 
-           (letcc-exp (var exp1 exp2)
-                      (value-of/k
-                       (call-exp
-                        (proc-exp '(x) (var-exp 'x))
-                        (list exp2))
-                       (extend-env var (cont-val cont) env)
-                       cont))
+           (letcc-exp (var body)
                       ;; (eopl:printf "cont is ~s~%" cont)
-                      ;; (value-of/k body
-                      ;;             (extend-env var (cont-val cont) env)
-                      ;;             cont))
+                      (value-of/k body
+                                  (extend-env var (cont-val cont) env)
+                                  cont))
 
            (throw-exp (exp1 exp2)
                       (value-of/k exp1 env
