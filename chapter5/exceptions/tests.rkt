@@ -247,11 +247,15 @@
      error)
 
     ;; ex5.42~44, letcc/throw/callcc
-    (simple-letcc-1 "letcc k in 32" 32)
-    (simple-letcc-2 "-(42, letcc k in 32)" 10)
+    ;; (simple-letcc-1 "letcc k in 32" 32)
+    ;; (simple-letcc-2 "-(42, letcc k in 32)" 10)
 
-    (throw-1 "letcc k in -(3, throw 2 to k)" 2)
-    (throw-2 "-(10, letcc k in -(1, throw 2 to k))" 8)
+    ;; (throw-1 "letcc k in -(3, throw 2 to k)" 2)
+    ;; (throw-2 "-(10, letcc k in -(1, throw 2 to k))" 8)
+
+    ;; letcc is a procedure
+    (letcc-proc-1 "letcc k in (k 2)" 2)
+    (letcc-proc-2 "-(10, letcc k in (k 3))" 7)
 
     ))
 

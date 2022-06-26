@@ -79,7 +79,7 @@
      raise-exp)
 
     (expression
-     ("letcc" identifier "in" expression)
+     ("letcc" identifier "in" "(" expression expression ")" )
      letcc-exp)
 
     (expression
