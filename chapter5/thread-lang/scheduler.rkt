@@ -49,12 +49,14 @@
 ;; Page: 184
 (define run-next-thread
   (lambda ()
+    ;; (eopl:printf "time-remaining is ~s~%" the-time-remaining)
     (if (empty? the-ready-queue)
         the-final-answer
         (dequeue the-ready-queue
                  (lambda (first-ready-thread other-ready-threads)
                    (set! the-ready-queue other-ready-threads)
-                   (set! the-time-remaining the-max-time-slice)
+                   (when (time-expired?)
+                     (set! the-time-remaining the-max-time-slice))
                    (first-ready-thread)
                    )))))
 
