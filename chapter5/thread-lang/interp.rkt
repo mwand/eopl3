@@ -97,8 +97,7 @@
 
            (yield-exp ()
                       (place-on-ready-queue!
-                       (a-thread
-                        (lambda () (apply-cont cont (num-val 99)))))
+                       (lambda () (apply-cont cont (num-val 99))))
                       (run-next-thread))
 
            (mutex-exp ()
@@ -125,8 +124,7 @@
     (if (time-expired?)
         (begin
           (place-on-ready-queue!
-           (a-thread
-            (lambda () (apply-cont cont val))))
+           (lambda () (apply-cont cont val)))
           (run-next-thread))
         (begin
 
@@ -166,24 +164,21 @@
                  (spawn-cont (saved-cont)
                              (let ((proc1 (expval->proc val)))
                                (place-on-ready-queue!
-                                (a-thread
-                                 (lambda ()
-                                   (apply-procedure proc1
-                                                    (num-val 28)
-                                                    (end-subthread-cont)))))
+                                (lambda ()
+                                  (apply-procedure proc1
+                                                   (num-val 28)
+                                                   (end-subthread-cont))))
                                (apply-cont saved-cont (num-val 73))))
 
                  (wait-cont (saved-cont)
                             (wait-for-mutex
                              (expval->mutex val)
-                             (a-thread
-                              (lambda () (apply-cont saved-cont (num-val 52))))))
+                             (lambda () (apply-cont saved-cont (num-val 52)))))
 
                  (signal-cont (saved-cont)
                               (signal-mutex
                                (expval->mutex val)
-                               (a-thread
-                                (lambda () (apply-cont saved-cont (num-val 53))))))
+                               (lambda () (apply-cont saved-cont (num-val 53)))))
 
                  (unop-arg-cont (unop1 cont)
                                 (apply-unop unop1 val cont))

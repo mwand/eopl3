@@ -58,22 +58,6 @@
     (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
                 variant value)))
 
-;;;;;;;;;;;;;;;; thread ;;;;;;;;;;;;;;;;
-
-;; can't define like below, since it will need apply-cont/apply-procedure
-;; in scheduler.rkt, unless put all in a single file, interp.rkt
-;; (define-datatype thread thread?
-;;   (val-thread
-;;    (cont continuation?)
-;;    (val expval?))
-;;   (proc-thread
-;;    (proc proc?)
-;;    (val expval?)
-;;    (cont continuation?)))
-(define-datatype thread thread?
-  (a-thread
-   (entrance procedure?)))
-
 ;;;;;;;;;;;;;;;; mutexes ;;;;;;;;;;;;;;;;
 
 (define-datatype mutex mutex?

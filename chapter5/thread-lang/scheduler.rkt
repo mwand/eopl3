@@ -55,10 +55,7 @@
                  (lambda (first-ready-thread other-ready-threads)
                    (set! the-ready-queue other-ready-threads)
                    (set! the-time-remaining the-max-time-slice)
-                   ;; (first-ready-thread)
-                   (cases thread first-ready-thread
-                          (a-thread (entrance)
-                                    (entrance)))
+                   (first-ready-thread)
                    )))))
 
 ;; set-final-answer! : ExpVal -> Unspecified
