@@ -33,9 +33,31 @@
   (lambda (sym lst)
     (remove-fst/k sym lst (end-cont))))
 
+
+;; list-sum : Listof(Int) -> Int
+(define list-sum
+   (lambda (lst)
+     (list-sum/k lst (end-cont))))
+
+(define list-sum/k
+  (lambda (lst cont)
+    (if (null? lst)
+        (apply-cont cont 0)
+        (list-sum/k (cdr lst)
+                    (list-sum1-cont (car lst) cont)))))
+
+(define list-sum1-cont
+  (lambda (head cont)
+    (lambda (val)
+      (apply-cont cont (+ head val)))))
+
+
 (module+ test
   (check-equal? (remove-fst 'a '(a b c)) '(b c))
   (check-equal? (remove-fst 'b '(e f g)) '(e f g))
   (check-equal? (remove-fst 'a4 '(c1 a4 c1 a4)) '(c1 c1 a4))
   (check-equal? (remove-fst 'x '()) '())
+  (check-equal? (list-sum '(1 2 3 4 5)) 15)
+  (check-equal? (list-sum '(1 2 3 4)) 10)
+  (check-equal? (list-sum '()) 0)
   )

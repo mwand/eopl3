@@ -29,10 +29,28 @@
                    (set! lst (cdr lst))
                    (remove-fst/k))))))
 
+(define list-sum
+  (lambda (arg-lst)
+    (set! cont (end-cont))
+    (set! lst arg-lst)
+    (list-sum/k)))
+
+(define list-sum/k
+  (lambda ()
+    (if (null? lst)
+        (begin (set! val 0)
+               (apply-cont))
+        (begin (set! cont (list-sum1-cont (car lst) cont))
+               (set! lst (cdr lst))
+               (list-sum/k)))))
+
 (define-datatype continuation continuation?
   (end-cont)
   (remove-fst1-cont
    (head symbol?)
+   (saved-cont continuation?))
+  (list-sum1-cont
+   (head number?)
    (saved-cont continuation?)))
 
 (define apply-cont
@@ -46,12 +64,19 @@
            (remove-fst1-cont (head saved-cont)
                              (set! cont saved-cont)
                              (set! val (cons head val))
-                             (apply-cont)))))
+                             (apply-cont))
+           (list-sum1-cont (head saved-cont)
+                           (set! cont saved-cont)
+                           (set! val (+ head val))
+                           (apply-cont)))))
 
 (module+ test
   (check-equal? (remove-fst 'a '(a b c)) '(b c))
   (check-equal? (remove-fst 'b '(e f g)) '(e f g))
   (check-equal? (remove-fst 'a4 '(c1 a4 c1 a4)) '(c1 c1 a4))
   (check-equal? (remove-fst 'x '()) '())
+  (check-equal? (list-sum '(1 2 3 4 5)) 15)
+  (check-equal? (list-sum '(1 2 3 4)) 10)
+  (check-equal? (list-sum '()) 0)
   )
 ;; (trace remove-fst remove-fst/k apply-cont)
