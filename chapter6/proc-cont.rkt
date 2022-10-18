@@ -51,6 +51,39 @@
     (lambda (val)
       (apply-cont cont (+ head val)))))
 
+;; occurs-free?
+(define occurs-free?
+  (lambda (var exp)
+    (occurs-free/k var exp (end-cont))))
+
+(define occurs-free/k
+  (lambda (var exp cont)
+    (cond
+      [(symbol? exp) (apply-cont cont (eqv? var exp))]
+      [(eqv? (car exp) 'lambda)
+       (occurs-free/k var (caddr exp)
+                      (occurs-free1-cont
+                       (not (eqv? var (car (cadr exp))))
+                       cont))]
+      [else
+       (occurs-free/k var (car exp)
+                      (occurs-free2-cont var (cadr exp) cont))]
+      )))
+
+(define occurs-free1-cont
+  (lambda (b cont)
+    (lambda (val)
+      (apply-cont cont (and b val)))))
+
+(define occurs-free2-cont
+  (lambda (var exp cont)
+    (lambda (val)
+    (occurs-free/k var exp (occurs-free3-cont val cont)))))
+
+(define occurs-free3-cont
+  (lambda (b cont)
+    (lambda (val)
+      (apply-cont cont (or b val)))))
 
 (module+ test
   (check-equal? (remove-fst 'a '(a b c)) '(b c))
@@ -60,4 +93,10 @@
   (check-equal? (list-sum '(1 2 3 4 5)) 15)
   (check-equal? (list-sum '(1 2 3 4)) 10)
   (check-equal? (list-sum '()) 0)
+  (check-equal? (occurs-free? 'x 'x) #t)
+  (check-equal? (occurs-free? 'x 'y) #f)
+  (check-equal? (occurs-free? 'x '(lambda (x) (x y))) #f)
+  (check-equal? (occurs-free? 'x '(lambda (y) (x y))) #t)
+  (check-equal? (occurs-free? 'x '((lambda (x) x) (x y))) #t)
+  (check-equal? (occurs-free? 'x '(lambda (y) (lambda (z) (x (y z))))) #t)
   )
