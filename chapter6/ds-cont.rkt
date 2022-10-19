@@ -81,6 +81,33 @@
                       (occurs-free2-cont var (cadr exp) cont))]
       )))
 
+;; subst : Sym * Sym * S-list -> S-list
+;; Page: 21
+;; (define subst
+;;   (lambda (new old slist)
+;;     (if (null? slist)
+;;         '()
+;;         (cons
+;;          (subst-in-s-exp new old (car slist))
+;;          (subst new old (cdr slist))))))
+(define subst
+  (lambda (sym1 sym2 lst)
+    (subst/k sym1 sym2 lst (end-cont))))
+
+(define subst/k
+  (lambda (sym1 sym2 lst cont)
+    (if (null? lst)
+        (apply-cont cont '())
+        (subst-in-s-exp/k sym1 sym2 (car lst)
+                          (subst-cont sym1 sym2 (cdr lst) cont)))))
+
+(define subst-in-s-exp/k
+  (lambda (new old s-exp cont)
+    (if (symbol? s-exp)
+        (if (equal? old s-exp)
+            (apply-cont cont new)
+            (apply-cont cont s-exp))
+        (subst/k new old s-exp cont))))
 
 (define-datatype continuation continuation?
   (end-cont)
@@ -104,6 +131,16 @@
   (occurs-free3-cont
    (rest boolean?)
    (saved-cont continuation?))
+  (subst-cont
+   (sym1 symbol?)
+   (sym2 symbol?)
+   (lst1 list?)
+   (saved-cont continuation?))
+  (subst1-cont
+   (old (lambda (e)
+          (or (symbol? e)
+              (list? e))))
+   (saved-cont continuation?))
   )
 
 (define apply-cont
@@ -124,6 +161,10 @@
                               (occurs-free/k var1 exp1 (occurs-free3-cont val cont)))
            (occurs-free3-cont (b cont)
                               (apply-cont cont (or b val)))
+           (subst-cont (sym1 sym2 lst1 cont)
+                       (subst/k sym1 sym2 lst1 (subst1-cont val cont)))
+           (subst1-cont (val1 cont)
+                        (apply-cont cont (cons val1 val)))
            )))
 
 (module+ test
@@ -144,10 +185,11 @@
   (check-equal? (occurs-free? 'x '(lambda (y) (x y))) #t)
   (check-equal? (occurs-free? 'x '((lambda (x) x) (x y))) #t)
   (check-equal? (occurs-free? 'x '(lambda (y) (lambda (z) (x (y z))))) #t)
+  (check-equal? (subst 'b 'a '(a c () (i (a) a))) '(b c () (i (b) b)))
   )
 
 ;; (trace remove-fst remove-fst/k apply-cont)
-;; (trace apply-cont occurs-free/k)
+;; (trace apply-cont subst/k subst-in-s-exp/k)
 ;; (define lambda-exp?
 ;;   (λ (E)
 ;;     (letrec
