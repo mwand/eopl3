@@ -85,6 +85,17 @@
     (lambda (val)
       (apply-cont cont (or b val)))))
 
+;; ex6.10 list-sum-clever
+(define list-sum-clever
+  (lambda (lst)
+    (list-sum-clever/k lst 0)))
+
+(define list-sum-clever/k
+  (lambda (lst cont)
+    (if (null? lst)
+        cont
+        (list-sum-clever/k (cdr lst) (+ (car lst) cont)))))
+
 (module+ test
   (check-equal? (remove-fst 'a '(a b c)) '(b c))
   (check-equal? (remove-fst 'b '(e f g)) '(e f g))
@@ -99,4 +110,7 @@
   (check-equal? (occurs-free? 'x '(lambda (y) (x y))) #t)
   (check-equal? (occurs-free? 'x '((lambda (x) x) (x y))) #t)
   (check-equal? (occurs-free? 'x '(lambda (y) (lambda (z) (x (y z))))) #t)
+  (check-equal? (list-sum-clever '(1 2 3 4 5)) 15)
+  (check-equal? (list-sum-clever '(1 2 3 4)) 10)
+  (check-equal? (list-sum-clever '()) 0)
   )
