@@ -62,8 +62,9 @@
   (lambda (exp env cont)
     (cases tfexp exp
            (simple-exp->exp (simple)
-                            (apply-cont cont
-                                        (value-of-simple-exp simple env)))
+                            (value-of-simple-exp simple env))
+                            ;; (apply-cont cont
+                            ;;             (value-of-simple-exp simple env)))
            (cps-let-exp (var rhs body)
                         (let ((val (value-of-simple-exp rhs env)))
                           (value-of/k body
