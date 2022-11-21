@@ -15,7 +15,8 @@
   (lambda (pgm)
     (cases cps-out-program pgm
            (cps-a-program (exp1)
-                          (value-of/k exp1 (init-env) (end-cont))))))
+                          ;; (value-of/k exp1 (init-env) (end-cont))))))
+                          (value-of/k exp1 (init-env) )))))
 
 (define value-of-simple-exp
   (lambda (exp env)
@@ -59,7 +60,7 @@
 ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
 ;; Page: 209
 (define value-of/k
-  (lambda (exp env cont)
+  (lambda (exp env)
     (cases tfexp exp
            (simple-exp->exp (simple)
                             (value-of-simple-exp simple env))
@@ -69,15 +70,15 @@
                         (let ((val (value-of-simple-exp rhs env)))
                           (value-of/k body
                                       (extend-env* (list var) (list val) env)
-                                      cont)))
+                                      )))
            (cps-letrec-exp (p-names b-varss p-bodies letrec-body)
                            (value-of/k letrec-body
                                        (extend-env-rec** p-names b-varss p-bodies env)
-                                       cont))
+                                       ))
            (cps-if-exp (simple1 body1 body2)
                        (if (expval->bool (value-of-simple-exp simple1 env))
-                           (value-of/k body1 env cont)
-                           (value-of/k body2 env cont)))
+                           (value-of/k body1 env)
+                           (value-of/k body2 env)))
            (cps-call-exp (rator rands)
                          (let ((rator-proc
                                 (expval->proc
@@ -87,7 +88,7 @@
                                  (lambda (simple)
                                    (value-of-simple-exp simple env))
                                  rands)))
-                           (apply-procedure/k rator-proc rand-vals cont))))))
+                           (apply-procedure/k rator-proc rand-vals))))))
 
 ;; apply-cont : Cont * ExpVal -> Final-ExpVal
 ;; there's only one continuation, and it only gets invoked once, at
@@ -100,20 +101,20 @@
 ;; apply-procedure/k : Proc * ExpVal * Cont -> ExpVal
 ;; Page: 209
 (define apply-procedure/k
-  (lambda (proc1 args cont)
+  (lambda (proc1 args)
     (cases proc proc1
            (procedure (vars body saved-env)
                       (value-of/k body
                                   (extend-env* vars args saved-env)
-                                  cont)))))
+                                  )))))
 
 '(define apply-procedure/k
-   (lambda (proc1 args cont)
+   (lambda (proc1 args)
      (cases proc proc1
             (procedure (vars body saved-env)
                        (value-of/k body
                                    (extend-env* vars args saved-env)
-                                   cont)))))
+                                   )))))
 
 ;; trace has to be in the module where the procedure is defined.
 ;; (trace value-of/k apply-cont)
