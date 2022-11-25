@@ -40,6 +40,38 @@
      if-exp)
 
     (expression
+     ("number?" "(" expression ")")
+     number?-exp)
+
+    (expression
+     ("equal?" "(" expression "," expression ")")
+     equal?-exp)
+
+    (expression
+     ("emptylist")
+     emptylist-exp)
+
+    (expression
+     ("cons" "(" expression "," expression ")")
+     cons-exp)
+
+    (expression
+     ("car" "(" expression ")")
+     car-exp)
+
+    (expression
+     ("cdr" "(" expression ")")
+     cdr-exp)
+
+    (expression
+     ("null?" "(" expression ")")
+     null?-exp)
+
+    (expression
+     ("list" "(" (separated-list expression ",") ")")
+     list-exp)
+
+    (expression
      ("letrec"
       (arbno identifier "(" (arbno identifier) ")"
              "=" expression)

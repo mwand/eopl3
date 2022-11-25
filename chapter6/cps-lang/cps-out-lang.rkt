@@ -42,6 +42,38 @@
      ("proc" "(" (arbno identifier) ")" tfexp)
      cps-proc-exp)
 
+    (simple-expression
+     ("number?" "(" simple-expression ")")
+     cps-number?-exp)
+
+    (simple-expression
+     ("equal?" "(" simple-expression "," simple-expression ")")
+     cps-equal?-exp)
+
+    (simple-expression
+     ("emptylist")
+     cps-emptylist-exp)
+
+    (simple-expression
+     ("cons" "(" simple-expression "," simple-expression ")")
+     cps-cons-exp)
+
+    (simple-expression
+     ("car" "(" simple-expression ")")
+     cps-car-exp)
+
+    (simple-expression
+     ("cdr" "(" simple-expression ")")
+     cps-cdr-exp)
+
+    (simple-expression
+     ("null?" "(" simple-expression ")")
+     cps-null?-exp)
+
+    (simple-expression
+     ("list" "(" (separated-list simple-expression ",") ")" )
+     cps-list-exp)
+
     (tfexp
      (simple-expression)
      simple-exp->exp)

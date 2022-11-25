@@ -34,6 +34,23 @@
                      (cps-of-diff-exp exp1 exp2 cont))
            (sum-exp (exps)
                     (cps-of-sum-exp exps cont))
+           (number?-exp (exp1)
+                        (cps-of-number?-exp exp1 cont))
+           (equal?-exp (exp1 exp2)
+                       (cps-of-equal?-exp exp1 exp2 cont))
+           (emptylist-exp ()
+                          (make-send-to-cont cont
+                                             (cps-emptylist-exp)))
+           (cons-exp (head tail)
+                     (cps-of-cons-exp head tail cont))
+           (car-exp (lst)
+                    (cps-of-car-exp lst cont))
+           (cdr-exp (lst)
+                    (cps-of-cdr-exp lst cont))
+           (null?-exp (lst)
+                      (cps-of-null?-exp lst cont))
+           (list-exp (exps)
+                     (cps-of-list-exp exps cont))
            (if-exp (exp1 exp2 exp3)
                    (cps-of-if-exp exp1 exp2 exp3 cont))
            (let-exp (var exp1 body)
@@ -129,6 +146,29 @@
            (sum-exp (exps)
                     (cps-sum-exp
                      (map cps-of-simple-exp exps)))
+           (number?-exp (exp1)
+                        (cps-number?-exp
+                         (cps-of-simple-exp exp1)))
+           (equal?-exp (exp1 exp2)
+                       (cps-equal?-exp
+                        (cps-of-simple-exp exp1)
+                        (cps-of-simple-exp exp2)))
+           (cons-exp (head tail)
+                     (cps-cons-exp
+                      (cps-of-simple-exp head)
+                      (cps-of-simple-exp tail)))
+           (car-exp (lst)
+                    (cps-car-exp
+                     (cps-of-simple-exp lst)))
+           (cdr-exp (lst)
+                    (cps-cdr-exp
+                     (cps-of-simple-exp lst)))
+           (null?-exp (lst)
+                      (cps-null?-exp
+                       (cps-of-simple-exp lst)))
+           (list-exp (exps)
+                     (cps-list-exp
+                      (map cps-of-simple-exp exps)))
            (else
             (report-invalid-exp-to-cps-of-simple-exp exp)))))
 
@@ -164,6 +204,64 @@
                    (make-send-to-cont
                     k-exp
                     (cps-sum-exp new-rands))))))
+
+(define cps-of-number?-exp
+  (lambda (exp1 k-exp)
+    (cps-of-exps (list exp1)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-number?-exp (car new-rands)))))))
+
+(define cps-of-equal?-exp
+  (lambda (exp1 exp2 k-exp)
+    (cps-of-exps (list exp1 exp2)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-equal?-exp (car new-rands)
+                                    (cadr new-rands)))))))
+
+(define cps-of-cons-exp
+  (lambda (head tail k-exp)
+    (cps-of-exps (list head tail)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-cons-exp (car new-rands)
+                                  (cadr new-rands)))))))
+
+(define cps-of-car-exp
+  (lambda (lst k-exp)
+    (cps-of-exps (list lst)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-car-exp (car new-rands)))))))
+
+(define cps-of-cdr-exp
+  (lambda (lst k-exp)
+    (cps-of-exps (list lst)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-cdr-exp (car new-rands)))))))
+
+(define cps-of-null?-exp
+  (lambda (lst k-exp)
+    (cps-of-exps (list lst)
+                 (lambda (new-rands)
+                   (make-send-to-cont
+                    k-exp
+                    (cps-null?-exp (car new-rands)))))))
+
+(define cps-of-list-exp
+        (lambda (exps k-exp)
+          (cps-of-exps (exps)
+                       (lambda (new-rands)
+                         (make-send-to-cont
+                          k-exp
+                          (cps-list-exp new-rands))))))
 
 ;; cps-of-diff-exp : InpExp * InpExp * SimpleExp -> TfExp
 ;; Page: 223

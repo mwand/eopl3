@@ -40,6 +40,44 @@
                             (expval->num
                              (value-of-simple-exp exp1 env)))))
 
+           (cps-number?-exp (exp1)
+                            (bool-val (number? (expval->num
+                                                (value-of-simple-exp exp1 env)))))
+
+           (cps-equal?-exp (exp1 exp2)
+                           (let ([val1 (expval->num (value-of-simple-exp exp1 env))]
+                                 [val2 (expval->num (value-of-simple-exp exp2 env))])
+                             (bool-val
+                              (equal? val1 val2))))
+
+           (cps-cons-exp (head tail)
+                         (let ([val1 (value-of-simple-exp head env)]
+                               [val2 (value-of-simple-exp tail env)])
+                           (list-val (list val1 val2))))
+           (cps-emptylist-exp ()
+                              (list-val '()))
+
+           (cps-car-exp (lst)
+                        (let ([val1 (expval->list (value-of-simple-exp lst env))])
+                          (car val1)))
+
+           (cps-cdr-exp (lst)
+                        (let ([val1 (expval->list
+                                     (value-of-simple-exp lst env))])
+                          (cdr val1)))
+
+           (cps-null?-exp (lst)
+                          (let ([val1 (expval->list
+                                       (value-of-simple-exp lst env))])
+                            (bool-val (null? val1))))
+
+           (cps-list-exp (exps)
+                         (let ([vals (map
+                                     (lambda (e)
+                                       (value-of-simple-exp e env))
+                                     exps)])
+                           (list-val vals)))
+
            (cps-sum-exp (exps)
                         (let ((nums (map
                                      (lambda (exp)
