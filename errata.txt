@@ -26,6 +26,10 @@ Page 101:
 Exercise 3.39
 Delete "and 'unpack'"
 
+Page 116:
+Figure 4.6
+The return type of value-of should be Answer.
+
 Page 124:
 Section 4.4:
 Line 5:
