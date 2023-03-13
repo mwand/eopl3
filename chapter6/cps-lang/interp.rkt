@@ -53,7 +53,11 @@
            (cps-cons-exp (head tail)
                          (let ([val1 (value-of-simple-exp head env)]
                                [val2 (value-of-simple-exp tail env)])
-                           (list-val (list val1 val2))))
+                           (cases expval val2
+                                  (list-val (lst) (list-val (cons val1 lst)))
+                                  (else
+                                   (list-val (list val2 val2))))))
+           
            (cps-emptylist-exp ()
                               (list-val '()))
 
@@ -64,7 +68,7 @@
            (cps-cdr-exp (lst)
                         (let ([val1 (expval->list
                                      (value-of-simple-exp lst env))])
-                          (cdr val1)))
+                          (list-val (cdr val1))))
 
            (cps-null?-exp (lst)
                           (let ([val1 (expval->list
